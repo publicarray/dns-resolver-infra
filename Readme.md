@@ -24,6 +24,8 @@ kubectl describe job/acme-init
 
 Dashboard
 
-```
+```sh
 kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+# or
+minikube dashboard
 ```

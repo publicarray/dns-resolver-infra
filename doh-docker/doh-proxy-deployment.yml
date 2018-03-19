@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  labels:
+    service: doh-proxy
+  name: doh-proxy
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: dnscrypt
+    spec:
+      containers:
+      - env:
+        image: publicarray/doh-proxy
+        name: ssl-keys
+        command: ["/entrypoint.sh"]
+      restartPolicy: Always
+
