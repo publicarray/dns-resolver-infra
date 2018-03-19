@@ -9,22 +9,22 @@ spec:
     spec:
       schedule: 30 03 01 */3 *
       containers:
-      - name: acme-init
-        image: neilpang/acme.sh
-        env:
-          # - name: DOMAIN
-            # value: test.seby.io
-          - name: CF_Email
-            valueFrom:
-              secretKeyRef:
-                name: cloudflare
-                key: username
-          - name: CF_Key
-            valueFrom:
-              secretKeyRef:
-                name: cloudflare
-                key: password
-        command:
+        - name: acme-init
+          image: neilpang/acme.sh
+          env:
+            # - name: DOMAIN
+            #   value: test.seby.io
+            - name: CF_Email
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare
+                  key: username
+            - name: CF_Key
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare
+                  key: password
+          command:
             - acme.sh
             - --issue
             - --dns
@@ -47,10 +47,10 @@ spec:
             - --reloadcmd
             - 'cat /data/ssl-keys/key.pem > cat /data/ssl-keys/fullchain.pem > /data/ssl-keys/fullchain-key.pem'
             - --staging
-        volumeMounts:
-          - name: ssl-keys
-            mountPath: /opt/ssl-keys
-      restartPolicy: Never #OnFailure
+          volumeMounts:
+            - name: ssl-keys
+              mountPath: /opt/ssl-keys
+      restartPolicy: Never  # OnFailure
       volumes:
         - name: ssl-keys
           hostPath:

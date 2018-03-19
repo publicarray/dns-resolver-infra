@@ -15,9 +15,8 @@ spec:
         service: dnscrypt
     spec:
       containers:
-      - env:
-        image: publicarray/doh-proxy
-        name: ssl-keys
-        command: ["/entrypoint.sh"]
+        - env:
+          image: publicarray/doh-proxy
+          name: ssl-keys
+          command: ["/entrypoint.sh"]
       restartPolicy: Always
-

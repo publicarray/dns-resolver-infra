@@ -12,23 +12,23 @@ spec:
   template:
     metadata:
       labels:
-        service: dnscrypt
+        component: dns-server
+        service: haproxy
     spec:
       containers:
-      - env:
-        image: publicarray/haproxy
-        name: ssl-keys
-        volumeMounts:
-          - name: ssl-keys
-            mountPath: /opt/ssl-keys
-        command: ["/entrypoint.sh"]
-        resources:
-          requests:
-            memory: "1Gi"
+        - env:
+          image: publicarray/haproxy
+          name: ssl-keys
+          volumeMounts:
+            - name: ssl-keys
+              mountPath: /opt/ssl-keys
+          command: ["/entrypoint.sh"]
+          resources:
+            requests:
+              memory: "1Gi"
       restartPolicy: Always
       volumes:
         - name: ssl-keys
           hostPath:
             path: /data/ssl-keys
             type: DirectoryOrCreate
-
