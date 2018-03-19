@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: acme-init
+spec:
+  template:
+    metadata:
+      name: acme-init
+    spec:
+      schedule: 30 03 01 */3 *
+      containers:
+      - name: acme-init
+        image: neilpang/acme.sh
+        env:
+          # - name: DOMAIN
+            # value: test.seby.io
+          - name: CF_Email
+            valueFrom:
+              secretKeyRef:
+                name: cloudflare
+                key: username
+          - name: CF_Key
+            valueFrom:
+              secretKeyRef:
+                name: cloudflare
+                key: password
+        command:
+            - acme.sh
+            - --issue
+            - --dns
+            - dns_cf
+            - --dnssleep
+            - "60"
+            - -d
+            # - $(DOMAIN)
+            - test.seby.io
+            # - -d
+            # - www.$(DOMAIN)
+            - --fullchain-file
+            - /opt/ssl-keys/fullchain.pem
+            - --key-file
+            - /opt/ssl-keys/key.pem
+            - --ca-file
+            - /opt/ssl-keys/ca.pem
+            - --cert-file
+            - /opt/ssl-keys/cert.pem
+            - --reloadcmd
+            - 'cat /data/ssl-keys/key.pem > cat /data/ssl-keys/fullchain.pem > /data/ssl-keys/fullchain-key.pem'
+            - --staging
+        volumeMounts:
+          - name: ssl-keys
+            mountPath: /opt/ssl-keys
+      restartPolicy: Never #OnFailure
+      volumes:
+        - name: ssl-keys
+          hostPath:
+            path: /data/ssl-keys
+            type: DirectoryOrCreate
