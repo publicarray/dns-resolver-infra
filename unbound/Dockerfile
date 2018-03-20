@@ -25,7 +25,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV UNBOUND_RUN_DEPS libressl libevent-dev runit shadow wget
+ENV UNBOUND_RUN_DEPS libressl libevent expat runit shadow wget
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -35,9 +35,13 @@ COPY --from=0 /usr/local/sbin/unbound-control /usr/local/sbin/unbound-control
 COPY --from=0 /usr/local/sbin/unbound-host /usr/local/sbin/unbound-host
 COPY --from=0 /usr/local/sbin/unbound-anchor /usr/local/sbin/unbound-anchor
 COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-control-setup
-COPY --from=0 /usr/local/lib/libunbound.* /usr/local/lib/
+COPY --from=0 /usr/local/lib/libunbound.so.2.5.8 /usr/local/lib/libunbound.so.2.5.8
 
 RUN set -x && \
+    cd /usr/local/lib/ && \
+    ln -sf libunbound.so.2.5.8 libunbound.so.2 && \
+    ln -sf libunbound.so.2.5.8 libunbound.so && \
+    cd && \
     groupadd _unbound && \
     useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
     mkdir -p /etc/service/unbound /etc/unbound/run && \
