@@ -2,7 +2,7 @@ FROM alpine:latest
 MAINTAINER publicarray
 ENV REVISION 0
 
-ENV HAPROXY_BUILD_DEPS  make tar gcc musl-dev linux-headers openssl-dev
+ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl-dev
 
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
@@ -28,22 +28,23 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
-ENV HAPROXY_RUN_DEPS  openssl-dev runit shadow
+
+ENV HAPROXY_RUN_DEPS openssl-dev runit shadow
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/haproxy /usr/local/sbin/haproxy
 
-RUN groupadd _haproxy && \
-    useradd -g _haproxy -s /dev/null -d /dev/null _haproxy
+RUN set -x && \
+    groupadd _haproxy && \
+    useradd -g _haproxy -s /dev/null -d /dev/null _haproxy && \
+    mkdir -p /etc/service/haproxy
 
 COPY haproxy.conf /etc/haproxy.conf
-RUN mkdir -p /etc/service/haproxy
 COPY haproxy.sh /etc/service/haproxy/run
-
 COPY entrypoint.sh /
 
-VOLUME ["/opt/ssl-keys"]
+VOLUME ["/opt/ssl"]
 
 EXPOSE 443/udp 443/tcp
 

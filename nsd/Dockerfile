@@ -2,7 +2,7 @@ FROM alpine:latest
 MAINTAINER publicarray
 ENV REVISION 0
 
-ENV NSD_BUILD_DEPS  make tar gcc musl-dev libevent-dev openssl-dev
+ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
@@ -24,7 +24,8 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
-ENV NSD_RUN_DEPS  openssl libevent-dev runit shadow
+
+ENV NSD_RUN_DEPS libressl libevent-dev runit shadow
 
 RUN apk add --no-cache $NSD_RUN_DEPS
 
@@ -34,43 +35,17 @@ COPY --from=0 /usr/local/sbin/nsd-checkconf /usr/local/sbin/nsd-checkconf
 COPY --from=0 /usr/local/sbin/nsd-checkzone /usr/local/sbin/nsd-checkzone
 COPY --from=0 /usr/local/sbin/nsd-control /usr/local/sbin/nsd-control
 
-RUN groupadd _nsd && \
-    useradd -g _nsd -s /dev/null -d /dev/null _nsd
-
-RUN set -x &&\
-    mkdir -p \
-    /etc/nsd/run/zonefiles \
-    /etc/service/nsd && \
-    chown _nsd /etc/nsd/run/zonefiles && \
-    chown _nsd /etc/nsd/run/ && \
+RUN set -x && \
+    groupadd _nsd && \
+    useradd -g _nsd -s /dev/null -d /dev/null _nsd && \
+    mkdir -p /etc/nsd/run/zonefiles /etc/service/nsd && \
+    chown _nsd:_nsd /etc/nsd/run/zonefiles && \
+    chown _nsd:_nsd /etc/nsd/run && \
     nsd-control-setup
 
 COPY nsd.conf /etc/nsd/nsd.conf
 COPY opennic.conf /etc/nsd/opennic.conf
-
 COPY nsd.sh /etc/service/nsd/
-
-
-# ./install-sh -c -d /usr/local/sbin
-# ./install-sh -c -d /etc/nsd
-# ./install-sh -c -d /var/run
-# ./install-sh -c -d /tmp
-# ./install-sh -c -d /var/db/nsd
-# ./install-sh -c -d /usr/local/share/man
-# ./install-sh -c -d /usr/local/share/man/man8
-# ./install-sh -c -d /usr/local/share/man/man5
-# ./install-sh -c nsd /usr/local/sbin/nsd
-# ./install-sh -c nsd-control-setup.sh /usr/local/sbin/nsd-control-setup
-# ./install-sh -c nsd-checkconf /usr/local/sbin/nsd-checkconf
-# ./install-sh -c nsd-checkzone /usr/local/sbin/nsd-checkzone
-# ./install-sh -c nsd-control /usr/local/sbin/nsd-control
-# ./install-sh -c -m 644 nsd.8 /usr/local/share/man/man8
-# ./install-sh -c -m 644 nsd-checkconf.8 /usr/local/share/man/man8/nsd-checkconf.8
-# ./install-sh -c -m 644 nsd-checkzone.8 /usr/local/share/man/man8/nsd-checkzone.8
-# ./install-sh -c -m 644 nsd-control.8 /usr/local/share/man/man8/nsd-control.8
-# ./install-sh -c -m 644 nsd.conf.5 /usr/local/share/man/man5/nsd.conf.5
-# ./install-sh -c -m 644 nsd.conf.sample /etc/nsd/nsd.conf.sample
-
 COPY entrypoint.sh /
 
 EXPOSE 552/udp 552/tcp

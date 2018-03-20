@@ -37,22 +37,22 @@ spec:
             # - -d
             # - www.$(DOMAIN)
             - --fullchain-file
-            - /opt/ssl-keys/fullchain.pem
+            - /opt/ssl/fullchain.pem
             - --key-file
-            - /opt/ssl-keys/key.pem
+            - /opt/ssl/key.pem
             - --ca-file
-            - /opt/ssl-keys/ca.pem
+            - /opt/ssl/ca.pem
             - --cert-file
-            - /opt/ssl-keys/cert.pem
+            - /opt/ssl/cert.pem
             - --reloadcmd
-            - 'cat /data/ssl-keys/key.pem > cat /data/ssl-keys/fullchain.pem > /data/ssl-keys/fullchain-key.pem'
+            - 'cat /data/ssl/key.pem > cat /data/ssl/fullchain.pem > /data/ssl/fullchain-key.pem'
             - --staging
           volumeMounts:
-            - name: ssl-keys
-              mountPath: /opt/ssl-keys
+            - name: ssl
+              mountPath: /opt/ssl
       restartPolicy: Never  # OnFailure
       volumes:
-        - name: ssl-keys
+        - name: ssl
           hostPath:
-            path: /data/ssl-keys
+            path: /data/ssl
             type: DirectoryOrCreate
