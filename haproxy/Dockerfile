@@ -29,7 +29,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV HAPROXY_RUN_DEPS openssl-dev runit shadow
+ENV HAPROXY_RUN_DEPS openssl runit shadow
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
