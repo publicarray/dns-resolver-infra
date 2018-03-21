@@ -29,7 +29,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV HAPROXY_RUN_DEPS openssl runit shadow
+ENV HAPROXY_RUN_DEPS openssl shadow
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
@@ -50,6 +50,6 @@ EXPOSE 443/udp 443/tcp
 
 RUN haproxy -v
 
-CMD ["/sbin/runsvdir -P /etc/service"]
+CMD ["-f /etc/haproxy.conf"]
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/sbin/haproxy"]

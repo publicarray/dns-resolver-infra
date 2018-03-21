@@ -25,7 +25,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV NSD_RUN_DEPS libressl libevent runit shadow
+ENV NSD_RUN_DEPS libressl libevent shadow
 
 RUN apk add --no-cache $NSD_RUN_DEPS
 
@@ -52,6 +52,6 @@ EXPOSE 552/udp 552/tcp
 
 RUN nsd -v
 
-CMD ["/sbin/runsvdir -P /etc/service"]
+CMD ["-d"]
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/sbin/nsd"]

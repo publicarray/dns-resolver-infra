@@ -7,7 +7,6 @@ kubectl create -f cloudflare-secret.yml
 # kubectl get secrets
 # kubectl get secret cloudflare -o yaml
 
-
 kubectl create -f acme-init-job.yml
 kubectl create -f kube/dnscrypt-init-job.yml
 ```
@@ -28,4 +27,43 @@ Dashboard
 kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 # or
 minikube dashboard
+```
+
+Debugging
+
+```sh
+kubectl get nodes
+kubectl get jobs
+kubectl get deployments
+kubectl get services
+kubectl get pods -o wide
+kubectl get all -l app=dns-server
+
+## SSH into the container/pod
+export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+kubectl exec -ti $POD_NAME sh
+
+## SSH into a new neighbouring container/pod
+kubectl run busybox -it --image=busybox --restart=Never --rm
+kubectl run alpine -it --image=alpine --restart=Never --rm
+
+minikube ssh
+
+kubectl logs deployment/nsd
+kubectl describe deployment/nsd
+```
+
+Build docker images
+
+```sh
+docker build -t publicarray/nsd nsd/
+docker build -t publicarray/unbound unbound/
+docker build -t publicarray/doh-proxy doh-proxy/
+docker build -t publicarray/haproxy haproxy/
+docker build -t publicarray/dnscrypt-wrapper dnscrypt-wrapper/
+docker images
+docker push publicarray/unbound
+
+docker run --rm --name myunbound -it publicarray/unbound sh
+docker run -p 5300:53/udp -v (pwd)/unbound/unbound.conf:/etc/unbound/unbound.conf:ro --name myunbound publicarray/unbound
 ```

@@ -12,20 +12,21 @@ spec:
   template:
     metadata:
       labels:
-        component: dns-server
+        app: dns-server
+        component: haproxy
         service: haproxy
     spec:
       containers:
         - env:
           image: publicarray/haproxy
-          name: ssl-keys
+          name: haproxy
           volumeMounts:
             - name: ssl-keys
               mountPath: /opt/ssl-keys
           command: ["/entrypoint.sh"]
-          resources:
-            requests:
-              memory: "1Gi"
+          # resources:
+          #   requests:
+          #     memory: "1Gi"
       restartPolicy: Always
       volumes:
         - name: ssl-keys

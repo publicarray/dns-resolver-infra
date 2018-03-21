@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   namespace: default
   labels:
-    service: doh-proxy
-  name: doh-proxy
+    service: nsd
+  name: nsd
 spec:
   strategy:
     type: Recreate
@@ -12,11 +12,16 @@ spec:
   template:
     metadata:
       labels:
-        service: dnscrypt
+        app: dns-server
+        component: nsd
+        service: nsd
     spec:
       containers:
         - env:
-          image: publicarray/doh-proxy
-          name: doh-proxy
+          image: publicarray/nsd
+          name: nsd
           command: ["/entrypoint.sh"]
+          resources:
+            requests:
+              memory: "1Gi"
       restartPolicy: Always

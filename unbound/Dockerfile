@@ -1,5 +1,12 @@
 FROM alpine:latest
-MAINTAINER Frank Denis
+MAINTAINER publicarray
+# LABEL org.label-schema.name="unbound"
+# LABEL org.label-schema.vendor="publicarray"
+# LABEL org.label-schema.description=""
+# LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
+# LABEL org.label-schema.version="3.7"
+# LABEL org.label-schema.license="MIT"
+
 ENV SERIAL 7
 
 ENV UNBOUND_BUILD_DEPS make gcc musl-dev libressl-dev libevent-dev expat-dev
@@ -58,7 +65,7 @@ EXPOSE 53/udp 53/tcp
 
 RUN unbound -h || true
 
-CMD ["/sbin/runsvdir -P /etc/service"]
+# CMD [""] --munin
 
 ENTRYPOINT ["/entrypoint.sh"]
 

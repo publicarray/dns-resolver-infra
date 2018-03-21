@@ -1,4 +1,5 @@
 #!/bin/sh
 set -e
-
-/usr/local/sbin/unbound -d
+exec 2>&1
+# . /etc/envvars
+exec /usr/local/sbin/unbound -d

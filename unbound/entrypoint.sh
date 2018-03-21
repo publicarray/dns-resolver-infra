@@ -1,7 +1,8 @@
 #!/bin/sh
 # Borrowed from: https://github.com/faisyl/alpine-runit/blob/master/start_runit
-
 set -e
+
+# export > /etc/envvars
 
 if [ $# -eq 0 ]; then
     exec /sbin/runsvdir -P /etc/service

@@ -30,6 +30,6 @@ EXPOSE 3000/udp 3000/tcp
 
 RUN doh-proxy --version
 
-CMD ["/sbin/runsvdir -P /etc/service"]
+CMD ["-u 9.9.9.9:53"]
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/doh-proxy"]
