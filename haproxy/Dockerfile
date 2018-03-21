@@ -41,8 +41,6 @@ RUN set -x && \
     mkdir -p /etc/service/haproxy
 
 COPY haproxy.conf /etc/haproxy.conf
-COPY haproxy.sh /etc/service/haproxy/run
-COPY entrypoint.sh /
 
 VOLUME ["/opt/ssl"]
 

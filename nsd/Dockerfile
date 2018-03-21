@@ -45,8 +45,6 @@ RUN set -x && \
 
 COPY nsd.conf /etc/nsd/nsd.conf
 COPY opennic.conf /etc/nsd/opennic.conf
-COPY nsd.sh /etc/service/nsd/run
-COPY entrypoint.sh /
 
 EXPOSE 552/udp 552/tcp
 
