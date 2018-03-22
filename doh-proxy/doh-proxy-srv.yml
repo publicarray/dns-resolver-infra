@@ -1,31 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: doh-proxy-tcp
-  namespace: default
-spec:
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
-  selector:
-    service: doh-proxy
+  name: doh-proxy
+  labels:
     app: dns-server
     component: doh-proxy
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: doh-proxy-udp
-  namespace: default
 spec:
-  ports:
-    - protocol: UDP
-      port: 3000
-      targetPort: 3000
   selector:
-    service: doh-proxy
     app: dns-server
     component: doh-proxy
-  type: NodePort
+  ports:
+    - name: doh-tcp
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  # type: ClusterIP

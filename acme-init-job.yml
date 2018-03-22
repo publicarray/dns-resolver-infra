@@ -13,7 +13,7 @@ spec:
           image: neilpang/acme.sh
           env:
             # - name: DOMAIN
-            #   value: test.seby.io
+            #   value: doh.seby.io
             - name: CF_Email
               valueFrom:
                 secretKeyRef:
@@ -33,7 +33,7 @@ spec:
             - "60"
             - -d
             # - $(DOMAIN)
-            - test.seby.io
+            - doh.seby.io
             # - -d
             # - www.$(DOMAIN)
             - --fullchain-file

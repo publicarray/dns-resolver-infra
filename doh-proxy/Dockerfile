@@ -23,10 +23,10 @@ RUN set -x && \
     useradd -g _doh_proxy -s /dev/null -d /dev/null _doh_proxy && \
     mkdir -p /etc/service/doh-proxy
 
+COPY entrypoint.sh /
+
 EXPOSE 3000/udp 3000/tcp
 
 RUN doh-proxy --version
 
-CMD ["-u 9.9.9.9:53"]
-
-ENTRYPOINT ["/usr/local/bin/doh-proxy"]
+ENTRYPOINT ["/entrypoint.sh"]
