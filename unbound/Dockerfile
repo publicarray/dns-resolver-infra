@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER publicarray
+LABEL maintainer "publicarray"
 ENV REVISION 0
 # LABEL org.label-schema.name="unbound"
 # LABEL org.label-schema.vendor="publicarray"
@@ -34,7 +34,6 @@ RUN set -x && \
 FROM alpine:latest
 
 ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow
-
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/unbound /usr/local/sbin/unbound

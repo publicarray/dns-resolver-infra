@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER publicarray
+LABEL maintainer "publicarray"
 ENV REVISION 0
 
 ENV DOH_BUILD_DEPS rust cargo
@@ -28,5 +28,8 @@ COPY entrypoint.sh /
 EXPOSE 3000/udp 3000/tcp
 
 RUN doh-proxy --version
+
+# HEALTHCHECK --interval=1m --timeout=3s \
+#   CMD curl -f http://localhost:3000/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

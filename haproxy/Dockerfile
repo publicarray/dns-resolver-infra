@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER publicarray
+LABEL maintainer "publicarray"
 ENV REVISION 0
 
 ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl-dev

@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER publicarray
+LABEL maintainer "publicarray"
 LABEL description "NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
 ENV REVISION 0
 
@@ -25,12 +25,12 @@ RUN set -x && \
     CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
     LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
     make install
-# apk del --no-cache $NSD_BUILD_DEPS && rm -rf /tmp/src \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
 ENV NSD_RUN_DEPS libressl libevent shadow
+RUN apk add --no-cache $NSD_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/nsd /usr/local/sbin/nsd
 COPY --from=0 /usr/local/sbin/nsd-control-setup /usr/local/sbin/nsd-control-setup
@@ -39,7 +39,6 @@ COPY --from=0 /usr/local/sbin/nsd-checkzone /usr/local/sbin/nsd-checkzone
 COPY --from=0 /usr/local/sbin/nsd-control /usr/local/sbin/nsd-control
 
 RUN set -x && \
-    apk add --no-cache $NSD_RUN_DEPS && \
     groupadd _nsd && \
     useradd -g _nsd -s /dev/null -d /dev/null _nsd && \
     mkdir -p /etc/nsd/run/zonefiles /etc/service/nsd && \
