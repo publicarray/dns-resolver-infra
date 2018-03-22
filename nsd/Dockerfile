@@ -46,7 +46,7 @@ RUN set -x && \
 COPY nsd.conf /etc/nsd/nsd.conf
 COPY opennic.conf /etc/nsd/opennic.conf
 
-EXPOSE 552/udp 552/tcp
+EXPOSE 53/udp 53/tcp
 
 RUN nsd -v
 

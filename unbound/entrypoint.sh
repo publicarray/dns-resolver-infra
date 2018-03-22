@@ -2,9 +2,7 @@
 set -e
 # export > /etc/envvars
 
-# defaultMem=512
 reserved=25
-# DEFAULT=${DEFAULT:-"foobar"}
 memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
 if [ $memoryMB -le $reserved ]; then
     echo "Not enough memory" >&2
@@ -14,10 +12,13 @@ memory=$(($((memoryMB / 4)) - reserved))
 
 nproc=$(nproc)
 if [ "$nproc" -gt 1 ]; then
-    threads=$(("$nproc" - 1))
+    threads=$((nproc - 1))
 else
     threads=1
 fi
+
+NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
+NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"552"}
 
 sed \
     -re "s/num-threads:\\s{0,}\\d{1,}\\w/num-threads: ${threads}/" \
@@ -29,7 +30,8 @@ sed \
     -re "s/rrset-cache-size:\\s{0,}\\d{1,}\\w/rrset-cache-size: $((memory * 2))m/" \
     -re "s/key-cache-size:\\s{0,}\\d{1,}\\w/key-cache-size: $((memory / 2))m/" \
     -re "s/neg-cache-size:\\s{0,}\\d{1,}\\w/neg-cache-size: $((memory / 2))m/" \
-    -i /etc/unbound/unbound.conf
+    -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}\"/g" \
+    -i  "/etc/unbound/unbound.conf"
 
 # Borrowed from: https://github.com/faisyl/alpine-runit/blob/master/start_runit
 if [ $# -eq 0 ]; then
@@ -40,4 +42,4 @@ fi
 
 [ "$1" = '--' ] && shift
 
-exec $@
+exec "$@"

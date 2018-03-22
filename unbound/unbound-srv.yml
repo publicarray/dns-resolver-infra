@@ -1,21 +1,22 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nsd
+  name: unbound
   labels:
     app: dns-server
-    component: nsd
+    component: unbound
 spec:
   selector:
     app: dns-server
-    component: nsd
+    component: unbound
   ports:
-    - name: nsd-tcp
+    - name: dns-tcp
       protocol: TCP
       port: 53
       targetPort: 53
-    - name: nsd-udp
+    - name: dns-udp
       protocol: UDP
       port: 53
       targetPort: 53
-  # type: ClusterIP
+  type: NodePort
+  # type: LoadBalancer

@@ -1,11 +1,12 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: default
-  labels:
-    service: unbound
   name: unbound
 spec:
+  selector:
+    matchLabels:
+      app: dns-server
+      component: unbound
   strategy:
     type: Recreate
   replicas: 1
@@ -14,14 +15,16 @@ spec:
       labels:
         app: dns-server
         component: unbound
-        service: unbound
     spec:
       containers:
-        - env:
+        - name: unbound
           image: publicarray/unbound
-          name: unbound
-          command: ["/entrypoint.sh"]
+          # command: ["/entrypoint.sh"]
+          ports:
+            - name: dns
+              containerPort: 53
           resources:
             requests:
-              memory: "1Gi"
+              cpu: 100m
+              memory: 500Mi
       restartPolicy: Always
