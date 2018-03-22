@@ -1,21 +1,20 @@
 FROM alpine:latest
 MAINTAINER publicarray
+ENV REVISION 0
 # LABEL org.label-schema.name="unbound"
 # LABEL org.label-schema.vendor="publicarray"
-# LABEL org.label-schema.description=""
+# LABEL org.label-schema.description="Unbound is a validating, recursive, and caching DNS resolver."
 # LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
 # LABEL org.label-schema.version="3.7"
 # LABEL org.label-schema.license="MIT"
 
-ENV SERIAL 7
-
-ENV UNBOUND_BUILD_DEPS make gcc musl-dev libressl-dev libevent-dev expat-dev
+ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ENV UNBOUND_VERSION 1.7.0
-ENV UNBOUND_SHA256 94dd9071fb13d8ccd122a3ac67c4524a3324d0e771fc7a8a7c49af8abfb926a2
-ENV UNBOUND_DOWNLOAD_URL https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
+ARG UNBOUND_VERSION=1.7.0
+ARG UNBOUND_SHA256=94dd9071fb13d8ccd122a3ac67c4524a3324d0e771fc7a8a7c49af8abfb926a2
+ARG UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
     mkdir -p /tmp/src && \
@@ -26,13 +25,15 @@ RUN set -x && \
     rm -f unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure --with-conf-file=/etc/unbound/unbound.conf --with-run-dir=/etc/unbound \
-    --with-pthreads --with-username=_unbound --with-libevent && \
+    --with-pthreads --with-username=_unbound --with-libevent \
+    CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
+    LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
     make install
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV UNBOUND_RUN_DEPS libressl libevent expat runit shadow wget
+ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -52,9 +53,9 @@ RUN set -x && \
     groupadd _unbound && \
     useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
     mkdir -p /etc/service/unbound /etc/unbound/run && \
-    chown _unbound:_unbound /etc/unbound/run && \
-    unbound-control-setup && \
     unbound-anchor -a /etc/unbound/run/root.key || true && \
+    chown _unbound:_unbound /etc/unbound/run && \
+    chown _unbound:_unbound /etc/unbound/run/root.key && \
     wget -O /etc/unbound/root.hints https://www.internic.net/domain/named.root
 
 COPY unbound.conf /etc/unbound/unbound.conf

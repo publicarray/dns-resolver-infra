@@ -1,15 +1,17 @@
 FROM alpine:latest
 MAINTAINER publicarray
+LABEL description "NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
 ENV REVISION 0
 
 ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
-ENV NSD_VERSION 4.1.20
-ENV NSD_SHA256 8a97f61d7bbb98a2ce04dc4425596f9023677a5f1c5ea743ff408d487f82f713
-ENV NSD_DOWNLOAD_URL https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
+ARG NSD_VERSION=4.1.20
+ARG NSD_SHA256=8a97f61d7bbb98a2ce04dc4425596f9023677a5f1c5ea743ff408d487f82f713
+ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
+# CFLAGS and LDFLAGS from https://store.docker.com/community/images/hardware/nsd-dnssec/dockerfile
 RUN set -x && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
@@ -19,15 +21,16 @@ RUN set -x && \
     rm -f nsd.tar.gz && \
     cd nsd-${NSD_VERSION} && \
     ./configure --enable-root-server --with-configdir=/etc/nsd \
-    --with-user=_nsd --with-libevent && \
+    --with-user=_nsd --with-libevent \
+    CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
+    LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
     make install
+# apk del --no-cache $NSD_BUILD_DEPS && rm -rf /tmp/src \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
 ENV NSD_RUN_DEPS libressl libevent shadow
-
-RUN apk add --no-cache $NSD_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/nsd /usr/local/sbin/nsd
 COPY --from=0 /usr/local/sbin/nsd-control-setup /usr/local/sbin/nsd-control-setup
@@ -36,15 +39,16 @@ COPY --from=0 /usr/local/sbin/nsd-checkzone /usr/local/sbin/nsd-checkzone
 COPY --from=0 /usr/local/sbin/nsd-control /usr/local/sbin/nsd-control
 
 RUN set -x && \
+    apk add --no-cache $NSD_RUN_DEPS && \
     groupadd _nsd && \
     useradd -g _nsd -s /dev/null -d /dev/null _nsd && \
     mkdir -p /etc/nsd/run/zonefiles /etc/service/nsd && \
     chown _nsd:_nsd /etc/nsd/run/zonefiles && \
-    chown _nsd:_nsd /etc/nsd/run && \
-    nsd-control-setup
+    chown _nsd:_nsd /etc/nsd/run
 
 COPY nsd.conf /etc/nsd/nsd.conf
 COPY opennic.conf /etc/nsd/opennic.conf
+COPY entrypoint.sh /
 
 EXPOSE 53/udp 53/tcp
 
@@ -52,4 +56,4 @@ RUN nsd -v
 
 CMD ["-d"]
 
-ENTRYPOINT ["/usr/local/sbin/nsd"]
+ENTRYPOINT ["/entrypoint.sh"]

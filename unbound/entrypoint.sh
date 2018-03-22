@@ -33,6 +33,10 @@ sed \
     -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}\"/g" \
     -i  "/etc/unbound/unbound.conf"
 
+if [ ! -f /etc/unbound/unbound_server.pem ]; then
+    unbound-control-setup
+fi
+
 # Borrowed from: https://github.com/faisyl/alpine-runit/blob/master/start_runit
 if [ $# -eq 0 ]; then
     exec /sbin/runsvdir -P /etc/service
