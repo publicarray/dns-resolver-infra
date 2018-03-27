@@ -55,10 +55,10 @@ RUN set -x && \
     chown _dnscrypt-wrapper:_dnscrypt-wrapper /opt/dnscrypt
     #/etc/dnscrypt-wrapper/run
 
+COPY dnscrypt-auto.sh /usr/local/sbin/anscript-auto
 COPY entrypoint.sh /
 # COPY dnscrypt-wrapper.sh /etc/service/dnscrypt-wrapper/run
 # COPY key-rotation.sh /etc/service/key-rotation/run
-
 
 VOLUME ["/opt/dnscrypt"]
 
@@ -66,6 +66,6 @@ EXPOSE 443/udp 443/tcp
 
 RUN dnscrypt-wrapper -v
 
-# CMD ["-h"]
+CMD ["/usr/local/sbin/anscript-auto", "-h"]
 
 ENTRYPOINT ["/entrypoint.sh"]
