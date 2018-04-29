@@ -9,15 +9,14 @@ spec:
     spec:
       containers:
         - name: dnscrypt-init
-          image: publicaray/dnscrypt
-          # env:
+          image: publicarray/dnscrypt-wrapper
           command:
-            - /entypoint.sh
+            - /entrypoint.sh
             - init
-            - N
+            - -N
             - dns.seby.io
-            - E
-            - 45.76.113.31
+            - -E
+            - 45.76.113.31:443
           volumeMounts:
             - name: dnscrypt
               mountPath: /opt/dnscrypt

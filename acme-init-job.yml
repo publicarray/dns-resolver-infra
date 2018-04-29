@@ -7,7 +7,7 @@ spec:
     metadata:
       name: acme-init
     spec:
-      schedule: 30 03 01 */3 *
+      # schedule: 30 03 01 */3 *
       containers:
         - name: acme-init
           image: neilpang/acme.sh

@@ -8,7 +8,7 @@ kubectl create -f cloudflare-secret.yml
 # kubectl get secret cloudflare -o yaml
 
 kubectl create -f acme-init-job.yml
-kubectl create -f dnscrypt-init-job.yml
+kubectl create -f dnscrypt-wrapper/dnscrypt-init-job.yml
 
 kubectl create -f nsd/nsd-srv.yml
 kubectl create -f unbound/unbound-srv.yml

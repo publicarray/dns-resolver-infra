@@ -6,7 +6,7 @@ minikube start
 kubectl create -f cloudflare-secret.yml
 
 kubectl create -f acme-init-job.yml
-kubectl create -f dnscrypt-init-job.yml
+kubectl create -f dnscrypt-wrapper/dnscrypt-init-job.yml
 
 kubectl create -f nsd/nsd-srv.yml
 kubectl create -f unbound/unbound-srv.yml
