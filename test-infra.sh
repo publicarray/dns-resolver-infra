@@ -28,3 +28,5 @@ kubectl get deployments
 kubectl get services
 kubectl get pods -o wide
 kubectl get all -l app=dns-server
+
+kubectl logs job/dnscrypt-init

@@ -21,15 +21,15 @@ spec:
           image: publicarray/haproxy
           name: haproxy
           volumeMounts:
-            - name: ssl-keys
-              mountPath: /opt/ssl-keys
+            - name: ssl
+              mountPath: /opt/ssl
           command: ["/usr/local/sbin/haproxy", "-f", "/etc/haproxy.conf"]
           # resources:
           #   requests:
           #     memory: "1Gi"
       restartPolicy: Always
       volumes:
-        - name: ssl-keys
+        - name: ssl
           hostPath:
-            path: /data/ssl-keys
+            path: /data/ssl
             type: DirectoryOrCreate
