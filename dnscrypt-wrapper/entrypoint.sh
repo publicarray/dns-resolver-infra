@@ -1,27 +1,121 @@
 #!/bin/sh
+
+# -N provider-name -E external-ip-address:port
+
 set -e
 
+KEYS_DIR="/opt/dnscrypt/etc/keys"
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"9.9.9.9"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
-#-r "${UNBOUND_SERVICE_HOST}:${UNBOUND_SERVICE_PORT}"--listen-address 0.0.0.0:443
+export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
-# if [ $# -eq 0 ]; then
-#     # chroot /opt/dnscrypt /usr/local/sbin/dnscrypt-wrapper --user=_dnscrypt-wrapper -h
-#     # chroot /etc/dnscrypt-wrapper/run/ /usr/local/sbin/dnscrypt-wrapper --user=_dnscrypt-wrapper
-#     # exec /usr/local/sbin/dnscrypt-wrapper --user=_dnscrypt-wrapper -h
-#     exec /usr/local/sbin/anscript-auto -h
-# fi
+init() {
+    if [ "$(is_initialized)" = yes ]; then
+        start
+        exit $?
+    fi
+    while getopts "h?N:E:" opt; do
+        case "$opt" in
+            h|\?) usage ;;
+            N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr "[:upper:]" "[:lower:]") ;;
+            E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr "[:upper:]" "[:lower:]") ;;
+        esac
+    done
+    [ -z "$provider_name" ] && usage
+    case "$provider_name" in
+        .*) usage ;;
+        2.dnscrypt-cert.*) ;;
+        *) provider_name="2.dnscrypt-cert.${provider_name}"
+    esac
 
-[ "$1" = '--' ] && shift
+    [ -z "$ext_address" ] && usage
+    case "$ext_address" in
+        .*) usage ;;
+        0.*) echo "Do not use 0.0.0.0, use an actual external IP address" >&2 ; exit 1 ;;
+    esac
 
-exec "$@"
-# exec /usr/local/sbin/anscript-auto "$@"
-# exec /usr/local/sbin/dnscrypt-wrapper --user="$DNSCRYPT_USER" "$@"
+    echo "Provider name: [$provider_name]"
+    cd "$KEYS_DIR"
+    /usr/local/sbin/dnscrypt-wrapper \
+        --gen-provider-keypair --nolog --dnssec --nofilter \
+        --provider-name="$provider_name" --ext-address="$ext_address" | \
+        tee "${KEYS_DIR}/provider-info.txt"
+    chmod 640 "${KEYS_DIR}/secret.key"
+    chmod 644 "${KEYS_DIR}/public.key"
+    chown root:_dnscrypt-signer "${KEYS_DIR}/public.key" "${KEYS_DIR}/secret.key"
+    echo "$provider_name" > "${KEYS_DIR}/provider_name"
+    chmod 644 "${KEYS_DIR}/provider_name"
+    hexdump -ve '1/1 "%.2x"' < "${KEYS_DIR}/public.key" > "${KEYS_DIR}/public.key.txt"
+    chmod 644 "${KEYS_DIR}/public.key.txt"
+    echo
+    echo -----------------------------------------------------------------------
+    echo
+    echo "Congratulations! The container has been properly initialized."
+    echo "Take a look up above at the way dnscrypt-proxy has to be configured in order"
+    echo "to connect to your resolver. Then, start the container with the default command."
+}
 
-# empty cmd
-# -> help
+provider_info() {
+    ensure_initialized
+    echo "Provider name:"
+    cat "${KEYS_DIR}/provider_name"
+    echo
+    echo "Provider public key:"
+    cat "${KEYS_DIR}/public.key.txt"
+    echo
+}
 
-# cmd of -d dns.seby.io
-# -> run
+is_initialized() {
+    if [ ! -f "${KEYS_DIR}/public.key" ] && [ ! -f "${KEYS_DIR}/secret.key" ] && [ ! -f "${KEYS_DIR}/provider_name" ]; then
+        echo no
+    else
+        echo yes
+    fi
+}
 
-# cmd of -d dns.seby.io --init
+ensure_initialized() {
+    if [ "$(is_initialized)" = no ]; then
+        echo "Please provide an initial configuration (init -N <provider_name> -E <external IP>)" >&2
+        exit 1
+    fi
+}
+
+start() {
+    ensure_initialized
+    echo "Starting DNSCrypt service for provider: "
+    cat "${KEYS_DIR}/provider_name"
+    exec /sbin/runsvdir -P /etc/service
+}
+
+usage() {
+    cat << EOT
+Commands
+========
+
+* init -N <provider_name> -E <external ip>:<port>
+initialize the container for a server accessible at ip <external ip> on port
+<port>, for a provider named <provider_name>. This is required only once.
+
+* start (default command): start the resolver and the dnscrypt server proxy.
+Ports 443/udp and 443/tcp have to be publicly exposed.
+
+* provider-info: prints the provider name and provider public key.
+
+This container has a single volume that you might want to securely keep a
+backup of: /opt/dnscrypt/etc/keys
+EOT
+    exit 1
+}
+
+shell () {
+    exec 2>&1
+    exec /bin/sh
+}
+
+case "$1" in
+    shell) shell ;;
+    start) start ;;
+    init) shift; init "$@" ;;
+    provider-info) provider_info ;;
+    *) usage ;;
+esac

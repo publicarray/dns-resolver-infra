@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dnscrypt-init
+spec:
+  template:
+    metadata:
+      name: dnscrypt-init
+    spec:
+      containers:
+        - name: dnscrypt-init
+          image: publicaray/dnscrypt
+          # env:
+          command:
+            - /entypoint.sh
+            - init
+            - N
+            - dns.seby.io
+            - E
+            - 45.76.113.31
+          volumeMounts:
+            - name: dnscrypt
+              mountPath: /opt/dnscrypt
+      restartPolicy: Never  # OnFailure
+      volumes:
+        - name: dnscrypt
+          hostPath:
+            path: /data/dnscrypt
+            type: DirectoryOrCreate

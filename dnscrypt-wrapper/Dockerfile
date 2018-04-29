@@ -36,7 +36,7 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
-ENV DNSCYPT_RUN_DEPS libevent shadow
+ENV DNSCYPT_RUN_DEPS libevent runit shadow
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
@@ -51,14 +51,20 @@ RUN set -x && \
     cd && \
     groupadd _dnscrypt-wrapper && \
     useradd -g _dnscrypt-wrapper -s /dev/null -d /dev/null _dnscrypt-wrapper && \
-    mkdir -p /opt/dnscrypt && \
-    chown _dnscrypt-wrapper:_dnscrypt-wrapper /opt/dnscrypt
-    #/etc/dnscrypt-wrapper/run
+    groupadd _dnscrypt-signer && \
+    useradd -g _dnscrypt-signer -s /dev/null -d /dev/null _dnscrypt-signer && \
+    mkdir -p /opt/dnscrypt/etc/keys/short-term \
+    /etc/service/watchdog \
+    /etc/service/key-rotation \
+    /etc/service/dnscrypt-wrapper && \
+    chown -R _dnscrypt-wrapper:_dnscrypt-wrapper /opt/dnscrypt
 
-COPY dnscrypt-auto.sh /usr/local/sbin/anscript-auto
+COPY dnscrypt-auto.sh /usr/local/sbin/dnscript-auto
 COPY entrypoint.sh /
-# COPY dnscrypt-wrapper.sh /etc/service/dnscrypt-wrapper/run
-# COPY key-rotation.sh /etc/service/key-rotation/run
+
+COPY dnscrypt-wrapper.sh /etc/service/dnscrypt-wrapper/run
+COPY key-rotation.sh /etc/service/key-rotation/run
+COPY watchdog.sh /etc/service/watchdog/run
 
 VOLUME ["/opt/dnscrypt"]
 
@@ -66,6 +72,6 @@ EXPOSE 443/udp 443/tcp
 
 RUN dnscrypt-wrapper -v
 
-CMD ["/usr/local/sbin/anscript-auto", "-h"]
+CMD ["/sbin/runsvdir" "-P" "/etc/service"]
 
 ENTRYPOINT ["/entrypoint.sh"]
