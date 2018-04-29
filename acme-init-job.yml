@@ -45,7 +45,7 @@ spec:
             - --cert-file
             - /opt/ssl/cert.pem
             - --reloadcmd
-            - 'cat /data/ssl/key.pem > cat /data/ssl/fullchain.pem > /data/ssl/fullchain-key.pem'
+            - 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem'
             - --staging
           volumeMounts:
             - name: ssl

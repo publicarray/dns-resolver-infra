@@ -2,11 +2,9 @@
 
 sleep 300
 
-for service in unbound dnscrypt-wrapper; do
-    sv check "$service" || sv force-restart "$service"
-done
+sv check dnscrypt-wrapper || sv force-restart dnscrypt-wrapper
 
-KEYS_DIR="/opt/dnscrypt-wrapper/etc/keys"
+KEYS_DIR="/opt/dnscrypt/etc/keys"
 GRACE_PERIOD=60
 
 provider_key=$(cat "${KEYS_DIR}/public.key.txt")

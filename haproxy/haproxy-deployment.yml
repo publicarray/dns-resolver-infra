@@ -23,7 +23,7 @@ spec:
           volumeMounts:
             - name: ssl-keys
               mountPath: /opt/ssl-keys
-          command: ["/entrypoint.sh"]
+          command: ["/usr/local/sbin/haproxy", "-f", "/etc/haproxy.conf"]
           # resources:
           #   requests:
           #     memory: "1Gi"

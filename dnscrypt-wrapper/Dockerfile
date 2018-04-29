@@ -36,7 +36,7 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
-ENV DNSCYPT_RUN_DEPS libevent runit shadow
+ENV DNSCYPT_RUN_DEPS libevent runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
@@ -49,14 +49,14 @@ RUN set -x && \
     ln -sf libsodium.so.23.1.0 libsodium.so.23 && \
     ln -sf libsodium.so.23.1.0 libsodium.so && \
     cd && \
+    mkdir -p /opt/dnscrypt/empty \
+        /etc/service/watchdog \
+        /etc/service/key-rotation \
+        /etc/service/dnscrypt-wrapper && \
     groupadd _dnscrypt-wrapper && \
     useradd -g _dnscrypt-wrapper -s /dev/null -d /opt/dnscrypt/empty _dnscrypt-wrapper && \
     groupadd _dnscrypt-signer && \
     useradd -g _dnscrypt-signer -s /dev/null -d /dev/null _dnscrypt-signer && \
-    mkdir -p /opt/dnscrypt/empty \
-    /etc/service/watchdog \
-    /etc/service/key-rotation \
-    /etc/service/dnscrypt-wrapper && \
     chown -R _dnscrypt-wrapper:_dnscrypt-wrapper /opt/dnscrypt
 
 COPY dnscrypt-auto.sh /usr/local/sbin/dnscript-auto
