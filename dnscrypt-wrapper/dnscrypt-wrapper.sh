@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/bin/sh
 
 KEYS_DIR="/opt/dnscrypt/etc/keys"
 STKEYS_DIR="${KEYS_DIR}/short-term"
@@ -58,7 +58,7 @@ prune
 exec /usr/local/sbin/dnscrypt-wrapper \
     --user=_dnscrypt-wrapper \
     --listen-address=0.0.0.0:443 \
-    --resolver-address=127.0.0.1:553 \
+    --resolver-address="${RESOLVER-1.1.1.1:53}" \
     --provider-name="$provider_name" \
     --provider-cert-file="$(stcerts_files)" \
     --crypt-secretkey-file=$(stkeys_files)

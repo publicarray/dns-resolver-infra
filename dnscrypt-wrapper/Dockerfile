@@ -50,10 +50,11 @@ RUN set -x && \
     ln -sf libsodium.so.23.1.0 libsodium.so && \
     cd && \
     groupadd _dnscrypt-wrapper && \
-    useradd -g _dnscrypt-wrapper -s /dev/null -d /dev/null _dnscrypt-wrapper && \
+    useradd -g _dnscrypt-wrapper -s /dev/null -d /opt/dnscrypt/empty _dnscrypt-wrapper && \
     groupadd _dnscrypt-signer && \
     useradd -g _dnscrypt-signer -s /dev/null -d /dev/null _dnscrypt-signer && \
-    mkdir -p /opt/dnscrypt/etc/keys/short-term \
+    mkdir -p /opt/dnscrypt/empty \
+    /opt/dnscrypt/etc/keys/short-term \
     /etc/service/watchdog \
     /etc/service/key-rotation \
     /etc/service/dnscrypt-wrapper && \

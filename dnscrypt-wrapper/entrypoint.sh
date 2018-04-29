@@ -5,7 +5,7 @@
 set -e
 
 KEYS_DIR="/opt/dnscrypt/etc/keys"
-UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"9.9.9.9"}
+UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
@@ -107,13 +107,7 @@ EOT
     exit 1
 }
 
-shell () {
-    exec 2>&1
-    exec /bin/sh
-}
-
 case "$1" in
-    shell) shell ;;
     start) start ;;
     init) shift; init "$@" ;;
     provider-info) provider_info ;;
