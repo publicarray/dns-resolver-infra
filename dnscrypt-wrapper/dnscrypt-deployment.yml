@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: dnscrypt
-          image: publicarray/dnscrypt
+          image: publicarray/dnscrypt-wrapper
           command: ["/entrypoint.sh", "start"]
           ports:
             - name: dns

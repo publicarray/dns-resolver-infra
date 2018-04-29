@@ -14,13 +14,13 @@ kubectl create -f nsd/nsd-srv.yml
 kubectl create -f unbound/unbound-srv.yml
 kubectl create -f doh-proxy/doh-proxy-srv.yml
 kubectl create -f haproxy/haproxy-srv.yml
-kubectl create -f dnscrypt-wrapper/dnscrypt-wrapper-srv.yml
+kubectl create -f dnscrypt-wrapper/dnscrypt-srv.yml
 
 kubectl create -f nsd/nsd-deployment.yml
 kubectl create -f unbound/unbound-deployment.yml
 kubectl create -f doh-proxy/doh-proxy-deployment.yml
 kubectl create -f haproxy/haproxy-deployment.yml
-kubectl create -f dnscrypt-wrapper/dnscrypt-wrapper-deployment.yml
+kubectl create -f dnscrypt-wrapper/dnscrypt-deployment.yml
 ```
 
 Workflow
@@ -78,4 +78,8 @@ docker push publicarray/unbound
 
 docker run --rm --name myunbound -it publicarray/unbound sh
 docker run -p 5300:53/udp -v (pwd)/unbound/unbound.conf:/etc/unbound/unbound.conf:ro --name myunbound publicarray/unbound
+docker run -p 4430:443/udp -p 4430:443/tcp --name=dnscrypt-server dnscrypt init -N example.com -E 127.0.0.1:4430
+docker start dnscrypt-server
+
+docker rm dnscrypt-server --force
 ```
