@@ -52,7 +52,9 @@ kubectl get pods -o wide
 kubectl get all -l app=dns-server
 
 ## SSH into the container/pod
-export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+#export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+kubectl get pods
+kubectl logs job/dnscrypt-init
 kubectl exec -ti $POD_NAME sh
 
 ## SSH into a new neighbouring container/pod

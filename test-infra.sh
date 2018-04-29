@@ -2,6 +2,7 @@
 
 set -x
 
+minikube delete
 minikube start
 kubectl create -f cloudflare-secret.yml
 

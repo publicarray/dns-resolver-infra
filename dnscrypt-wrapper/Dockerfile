@@ -54,7 +54,6 @@ RUN set -x && \
     groupadd _dnscrypt-signer && \
     useradd -g _dnscrypt-signer -s /dev/null -d /dev/null _dnscrypt-signer && \
     mkdir -p /opt/dnscrypt/empty \
-    /opt/dnscrypt/etc/keys/short-term \
     /etc/service/watchdog \
     /etc/service/key-rotation \
     /etc/service/dnscrypt-wrapper && \

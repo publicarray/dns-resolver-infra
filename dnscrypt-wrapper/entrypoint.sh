@@ -35,6 +35,7 @@ init() {
     esac
 
     echo "Provider name: [$provider_name]"
+    mkdir -p "$KEYS_DIR" "$KEYS_DIR/short-term"
     cd "$KEYS_DIR"
     /usr/local/sbin/dnscrypt-wrapper \
         --gen-provider-keypair --nolog --dnssec --nofilter \
