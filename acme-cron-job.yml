@@ -1,0 +1,59 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: acme-cron-job
+spec:
+  schedule: 30 03 01 */3 *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: acme-init
+              image: neilpang/acme.sh
+              env:
+                # - name: DOMAIN
+                #   value: doh.seby.io
+                - name: CF_Email
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare
+                      key: username
+                - name: CF_Key
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare
+                      key: password
+              command:
+                - acme.sh
+                - --issue
+                - --staging # remember to remove in production
+                - --dns
+                - dns_cf
+                - --dnssleep
+                - "60"
+                - -d
+                # - $(DOMAIN)
+                - doh.seby.io
+                # - -d
+                # - www.$(DOMAIN)
+                - --fullchain-file
+                - /opt/ssl/fullchain.pem
+                - --key-file
+                - /opt/ssl/key.pem
+                - --ca-file
+                - /opt/ssl/ca.pem
+                - --cert-file
+                - /opt/ssl/cert.pem
+                - --reloadcmd
+                - 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem'
+                - --staging
+              volumeMounts:
+                - name: ssl
+                  mountPath: /opt/ssl
+          restartPolicy: Never  # OnFailure
+          volumes:
+            - name: ssl
+              hostPath:
+                path: /data/ssl
+                type: DirectoryOrCreate
