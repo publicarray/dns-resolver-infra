@@ -20,6 +20,11 @@ spec:
         - env:
           image: publicarray/haproxy
           name: haproxy
+          ports:
+            - name: dns-over-tls
+              containerPort: 853
+            - name: doh
+              containerPort: 453
           volumeMounts:
             - name: ssl
               mountPath: /opt/ssl
