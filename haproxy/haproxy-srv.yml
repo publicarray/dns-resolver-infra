@@ -12,12 +12,12 @@ spec:
   ports:
     - name: dns-over-tls-tcp
       protocol: TCP
-      port: 453
-      targetPort: 453
+      port: 853
+      targetPort: 853
     - name: doh-tcp
       protocol: TCP
-      port: 452
-      targetPort: 452
+      port: 453
+      targetPort: 453
   type: LoadBalancer
   loadBalancerIP: 0.0.0.0
 ---
@@ -35,11 +35,11 @@ spec:
   ports:
     - name: dns-over-tls-udp
       protocol: UDP
-      port: 453
-      targetPort: 453
+      port: 853
+      targetPort: 853
     - name: doh-udp
       protocol: UDP
-      port: 452
-      targetPort: 452
+      port: 453
+      targetPort: 453
   type: LoadBalancer
   loadBalancerIP: 0.0.0.0

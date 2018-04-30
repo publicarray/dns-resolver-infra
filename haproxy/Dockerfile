@@ -45,7 +45,7 @@ COPY haproxy.conf /etc/haproxy.conf
 
 VOLUME ["/opt/ssl"]
 
-EXPOSE 453/udp 453/tcp 452/udp 452/tcp
+EXPOSE 853/udp 853/tcp 453/udp 453/tcp
 
 RUN haproxy -v
 
