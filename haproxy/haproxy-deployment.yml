@@ -24,7 +24,7 @@ spec:
             - name: dns-over-tls
               containerPort: 853
             - name: doh
-              containerPort: 453
+              containerPort: 443
           volumeMounts:
             - name: ssl
               mountPath: /opt/ssl

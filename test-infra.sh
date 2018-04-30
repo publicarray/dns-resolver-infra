@@ -4,6 +4,9 @@ set -x
 
 minikube delete
 minikube start
+# Enable DNS service: https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/
+# kubectl --namespace=kube-system scale deployment kube-dns --replicas=1
+
 kubectl create -f cloudflare-secret.yml
 
 kubectl create -f acme-init-job.yml
