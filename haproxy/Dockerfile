@@ -40,14 +40,13 @@ RUN set -x && \
     useradd -g _haproxy -s /dev/null -d /dev/null _haproxy && \
     mkdir -p /etc/service/haproxy
 
+COPY entrypoint.sh /
 COPY haproxy.conf /etc/haproxy.conf
 
 VOLUME ["/opt/ssl"]
 
-EXPOSE 443/udp 443/tcp
+EXPOSE 453/udp 453/tcp 452/udp 452/tcp
 
 RUN haproxy -v
 
-CMD ["-f /etc/haproxy.conf"]
-
-ENTRYPOINT ["/usr/local/sbin/haproxy"]
+ENTRYPOINT ["/entrypoint.sh"]

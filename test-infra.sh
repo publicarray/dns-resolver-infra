@@ -29,4 +29,6 @@ kubectl get services
 kubectl get pods -o wide
 kubectl get all -l app=dns-server
 
+minikube ip
+kubectl get services
 kubectl logs job/dnscrypt-init

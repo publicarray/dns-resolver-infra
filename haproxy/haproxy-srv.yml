@@ -2,15 +2,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: haproxy-tcp
-  namespace: default
+  labels:
+    app: dns-server
+    component: haproxy
 spec:
-  ports:
-    - protocol: TCP
-      port: 453
-      targetPort: 453
   selector:
     application: dns-server
     service: haproxy
+  ports:
+    - name: dns-over-tls-tcp
+      protocol: TCP
+      port: 453
+      targetPort: 453
+    - name: doh-tcp
+      protocol: TCP
+      port: 452
+      targetPort: 452
   type: LoadBalancer
   loadBalancerIP: 0.0.0.0
 ---
@@ -18,14 +25,21 @@ apiVersion: v1
 kind: Service
 metadata:
   name: haproxy-udp
-  namespace: default
+  labels:
+    app: dns-server
+    component: haproxy
 spec:
-  ports:
-    - protocol: UDP
-      port: 453
-      targetPort: 453
   selector:
     application: dns-server
     service: haproxy
+  ports:
+    - name: dns-over-tls-udp
+      protocol: UDP
+      port: 453
+      targetPort: 453
+    - name: doh-udp
+      protocol: UDP
+      port: 452
+      targetPort: 452
   type: LoadBalancer
   loadBalancerIP: 0.0.0.0

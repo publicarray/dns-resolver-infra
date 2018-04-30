@@ -23,7 +23,7 @@ spec:
           volumeMounts:
             - name: ssl
               mountPath: /opt/ssl
-          command: ["/usr/local/sbin/haproxy", "-f", "/etc/haproxy.conf"]
+          # command: ["/usr/local/sbin/haproxy", "-f", "/etc/haproxy.conf"]
           # resources:
           #   requests:
           #     memory: "1Gi"
