@@ -27,6 +27,7 @@ spec:
           command:
             - acme.sh
             - --issue
+            - --staging # remember to remove in production
             - --dns
             - dns_cf
             - --dnssleep
