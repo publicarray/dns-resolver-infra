@@ -14,7 +14,6 @@ spec:
       labels:
         app: dns-server
         component: haproxy
-        service: haproxy
     spec:
       containers:
         - env:

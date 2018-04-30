@@ -7,8 +7,8 @@ metadata:
     component: haproxy
 spec:
   selector:
-    application: dns-server
-    service: haproxy
+    app: dns-server
+    component: haproxy
   ports:
     - name: dns-over-tls-tcp
       protocol: TCP
