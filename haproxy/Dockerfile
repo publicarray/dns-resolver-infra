@@ -7,12 +7,13 @@ ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl-dev
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 # haproxy v 1.8 + is required for http/2
+# https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_MAJOR 1.8
-ENV HAPROXY_VERSION 1.8.4
+ENV HAPROXY_VERSION 1.8.8
 RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
 
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
-ENV HAPROXY_SHA256 e305b0a4e7dec08072841eef6ac6dcd1b5586b1eff09c2d51e152a912e8884a6
+ENV HAPROXY_SHA256 bcc05ab824bd2f89b8b21ac05459c0a0a0e02247b57ffe441d52cfe771daea92
 
 RUN set -x && \
     mkdir -p /tmp/src && \
