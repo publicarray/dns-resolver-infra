@@ -1,3 +1,0 @@
-[submodule "dnscrypt-server-docker"]
-	path = dnscrypt-server-docker
-	url = https://github.com/jedisct1/dnscrypt-server-docker
