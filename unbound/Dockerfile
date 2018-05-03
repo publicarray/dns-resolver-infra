@@ -1,19 +1,19 @@
 FROM alpine:latest
 LABEL maintainer "publicarray"
 ENV REVISION 0
-# LABEL org.label-schema.name="unbound"
-# LABEL org.label-schema.vendor="publicarray"
-# LABEL org.label-schema.description="Unbound is a validating, recursive, and caching DNS resolver."
-# LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
-# LABEL org.label-schema.version="3.7"
-# LABEL org.label-schema.license="MIT"
+LABEL org.label-schema.name="unbound"
+LABEL org.label-schema.vendor="publicarray"
+LABEL org.label-schema.description="Unbound is a validating, recursive, and caching DNS resolver."
+LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
+LABEL org.label-schema.version="1.7.1"
+LABEL org.label-schema.license="MIT"
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.7.0
-ARG UNBOUND_SHA256=94dd9071fb13d8ccd122a3ac67c4524a3324d0e771fc7a8a7c49af8abfb926a2
+ARG UNBOUND_VERSION=1.7.1
+ARG UNBOUND_SHA256=56e085ef582c5372a20207de179d0edb4e541e59f87be7d4ee1d00d12008628d
 ARG UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -65,8 +65,4 @@ EXPOSE 53/udp 53/tcp
 
 RUN unbound -h || true
 
-# CMD [""] --munin
-
 ENTRYPOINT ["/entrypoint.sh"]
-
-# ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libressl ldns ldns-tools libevent expat libexecinfo coreutils drill
