@@ -56,6 +56,7 @@ kubectl get all -l app=dns-server
 kubectl get pods
 kubectl logs job/dnscrypt-init
 kubectl exec -ti $POD_NAME sh
+kubectl exec -ti $(kubectl get pods | grep 'unbound' | awk '{print $1}') sh
 
 ## SSH into a new neighbouring container/pod
 kubectl run busybox -it --image=busybox --restart=Never --rm

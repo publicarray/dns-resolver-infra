@@ -11,7 +11,6 @@ ARG NSD_VERSION=4.1.20
 ARG NSD_SHA256=8a97f61d7bbb98a2ce04dc4425596f9023677a5f1c5ea743ff408d487f82f713
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
-# CFLAGS and LDFLAGS from https://store.docker.com/community/images/hardware/nsd-dnssec/dockerfile
 RUN set -x && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
