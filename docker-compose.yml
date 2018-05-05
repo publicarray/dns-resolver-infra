@@ -1,0 +1,148 @@
+version: '3.2'
+volumes:
+    dnscrypt:
+    ssl:
+services:
+  acme:
+    image: neilpang/acme.sh
+    command: >
+      /bin/sh -c "echo \"#!/bin/sh \
+
+      set -x \
+
+      export CF_Key='$$(cat /run/secrets/CF_Key)' \
+
+      export CF_Email='$$(cat /run/secrets/CF_Email)' \
+
+      #### Remember to remove '--staging' in production! #### \
+
+      acme.sh
+      --issue
+      --staging
+      --dns dns_cf
+      --dnssleep 60
+      -d doh.seby.io
+      --fullchain-file /opt/ssl/fullchain.pem
+      --key-file /opt/ssl/key.pem
+      --ca-file /opt/ssl/ca.pem
+      --cert-file /opt/ssl/cert.pem
+      --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem'\" > start.sh
+      && chmod +x start.sh
+      && ./start.sh"
+
+    deploy:
+      resources:
+        reservations :
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: none
+    secrets:
+      - CF_Email
+      - CF_Key
+    volumes:
+       - ssl:/opt/ssl
+  nsd:
+    build: nsd
+    image: publicarray/nsd
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          cpus: '0.1'
+          memory: 100M
+      restart_policy:
+        condition: on-failure
+
+  unbound:
+    depends_on:
+      - nsd
+    build: unbound
+    image: publicarray/unbound
+    deploy:
+      replicas: 1
+      resources:
+        reservations :
+          cpus: "0.2"
+          memory: 300M
+      restart_policy:
+        condition: on-failure
+
+  doh-proxy:
+    depends_on:
+     - unbound
+    build: doh-proxy
+    image: publicarray/doh-proxy
+    deploy:
+      replicas: 1
+      resources:
+        reservations :
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+
+  haproxy:
+    depends_on:
+      - acme
+      - doh-proxy
+      - unbound
+    build: haproxy
+    image: publicarray/haproxy
+    deploy:
+      replicas: 1
+      resources:
+        reservations :
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+    - "443:443"
+    - target: 853
+      published: 853
+      protocol: tcp
+      mode: ingress
+    - target: 853
+      published: 853
+      protocol: udp
+      mode: ingress
+    volumes:
+       - ssl:/opt/ssl
+
+  dnscrypt-wrapper:
+    depends_on:
+      - unbound
+      - dnscrypt-wrapper-init
+    image: publicarray/dnscrypt-wrapper
+    command:
+      - init
+      - -N
+      - dns.seby.io
+      - -E
+      - 149.28.165.94:8443
+    deploy:
+      replicas: 1
+      resources:
+        reservations :
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - target: 443
+        published: 8443
+        protocol: tcp
+        mode: ingress
+      - target: 443
+        published: 8443
+        protocol: udp
+        mode: ingress
+    volumes:
+       - dnscrypt:/opt/dnscrypt
+
+secrets:
+  CF_Email:
+    external: true
+  CF_Key:
+    external: true

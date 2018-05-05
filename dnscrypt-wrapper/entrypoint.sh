@@ -4,9 +4,16 @@
 
 set -e
 
+getServiceIP () {
+    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+}
+
 KEYS_DIR="/opt/dnscrypt/etc/keys"
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
+if [ -n "$(getServiceIP unbound)" ]; then
+    UNBOUND_SERVICE_HOST=$(getServiceIP unbound)
+fi
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
 init() {

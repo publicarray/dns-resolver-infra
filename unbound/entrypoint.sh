@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
-# export > /etc/envvars
+
+getServiceIP () {
+    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+}
 
 reserved=25
 memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
@@ -19,6 +22,11 @@ fi
 
 NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
 NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"552"}
+
+if [ -n "$(getServiceIP nsd)" ]; then
+    NSD_SERVICE_HOST=$(getServiceIP nsd)
+    NSD_SERVICE_PORT=53
+fi
 
 sed \
     -re "s/num-threads:\\s{0,}\\d{1,}\\w/num-threads: ${threads}/" \

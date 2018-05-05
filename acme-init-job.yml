@@ -47,7 +47,6 @@ spec:
             - /opt/ssl/cert.pem
             - --reloadcmd
             - 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem'
-            - --staging
           volumeMounts:
             - name: ssl
               mountPath: /opt/ssl

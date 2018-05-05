@@ -6,7 +6,7 @@ ENV REVISION 0
 ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev make gcc git musl-dev tar wget
 
 RUN apk add --no-cache $DNSCRYPT_BUILD_DEPS
-# libsodium-dev libsodium 1.0.15
+
 ARG LIBSODIUM_VERSION=1.0.16
 ARG LIBSODIUM_SHA256=eeadc7e1e1bcef09680fb4837d448fbdf57224978f865ac1c16745868fbd0533
 ARG LIBSODIUM_DOWNLOAD_URL=https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz

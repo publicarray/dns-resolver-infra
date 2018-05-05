@@ -1,22 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: dnscrypt-init
+  name: dnscrypt-key-rotation
 spec:
   template:
     metadata:
-      name: dnscrypt-init
+      name: dnscrypt-key-rotation
     spec:
+      schedule: "*/30 * * * *"
       containers:
-        - name: dnscrypt-init
-          image: publicarray/dnscrypt-wrapper
+        - name: dnscrypt-key-rotation
+          image: publicaray/dnscrypt-wrapper
           command:
-            - /entrypoint.sh
-            - init
-            - -N
-            - dns.seby.io
-            - -E
-            - 35.201.20.179:8443
+            - /usr/local/sbin/anscript-auto
+            - renew
           volumeMounts:
             - name: dnscrypt
               mountPath: /opt/dnscrypt
