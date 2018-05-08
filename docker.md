@@ -24,7 +24,7 @@ gcloud auth login
 gcloud auth application-default login # (should only be used temporarily)
 gcloud compute images list --uri # for machine-image
 
-docker-machine create -d google --google-project dns-infra-xxxxxxx --google-zone australia-southeast1-a --google-machine-type f1-micro --google-machine-image https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/centos-7-v20180507 g-node
+docker-machine create -d google --google-project dns-infra-xxxxxxx --google-zone australia-southeast1-a --google-machine-type f1-micro --google-tags doh,dnscrypt,g-node --google-machine-image https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/centos-7-v20180507 g-node
 # use "--google-preemptible" for testing
 
 # https://rancher.com/docs/os/v1.1/en/running-rancheros/cloud/gce/
@@ -55,6 +55,7 @@ docker ps -a
 
 # Some useful commands
 docker-machine ssh rancher-node
+docker-machine ip rancher-node
 docker logs xxxxxxxxxxxxxx
 docker exec -it xxxxxxxxxxxxxx sh
 docker exec -it xxxxxxxxxxxxxx /entrypoint.sh provider-info # for dnscrypt-wrapper

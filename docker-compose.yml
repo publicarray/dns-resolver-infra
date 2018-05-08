@@ -52,7 +52,8 @@ services:
           cpus: '0.1'
           memory: 100M
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 5s
 
   unbound:
     depends_on:
@@ -66,7 +67,8 @@ services:
           cpus: "0.2"
           memory: 300M
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 5s
 
   doh-proxy:
     depends_on:
@@ -80,7 +82,8 @@ services:
           cpus: "0.1"
           memory: 50M
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 5s
 
   haproxy:
     depends_on:
@@ -96,7 +99,8 @@ services:
           cpus: "0.2"
           memory: 50M
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 5s
     ports:
     - "443:443"
     - target: 853
@@ -128,7 +132,8 @@ services:
           cpus: "0.2"
           memory: 50M
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 5s
     ports:
       - target: 443
         published: 8443
