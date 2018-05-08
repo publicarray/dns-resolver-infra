@@ -1,5 +1,6 @@
 FROM alpine:latest
 LABEL maintainer "publicarray"
+LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 ENV REVISION 0
 
 ENV DOH_BUILD_DEPS rust cargo

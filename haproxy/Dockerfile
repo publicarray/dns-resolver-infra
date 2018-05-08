@@ -1,5 +1,6 @@
 FROM alpine:latest
 LABEL maintainer "publicarray"
+LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 0
 
 ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl-dev
@@ -24,8 +25,7 @@ RUN set -x && \
     rm -f haproxy.tar.gz && \
     cd haproxy-${HAPROXY_VERSION} && \
     make TARGET=linux2628 USE_OPENSSL=1 USE_ZLIB=1 && \
-    make install-bin && \
-    rm -fr /tmp/* /var/tmp/*
+    make install-bin
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
