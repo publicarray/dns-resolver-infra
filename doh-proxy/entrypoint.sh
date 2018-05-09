@@ -18,6 +18,4 @@ fi
 
 [ "$1" = '--' ] && shift
 
-# Silence "DDUT server error: Incomplete" log messages
-# https://github.com/jedisct1/rust-doh/blob/d2bc3e24491498f17036fe0c02b1dc2e76d38f2f/src/main.rs#L97
-exec /usr/local/bin/doh-proxy "$@" 2>/dev/null
+exec /usr/local/bin/doh-proxy "$@"
