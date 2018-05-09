@@ -36,6 +36,7 @@ docker-machine ssh g-node
 
 eval "$(docker-machine env g-node)" # for fish: eval (docker-machine env g-node)
 ```
+For logging I suggest you follow: https://cloud.google.com/community/tutorials/docker-gcplogs-driver
 
 # Docker Swarm Setup
 
