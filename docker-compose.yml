@@ -42,6 +42,7 @@ services:
       - CF_Key
     volumes:
        - ssl:/opt/ssl
+
   nsd:
     build: nsd
     image: publicarray/nsd
@@ -54,6 +55,8 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    networks:
+      - nsd-net
 
   unbound:
     depends_on:
@@ -69,6 +72,9 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    networks:
+      - nsd-net
+      - unbound-net
 
   doh-proxy:
     depends_on:
@@ -84,6 +90,8 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    networks:
+      - unbound-net
 
   haproxy:
     depends_on:
@@ -113,6 +121,9 @@ services:
       mode: ingress
     volumes:
        - ssl:/opt/ssl
+    networks:
+      - haproxy-net
+      - unbound-net
 
   dnscrypt-wrapper:
     depends_on:
@@ -145,9 +156,22 @@ services:
         mode: ingress
     volumes:
        - dnscrypt:/opt/dnscrypt
+    networks:
+      - dnscrypt-net
+      - unbound-net
 
 secrets:
   CF_Email:
     external: true
   CF_Key:
     external: true
+
+networks:
+  dnscrypt-net:
+    driver: overlay
+  haproxy-net:
+    driver: overlay
+  nsd-net:
+    driver: overlay
+  unbound-net:
+    driver: overlay

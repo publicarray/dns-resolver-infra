@@ -2,7 +2,16 @@
 
 KEYS_DIR="/opt/dnscrypt/etc/keys"
 STKEYS_DIR="${KEYS_DIR}/short-term"
-# DNSCRYPT_KEY_DIR=${DNSCRYPT_KEY_DIR:-"/opt/dnscrypt"}
+getServiceIP () {
+    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+}
+UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
+UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
+if [ -n "$(getServiceIP unbound)" ]; then
+    UNBOUND_SERVICE_HOST=$(getServiceIP unbound)
+fi
+RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
+echo "dnscrypt-proxy - resolver: $RESOLVER"
 
 prune() {
     /usr/bin/find "$STKEYS_DIR" -type f -cmin +1440 -exec rm -f {} \;
@@ -58,7 +67,7 @@ prune
 exec /usr/local/sbin/dnscrypt-wrapper \
     --user=_dnscrypt-wrapper \
     --listen-address=0.0.0.0:443 \
-    --resolver-address="${RESOLVER-1.1.1.1:53}" \
+    --resolver-address="${RESOLVER}" \
     --provider-name="$provider_name" \
     --provider-cert-file="$(stcerts_files)" \
-    --crypt-secretkey-file=$(stkeys_files)
+    --crypt-secretkey-file="$(stkeys_files)"
