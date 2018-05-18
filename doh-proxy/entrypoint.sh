@@ -14,7 +14,7 @@ export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
 if [ $# -eq 0 ]; then
     echo "doh-proxy - resolver: $RESOLVER"
-    exec /usr/local/bin/doh-proxy -u "${RESOLVER}" -l 0.0.0.0:3000
+    exec /usr/local/bin/doh-proxy --server-address "${RESOLVER}" --listen-address 0.0.0.0:3000
 fi
 
 [ "$1" = '--' ] && shift
