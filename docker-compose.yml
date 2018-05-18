@@ -2,6 +2,7 @@ version: '3.2'
 volumes:
     dnscrypt:
     ssl:
+    nsd:
 services:
   acme:
     image: neilpang/acme.sh
@@ -64,6 +65,8 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    volumes:
+      - nsd:/etc/nsd/run
     networks:
       - nsd-net
 

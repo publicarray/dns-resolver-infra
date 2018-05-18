@@ -48,6 +48,8 @@ COPY nsd.conf /etc/nsd/nsd.conf
 COPY opennic.conf /etc/nsd/opennic.conf
 COPY entrypoint.sh /
 
+VOLUME ["/etc/nsd/run"]
+
 EXPOSE 53/udp 53/tcp
 
 RUN nsd -v
