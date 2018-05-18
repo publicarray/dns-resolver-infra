@@ -6,15 +6,24 @@ services:
   acme:
     image: neilpang/acme.sh
     command: >
-      /bin/sh -c "echo \"#!/bin/sh \
+      /bin/sh -c "echo \"#!/bin/sh
 
-      set -x \
+      set -e
 
-      export CF_Key='$$(cat /run/secrets/CF_Key)' \
+      if [ -f /opt/ssl/fullchain.pem ]; then
+        if openssl x509 -checkend 2592000 -noout -in /opt/ssl/fullchain.pem; then
+          echo 'Certificate is still valid!'
+          exit 0
+        else
+          echo 'Certificate has expired or will do so within 30 days!'
+          echo 'Renewing...'
+        fi
+      fi
 
-      export CF_Email='$$(cat /run/secrets/CF_Email)' \
+      export CF_Key='$$(cat /run/secrets/CF_Key)'
+      export CF_Email='$$(cat /run/secrets/CF_Email)'
 
-      #### Remember to remove '--staging' in production! #### \
+      #### Remember to remove '--staging' in production! ####
 
       acme.sh
       --issue
