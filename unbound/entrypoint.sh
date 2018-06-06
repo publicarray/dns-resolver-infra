@@ -45,9 +45,65 @@ if [ ! -f /etc/unbound/unbound_server.pem ]; then
     unbound-control-setup
 fi
 
-# Borrowed from: https://github.com/faisyl/alpine-runit/blob/master/start_runit
 if [ $# -eq 0 ]; then
     exec /sbin/runsvdir -P /etc/service
+fi
+
+#------------------------ Optional add munin statistics -----------------------#
+if [ "$1" = "munin" ]; then
+    echo "==> Installing munin-node"
+    apk update
+    apk add munin-node
+    mkdir -p /etc/munin/plugin-state
+    echo "==> Installing contrib/unbound_munin_"
+    wget https://raw.githubusercontent.com/NLnetLabs/unbound/master/contrib/unbound_munin_ -O /etc/munin/unbound_munin_
+    chmod +x /etc/munin/unbound_munin_
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_by_class
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_by_flags
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_by_opcode
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_by_rcode
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_by_type
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_histogram
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_hits
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_memory
+    ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_queue
+    echo "==> Configuring munin-node"
+
+    if [ -n "$2" ]; then
+        echo "allow_ip: $2"
+        allow_ip="allow ^$(echo "$2" | sed 's/\./\\./g')\$"
+        echo "allow_ip: $allow_ip"
+        echo "$allow_ip" >> /etc/munin/munin-node.conf
+    fi
+    groupadd _munin-node
+    useradd -g _munin-node -s /dev/null -d /dev/null _munin-node
+    chown -R _munin-node:_munin-node /etc/munin/
+    sed \
+        -re "s/user\\s{0,}\\root\\w/user _munin-node/" \
+        -re "s/group\\s{0,}\\root\\w/group _munin-node/" \
+        -i  "/etc/munin/munin-node.conf"
+
+cat << EOF > /etc/munin/plugin-conf.d/local.conf
+[unbound*]
+user root
+env.statefile /etc/munin/plugin-state/unbound-state
+env.unbound_conf /etc/unbound/unbound.conf
+env.unbound_control /usr/local/sbin/unbound-control
+env.spoof_warn 1000
+env.spoof_crit 100000
+EOF
+
+    echo "==> Configuring unbound"
+    sed \
+        -re "s/statistics-interval:\\s{0,}\\d{1,}\\w/statistics-interval: 1/" \
+        -re "s/extended-statistics:\\s{0,}\\d{1,}\\w/extended-statistics: 1/" \
+        -re "s/statistics-cumulative:\\s{0,}\\d{1,}\\w/statistics-cumulative: 1/" \
+        -i  "/etc/unbound/unbound.conf"
+
+    echo "==> Done"
+    /usr/sbin/munin-node &
+    exec /sbin/runsvdir -P /etc/service
+    exit
 fi
 
 /sbin/runsvdir -P /etc/service &

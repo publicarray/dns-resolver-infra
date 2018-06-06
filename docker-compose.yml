@@ -75,6 +75,7 @@ services:
       - nsd
     build: unbound
     image: publicarray/unbound
+    command: munin 10.10.10.10
     deploy:
       replicas: 1
       resources:
@@ -140,7 +141,6 @@ services:
   dnscrypt-wrapper:
     depends_on:
       - unbound
-      - dnscrypt-wrapper-init
     image: publicarray/dnscrypt-wrapper
     command:
       - init
