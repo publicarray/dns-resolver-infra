@@ -90,7 +90,7 @@ services:
 
   doh-proxy:
     depends_on:
-     - unbound
+      - unbound
     build: doh-proxy
     image: publicarray/doh-proxy
     deploy:
@@ -98,7 +98,7 @@ services:
       resources:
         reservations :
           cpus: "0.1"
-          memory: 50M
+          memory: 10M
       restart_policy:
         condition: any
         delay: 5s
@@ -153,7 +153,7 @@ services:
       resources:
         reservations :
           cpus: "0.2"
-          memory: 50M
+          memory: 10M
       restart_policy:
         condition: any
         delay: 5s
