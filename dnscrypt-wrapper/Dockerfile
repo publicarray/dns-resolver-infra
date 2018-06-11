@@ -72,6 +72,6 @@ EXPOSE 443/udp 443/tcp
 
 RUN dnscrypt-wrapper -v
 
-CMD ["/sbin/runsvdir" "-P" "/etc/service"]
+CMD ["/sbin/runsvdir", "-P", "/etc/service"]
 
 ENTRYPOINT ["/entrypoint.sh"]
