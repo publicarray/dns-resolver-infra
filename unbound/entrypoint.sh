@@ -105,9 +105,9 @@ EOF
 
     echo "==> Configuring unbound"
     sed \
-        -re "s/# statistics-interval:\\s{0,}\\d{1,}\\w/statistics-interval: 1/" \
-        -re "s/# extended-statistics:\\s{0,}\\d{1,}\\w/extended-statistics: 1/" \
-        -re "s/# statistics-cumulative:\\s{0,}\\d{1,}\\w/statistics-cumulative: 1/" \
+        -re "s/# statistics-interval:.*/statistics-interval: 1/" \
+        -re "s/# extended-statistics:.*/extended-statistics: yes/" \
+        -re "s/# statistics-cumulative:.*/statistics-cumulative: yes/" \
         -i  "/etc/unbound/unbound.conf"
 
     echo "==> Done"
