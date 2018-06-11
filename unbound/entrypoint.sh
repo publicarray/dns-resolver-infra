@@ -93,7 +93,7 @@ if [ "$1" = "munin" ]; then
     openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 \
         -keyout /etc/ssl/munin.key \
         -out /etc/ssl/munin.pem \
-        -days 99999999
+        -days 999999
     echo "tls enabled" >> /etc/munin/munin-node.conf
     echo "tls_verify_certificate no" >> /etc/munin/munin-node.conf
     echo "tls_private_key /etc/ssl/munin.key" >> /etc/munin/munin-node.conf
