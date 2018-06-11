@@ -67,6 +67,6 @@ EXPOSE 4949/tcp
 RUN unbound -h || true
 
 HEALTHCHECK --start-period=1m \
-CMD [drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
+CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
 
 ENTRYPOINT ["/entrypoint.sh"]
