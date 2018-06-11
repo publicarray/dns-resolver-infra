@@ -1,5 +1,5 @@
 #!/bin/sh
 
 # yarn
-find . -type f -name Dockerfile | xargs -L1 yarn dockerlint
-find . -type f -name Dockerfile | xargs -L1 yarn dockerfile_lint -f
+find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 node_modules/.bin/dockerlint
+find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 node_modules/.bin/dockerfile_lint -f
