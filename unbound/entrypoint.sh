@@ -7,6 +7,12 @@ getServiceIP () {
 
 reserved=25
 memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
+# https://fabiokung.com/2014/03/13/memory-inside-linux-containers/
+dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) / 1024)) / 1024))
+if [ $dokerMemoryLimitMB -le $memoryMB ]; then
+    memoryMB=$dokerMemoryLimitMB
+fi
+
 if [ $memoryMB -le $reserved ]; then
     echo "Not enough memory" >&2
     exit 1

@@ -59,6 +59,8 @@ services:
     deploy:
       replicas: 1
       resources:
+        limits:
+          memory: 200M
         reservations:
           cpus: '0.1'
           memory: 100M
@@ -79,9 +81,11 @@ services:
     deploy:
       replicas: 1
       resources:
+        limits:
+          memory: 300M
         reservations :
           cpus: "0.2"
-          memory: 300M
+          memory: 256M
       restart_policy:
         condition: any
         delay: 5s
