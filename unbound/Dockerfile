@@ -62,6 +62,7 @@ COPY unbound.sh /etc/service/unbound/run
 COPY entrypoint.sh /
 
 EXPOSE 53/udp 53/tcp
+EXPOSE 4949/tcp
 
 RUN unbound -h || true
 

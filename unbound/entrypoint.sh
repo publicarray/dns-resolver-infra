@@ -75,6 +75,7 @@ if [ "$1" = "munin" ]; then
     ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_queue
     echo "==> Configuring munin-node"
 
+    # Set a single IP to allow connections
     if [ -n "$2" ]; then
         echo "allow_ip: $2"
         allow_ip="allow ^$(echo "$2" | sed 's/\./\\./g')\$"
@@ -88,6 +89,15 @@ if [ "$1" = "munin" ]; then
         -re "s/user\\s{0,}\\root\\w/user _munin-node/" \
         -re "s/group\\s{0,}\\root\\w/group _munin-node/" \
         -i  "/etc/munin/munin-node.conf"
+    # enable tls
+    openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 \
+        -keyout /etc/ssl/munin.key \
+        -out /etc/ssl/munin.pem \
+        -days 99999999
+    echo "tls enabled" >> /etc/munin/munin-node.conf
+    echo "tls_verify_certificate no" >> /etc/munin/munin-node.conf
+    echo "tls_private_key /etc/ssl/munin.key" >> /etc/munin/munin-node.conf
+    echo "tls_certificate /etc/ssl/munin.pem" >> /etc/munin/munin-node.conf
 
 cat << EOF > /etc/munin/plugin-conf.d/local.conf
 [unbound*]
