@@ -30,7 +30,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV HAPROXY_RUN_DEPS openssl shadow
+ENV HAPROXY_RUN_DEPS openssl shadow curl
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
@@ -49,5 +49,8 @@ VOLUME ["/opt/ssl"]
 EXPOSE 853/udp 853/tcp 443/udp 443/tcp
 
 RUN haproxy -v
+
+HEALTHCHECK --start-period=5s --interval=60s \
+CMD curl -H 'Content-Type: application/dns-udpwireformat' -f 'https://127.0.0.1/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB'>/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

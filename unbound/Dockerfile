@@ -33,7 +33,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow
+ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/unbound /usr/local/sbin/unbound
@@ -65,5 +65,8 @@ EXPOSE 53/udp 53/tcp
 EXPOSE 4949/tcp
 
 RUN unbound -h || true
+
+HEALTHCHECK --start-period=1m \
+CMD ["drill", ,"-D", "-Q", ".", "@127.0.0.1", "SOA"]
 
 ENTRYPOINT ["/entrypoint.sh"]

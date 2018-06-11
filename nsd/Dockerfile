@@ -28,7 +28,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV NSD_RUN_DEPS libressl libevent shadow
+ENV NSD_RUN_DEPS libressl libevent shadow drill
 RUN apk add --no-cache $NSD_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/nsd /usr/local/sbin/nsd
@@ -53,6 +53,9 @@ VOLUME ["/etc/nsd/run"]
 EXPOSE 53/udp 53/tcp
 
 RUN nsd -v
+
+HEALTHCHECK --start-period=5s \
+CMD ["drill", "-Q", "dns.opennic.glue", "@127.0.0.1", "SOA"]
 
 CMD ["-d"]
 
