@@ -12,8 +12,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-de
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.7.1
-ARG UNBOUND_SHA256=56e085ef582c5372a20207de179d0edb4e541e59f87be7d4ee1d00d12008628d
+ARG UNBOUND_VERSION=1.7.2
+ARG UNBOUND_SHA256=a85fc7bb34711992cf128b2012638ebb8dc1fe15818baa381f6489240845eaa0
 ARG UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -42,12 +42,12 @@ COPY --from=0 /usr/local/sbin/unbound-control /usr/local/sbin/unbound-control
 COPY --from=0 /usr/local/sbin/unbound-host /usr/local/sbin/unbound-host
 COPY --from=0 /usr/local/sbin/unbound-anchor /usr/local/sbin/unbound-anchor
 COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-control-setup
-COPY --from=0 /usr/local/lib/libunbound.so.2.5.9 /usr/local/lib/libunbound.so.2.5.9
+COPY --from=0 /usr/local/lib/libunbound.so.2.5.10 /usr/local/lib/libunbound.so.2.5.10
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libunbound.so.2.5.9 libunbound.so.2 && \
-    ln -sf libunbound.so.2.5.9 libunbound.so && \
+    ln -sf libunbound.so.2.5.10 libunbound.so.2 && \
+    ln -sf libunbound.so.2.5.10 libunbound.so && \
     cd && \
     groupadd _unbound && \
     useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
