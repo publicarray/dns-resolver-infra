@@ -19,7 +19,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:latest
 
-ENV DOH_RUN_DEPS libgcc runit shadow
+ENV DOH_RUN_DEPS libgcc runit shadow curl
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 
@@ -36,7 +36,7 @@ EXPOSE 3000/udp 3000/tcp
 
 RUN doh-proxy --version
 
-# HEALTHCHECK --interval=1m --timeout=3s \
-#   CMD curl -f http://localhost:3000/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' || exit 1
+HEALTHCHECK --start-period=5s --interval=60s \
+CMD curl -H 'Content-Type: application/dns-udpwireformat' -f 'http://127.0.0.1:3000/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB'>/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
