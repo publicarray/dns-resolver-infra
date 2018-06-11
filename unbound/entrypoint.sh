@@ -74,14 +74,6 @@ if [ "$1" = "munin" ]; then
     ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_memory
     ln -s /etc/munin/unbound_munin_ /etc/munin/plugins/unbound_munin_queue
     echo "==> Configuring munin-node"
-
-    # Set a single IP to allow connections
-    if [ -n "$2" ]; then
-        echo "allow_ip: $2"
-        allow_ip="allow ^$(echo "$2" | sed 's/\./\\./g')\$"
-        echo "allow_ip: $allow_ip"
-        echo "$allow_ip" >> /etc/munin/munin-node.conf
-    fi
     groupadd _munin-node
     useradd -g _munin-node -s /dev/null -d /dev/null _munin-node
     chown -R _munin-node:_munin-node /etc/munin/
@@ -89,6 +81,8 @@ if [ "$1" = "munin" ]; then
         -re "s/user\\s{0,}\\root\\w/user _munin-node/" \
         -re "s/group\\s{0,}\\root\\w/group _munin-node/" \
         -i  "/etc/munin/munin-node.conf"
+    # Allow all connections (we are in a nat environment)
+    echo "allow .*" >> /etc/munin/munin-node.conf
     # enable tls
     openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 \
         -keyout /etc/ssl/munin.key \

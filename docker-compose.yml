@@ -77,7 +77,7 @@ services:
       - nsd
     build: unbound
     image: publicarray/unbound
-    command: munin 10.10.10.10
+    command: munin
     deploy:
       replicas: 1
       resources:
@@ -89,6 +89,11 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    ports:
+      - target: 4949
+        published: 4949
+        protocol: tcp
+        mode: ingress
     networks:
       - nsd-net
       - unbound-net
