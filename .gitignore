@@ -1,4 +1,6 @@
+node_modules
 *secret*
-node.yml
 *backup
 *.pcap
+*.log
+node.yml
