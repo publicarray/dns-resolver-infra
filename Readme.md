@@ -1,3 +1,5 @@
+<p align="left"><img src="logo/icon.png" alt="dns-resolver-infra" height="170px"></p>
+
 Getting Started
 
 ```sh
