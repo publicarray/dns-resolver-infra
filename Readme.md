@@ -1,4 +1,6 @@
-<p align="left"><img src="logo/icon.png" alt="dns-resolver-infra" height="170px"></p>
+<p align="center">
+    <img src="logo/icon-transparent.svg" alt="DNS Resolver Infrastructure" width="300">
+</p>
 
 Getting Started
 
