@@ -6,6 +6,7 @@
 
 ## Infrastructure Overview
 
+<br>
 <p align="center">
     <img src="dns-infra.svg" alt="Infrastructure" style="max-width:100%;" width="1393">
 </p>
