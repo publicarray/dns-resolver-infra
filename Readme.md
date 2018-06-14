@@ -12,12 +12,12 @@
 </p>
 
 * [acme.sh](https://github.com/Neilpang/acme.sh) (TLS certificate generation for haproxy)
-* [nsd](https://www.nlnetlabs.nl/projects/nsd/) ([OpenNIC](https://www.opennic.org/))
-  * [unbound](https://unbound.nlnetlabs.nl/) (DNS Resolver)
-    * [dnscrypt-wrapper](https://github.com/cofyc/dnscrypt-wrapper) (dnscrypt)
-    * [doh-proxy](https://github.com/jedisct1/rust-doh)
-      * [haproxy](http://www.haproxy.org/) (DHS-over-HTTPS)
-    * [haproxy](http://www.haproxy.org/) (DNS-over-TLS)
+* [nsd](https://www.nlnetlabs.nl/projects/nsd/) ([OpenNIC](https://www.opennic.org/)) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/nsd.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/nsd.svg)](https://microbadger.com/images/publicarray/nsd)
+  * [unbound](https://unbound.nlnetlabs.nl/) (DNS Resolver) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/unbound.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/unbound.svg)](https://microbadger.com/images/publicarray/unbound)
+    * [dnscrypt-wrapper](https://github.com/cofyc/dnscrypt-wrapper) (dnscrypt) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/dnscrypt-wrapper.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/dnscrypt-wrapper.svg)](https://microbadger.com/images/publicarray/dnscrypt-wrapper)
+    * [doh-proxy](https://github.com/jedisct1/rust-doh) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/doh-proxy.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/doh-proxy.svg)](https://microbadger.com/images/publicarray/doh-proxy)
+      * [haproxy](http://www.haproxy.org/) (DHS-over-HTTPS) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/haproxy.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/haproxy.svg)](https://microbadger.com/images/publicarray/haproxy)
+    * [haproxy](http://www.haproxy.org/) (DNS-over-TLS) ![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/haproxy.svg) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/haproxy.svg)](https://microbadger.com/images/publicarray/haproxy)
 
 ## Getting started
 
