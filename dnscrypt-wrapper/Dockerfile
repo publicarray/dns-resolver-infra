@@ -4,7 +4,7 @@ LABEL name "dnscrypt-wrapper"
 LABEL description ""
 ENV REVISION 0
 
-ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev make gcc git musl-dev tar wget
+ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev libexecinfo make gcc git musl-dev tar wget
 
 RUN apk add --no-cache $DNSCRYPT_BUILD_DEPS
 
@@ -24,7 +24,7 @@ RUN set -x && \
     ldconfig /usr/local/lib
 
 ARG DNSCRYPT_WRAPPER_GIT_URL=https://github.com/jedisct1/dnscrypt-wrapper.git
-ARG DNSCRYPT_WRAPPER_GIT_BRANCH=master
+ARG DNSCRYPT_WRAPPER_GIT_BRANCH=xchacha-stamps
 
 RUN set -x && \
     cd /tmp/src && \
@@ -37,7 +37,7 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:latest
-ENV DNSCYPT_RUN_DEPS libevent runit shadow findutils drill
+ENV DNSCYPT_RUN_DEPS libevent libexecinfo runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper

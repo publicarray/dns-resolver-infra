@@ -23,10 +23,12 @@ waitOrFail () {
 
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
-
-if [ -n "$(waitOrFail getServiceIP unbound)" ]; then
-    UNBOUND_SERVICE_HOST=$(getServiceIP unbound)
-fi
+while getopts "h?d" opt; do
+    case "$opt" in
+        h|\?) echo "-d  domain lookup for service discovery"; exit 0;;
+        d) UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)";;
+    esac
+done
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
 if [ $# -eq 0 ]; then

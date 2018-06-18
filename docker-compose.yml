@@ -28,7 +28,7 @@ services:
 
       acme.sh
       --issue
-      --staging
+      --test
       --dns dns_cf
       --dnssleep 60
       -d doh.seby.io
@@ -77,7 +77,7 @@ services:
       - nsd
     build: unbound
     image: publicarray/unbound
-    command: munin
+    command: -d -m
     deploy:
       replicas: 1
       resources:
@@ -103,6 +103,7 @@ services:
       - unbound
     build: doh-proxy
     image: publicarray/doh-proxy
+    command: -d
     deploy:
       replicas: 1
       resources:
@@ -122,6 +123,7 @@ services:
       - unbound
     build: haproxy
     image: publicarray/haproxy
+    command: -d
     deploy:
       replicas: 1
       resources:
@@ -153,6 +155,7 @@ services:
     image: publicarray/dnscrypt-wrapper
     command:
       - init
+      - -d
       - -N
       - dns.seby.io
       - -E
@@ -181,6 +184,29 @@ services:
       - dnscrypt-net
       - unbound-net
 
+  # influxdb:
+  #   image: influxdb
+  #   command:
+  #      openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 -keyout /etc/ssl/influxdb.key -out /etc/ssl/influxdb.pem -days 365
+  #   deploy:
+  #     replicas: 1
+  #     resources:
+  #       reservations :
+  #         cpus: "0.2"
+  #         memory: 50M
+  #     restart_policy:
+  #       condition: any
+  #       delay: 5s
+  #   ports:
+  #     - target: 8086
+  #       published: 8086
+  #       protocol: tcp
+  #       mode: ingress
+  #   volumes:
+  #      - influxdb:/opt/influxdb
+  #   networks:
+  #     - influxdb-net
+
 secrets:
   CF_Email:
     external: true
@@ -196,3 +222,5 @@ networks:
     driver: overlay
   unbound-net:
     driver: overlay
+  # influxdb-net:
+  #   driver: overlay

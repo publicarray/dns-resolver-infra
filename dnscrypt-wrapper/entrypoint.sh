@@ -4,44 +4,19 @@
 
 set -e
 
-getServiceIP () {
-    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
-}
-
-waitOrFail () {
-    maxTries=9
-    i=0
-    while [ $i -lt $maxTries ]; do
-        outStr="$($@)"
-        if [ $? -eq 0 ];then
-            echo "$outStr"
-            return
-        fi
-        i=$((i+1))
-        sleep 10
-    done
-    echo "Too many failed attempts" >&2
-    exit 1
-}
-
 KEYS_DIR="/opt/dnscrypt/etc/keys"
-UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
-UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
-if [ -n "$(waitOrFail getServiceIP unbound)" ]; then
-    UNBOUND_SERVICE_HOST=$(getServiceIP unbound)
-fi
-export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 
 init() {
     if [ "$(is_initialized)" = yes ]; then
         start
         exit $?
     fi
-    while getopts "h?N:E:" opt; do
+    while getopts "h?dN:E:" opt; do
         case "$opt" in
             h|\?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr "[:upper:]" "[:lower:]") ;;
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr "[:upper:]" "[:lower:]") ;;
+            d) mkdir -p "$KEYS_DIR"; touch "$KEYS_DIR/../dns-service-discovery";;
         esac
     done
     [ -z "$provider_name" ] && usage
@@ -116,11 +91,12 @@ usage() {
 Commands
 ========
 
-* init -N <provider_name> -E <external ip>:<port>
+* init -N <provider_name> -E <external ip>:<port> -d use dns service discovery
 initialize the container for a server accessible at ip <external ip> on port
 <port>, for a provider named <provider_name>. This is required only once.
 
-* start (default command): start the resolver and the dnscrypt server proxy.
+* start (default command)
+start the resolver and the dnscrypt server proxy.
 Ports 443/udp and 443/tcp have to be publicly exposed.
 
 * provider-info: prints the provider name and provider public key.
@@ -132,7 +108,7 @@ EOT
 }
 
 case "$1" in
-    start) start ;;
+    start) shift; start "$@" ;;
     init) shift; init "$@" ;;
     provider-info) provider_info ;;
     *) usage ;;

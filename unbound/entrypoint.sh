@@ -21,58 +21,8 @@ waitOrFail () {
     exit 1
 }
 
-reserved=25
-memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
-# https://fabiokung.com/2014/03/13/memory-inside-linux-containers/
-dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) / 1024)) / 1024))
-if [ $dokerMemoryLimitMB -le $memoryMB ]; then
-    memoryMB=$dokerMemoryLimitMB
-fi
-
-if [ $memoryMB -le $reserved ]; then
-    echo "Not enough memory" >&2
-    exit 1
-fi
-memory=$(($((memoryMB / 4)) - reserved))
-
-nproc=$(nproc)
-if [ "$nproc" -gt 1 ]; then
-    threads=$((nproc - 1))
-else
-    threads=1
-fi
-
-NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
-NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"552"}
-
-if [ -n "$(waitOrFail getServiceIP nsd)" ]; then
-    NSD_SERVICE_HOST=$(getServiceIP nsd)
-    NSD_SERVICE_PORT=53
-fi
-
-sed \
-    -re "s/num-threads:\\s{0,}\\d{1,}\\w/num-threads: ${threads}/" \
-    -re "s/msg-cache-slabs:\\s{0,}\\d{1,}\\w/msg-cache-size: ${threads}/" \
-    -re "s/rrset-cache-slabs:\\s{0,}\\d{1,}\\w/rrset-cache-slabs: ${threads}/" \
-    -re "s/key-cache-slabs:\\s{0,}\\d{1,}\\w/key-cache-slabs: ${threads}/" \
-    -re "s/infra-cache-slabs:\\s{0,}\\d{1,}\\w/infra-cache-slabs: ${threads}/" \
-    -re "s/msg-cache-size:\\s{0,}\\d{1,}\\w/msg-cache-size: ${memory}m/" \
-    -re "s/rrset-cache-size:\\s{0,}\\d{1,}\\w/rrset-cache-size: $((memory * 2))m/" \
-    -re "s/key-cache-size:\\s{0,}\\d{1,}\\w/key-cache-size: $((memory / 2))m/" \
-    -re "s/neg-cache-size:\\s{0,}\\d{1,}\\w/neg-cache-size: $((memory / 2))m/" \
-    -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}\"/g" \
-    -i  "/etc/unbound/unbound.conf"
-
-if [ ! -f /etc/unbound/unbound_server.pem ]; then
-    unbound-control-setup
-fi
-
-if [ $# -eq 0 ]; then
-    exec /sbin/runsvdir -P /etc/service
-fi
-
 #------------------------ Optional add munin statistics -----------------------#
-if [ "$1" = "munin" ]; then
+munin() {
     echo "==> Installing munin-node"
     apk update
     apk add munin-node
@@ -130,6 +80,69 @@ EOF
     /usr/sbin/munin-node &
     exec /sbin/runsvdir -P /etc/service
     exit
+}
+
+usage() {
+    echo "-d  domain lookup for service discovery"
+    echo "-m  setup munin node"
+    exit 0
+}
+
+optimise_unbound_memory() {
+    reserved=25
+    memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
+    # https://fabiokung.com/2014/03/13/memory-inside-linux-containers/
+    dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) / 1024)) / 1024))
+    if [ $dokerMemoryLimitMB -le $memoryMB ]; then
+        memoryMB=$dokerMemoryLimitMB
+    fi
+
+    if [ $memoryMB -le $reserved ]; then
+        echo "Not enough memory" >&2
+        exit 1
+    fi
+    memory=$(($((memoryMB / 4)) - reserved))
+
+    nproc=$(nproc)
+    if [ "$nproc" -gt 1 ]; then
+        threads=$((nproc - 1))
+    else
+        threads=1
+    fi
+
+    sed \
+        -re "s/num-threads:\\s{0,}\\d{1,}\\w/num-threads: ${threads}/" \
+        -re "s/msg-cache-slabs:\\s{0,}\\d{1,}\\w/msg-cache-size: ${threads}/" \
+        -re "s/rrset-cache-slabs:\\s{0,}\\d{1,}\\w/rrset-cache-slabs: ${threads}/" \
+        -re "s/key-cache-slabs:\\s{0,}\\d{1,}\\w/key-cache-slabs: ${threads}/" \
+        -re "s/infra-cache-slabs:\\s{0,}\\d{1,}\\w/infra-cache-slabs: ${threads}/" \
+        -re "s/msg-cache-size:\\s{0,}\\d{1,}\\w/msg-cache-size: ${memory}m/" \
+        -re "s/rrset-cache-size:\\s{0,}\\d{1,}\\w/rrset-cache-size: $((memory * 2))m/" \
+        -re "s/key-cache-size:\\s{0,}\\d{1,}\\w/key-cache-size: $((memory / 2))m/" \
+        -re "s/neg-cache-size:\\s{0,}\\d{1,}\\w/neg-cache-size: $((memory / 2))m/" \
+        -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE}\"/g" \
+        -i  "/etc/unbound/unbound.conf"
+}
+
+NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
+NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"53"}
+while getopts "h?d" opt; do
+    case "$opt" in
+        h|\?) usage;;
+        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)";;
+        m) munin;;
+    esac
+done
+export NSD_SERVICE="${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}"
+
+optimise_unbound_memory
+
+if [ ! -f /etc/unbound/unbound_server.pem ]; then
+    unbound-control-setup
+fi
+
+if [ $# -eq 0 ]; then
+    exec /sbin/runsvdir -P /etc/service
 fi
 
 /sbin/runsvdir -P /etc/service &

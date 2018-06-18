@@ -23,16 +23,18 @@ waitOrFail () {
 
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
-if [ -n "$(waitOrFail getServiceIP unbound)" ]; then
-    UNBOUND_SERVICE_HOST=$(getServiceIP unbound)
-fi
-export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
-
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
-if [ -n "$(waitOrFail getServiceIP doh-proxy)" ]; then
-    DOH_PROXY_SERVICE_HOST=$(getServiceIP doh-proxy)
-fi
+while getopts "h?d" opt; do
+    case "$opt" in
+        h|\?) echo "-d  domain lookup for service discovery"; exit 0;;
+        d)
+            UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
+            DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy)"
+        ;;
+    esac
+done
+export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
 sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
