@@ -5,6 +5,22 @@ getServiceIP () {
     nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
 }
 
+waitOrFail () {
+    maxTries=9
+    i=0
+    while [ $i -lt $maxTries ]; do
+        outStr="$($@)"
+        if [ $? -eq 0 ];then
+            echo "$outStr"
+            return
+        fi
+        i=$((i+1))
+        sleep 10
+    done
+    echo "Too many failed attempts" >&2
+    exit 1
+}
+
 reserved=25
 memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
 # https://fabiokung.com/2014/03/13/memory-inside-linux-containers/
@@ -29,7 +45,7 @@ fi
 NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
 NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"552"}
 
-if [ -n "$(getServiceIP nsd)" ]; then
+if [ -n "$(waitOrFail getServiceIP nsd)" ]; then
     NSD_SERVICE_HOST=$(getServiceIP nsd)
     NSD_SERVICE_PORT=53
 fi

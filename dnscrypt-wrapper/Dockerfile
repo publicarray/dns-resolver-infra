@@ -1,5 +1,6 @@
 FROM alpine:latest
 LABEL maintainer "publicarray"
+LABEL name "dnscrypt-wrapper"
 LABEL description ""
 ENV REVISION 0
 
