@@ -37,6 +37,6 @@ EXPOSE 3000/udp 3000/tcp
 RUN doh-proxy --version
 
 HEALTHCHECK --start-period=5s --interval=60s \
-CMD curl -H 'Content-Type: application/dns-udpwireformat' -f 'http://127.0.0.1:3000/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB'>/dev/null || exit 1
+CMD curl -H 'Content-Type: application/dns-message' -f 'http://127.0.0.1:3000/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB'>/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
