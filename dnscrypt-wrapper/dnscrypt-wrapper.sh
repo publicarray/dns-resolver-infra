@@ -5,7 +5,7 @@ getServiceIP () {
 }
 
 waitOrFail () {
-    maxTries=9
+    maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
         outStr="$($@)"
@@ -14,7 +14,8 @@ waitOrFail () {
             return
         fi
         i=$((i+1))
-        sleep 10
+        echo "==> waiting for a dependent service $i/$maxTries" >&2
+        sleep 5
     done
     echo "Too many failed attempts" >&2
     exit 1
