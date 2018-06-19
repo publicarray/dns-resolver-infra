@@ -6,7 +6,7 @@ getServiceIP () {
 }
 
 waitOrFail () {
-    maxTries=9
+    maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
         outStr="$($@)"
@@ -15,7 +15,8 @@ waitOrFail () {
             return
         fi
         i=$((i+1))
-        sleep 10
+        echo "==> waiting for a dependent service $i/$maxTries" >&2
+        sleep 5
     done
     echo "Too many failed attempts" >&2
     exit 1
@@ -76,7 +77,7 @@ EOF
         -re "s/# statistics-cumulative:.*/statistics-cumulative: no/" \
         -i  "/etc/unbound/unbound.conf"
 
-    echo "==> Done"
+    echo "==> Done munin-node"
     /usr/sbin/munin-node &
 }
 
@@ -124,23 +125,22 @@ optimise_unbound_memory() {
 
 NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
 NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"53"}
+if [ ! -f /etc/unbound/unbound_server.pem ]; then
+    unbound-control-setup
+fi
+
 while getopts "h?dm" opt; do
     case "$opt" in
         h|\?) usage;;
         d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)"
-           [ -z "$NSD_SERVICE_HOST" ] || exit 1
         ;;
         m) munin;;
     esac
 done
 shift $((OPTIND-1))
 export NSD_SERVICE="${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}"
-
 optimise_unbound_memory
-
-if [ ! -f /etc/unbound/unbound_server.pem ]; then
-    unbound-control-setup
-fi
+echo "==> Done configuring unbound"
 
 if [ "$1" = '--' ] && shift; then
     /sbin/runsvdir -P /etc/service &
