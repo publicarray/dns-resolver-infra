@@ -126,13 +126,16 @@ optimise_unbound_memory() {
 
 NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
 NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"53"}
-while getopts "h?d" opt; do
+while getopts "h?dm" opt; do
     case "$opt" in
         h|\?) usage;;
-        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)";;
+        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)"
+           [ -z "$NSD_SERVICE_HOST" ] || exit 1
+        ;;
         m) munin;;
     esac
 done
+shift $((OPTIND-1))
 export NSD_SERVICE="${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}"
 
 optimise_unbound_memory
@@ -141,12 +144,9 @@ if [ ! -f /etc/unbound/unbound_server.pem ]; then
     unbound-control-setup
 fi
 
-if [ $# -eq 0 ]; then
-    exec /sbin/runsvdir -P /etc/service
+if [ "$1" = '--' ] && shift; then
+    /sbin/runsvdir -P /etc/service &
+    exec "$@"
 fi
 
-/sbin/runsvdir -P /etc/service &
-
-[ "$1" = '--' ] && shift
-
-exec "$@"
+exec /sbin/runsvdir -P /etc/service

@@ -11,7 +11,7 @@ init() {
         start
         exit $?
     fi
-    while getopts "h?dN:E:" opt; do
+    while getopts "h?N:E:d" opt; do
         case "$opt" in
             h|\?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr "[:upper:]" "[:lower:]") ;;
@@ -19,6 +19,7 @@ init() {
             d) mkdir -p "$KEYS_DIR"; touch "$KEYS_DIR/../dns-service-discovery";;
         esac
     done
+    shift $((OPTIND-1))
     [ -z "$provider_name" ] && usage
     case "$provider_name" in
         .*) usage ;;

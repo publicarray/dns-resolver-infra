@@ -30,10 +30,13 @@ while getopts "h?d" opt; do
         h|\?) echo "-d  domain lookup for service discovery"; exit 0;;
         d)
             UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
+            [ -z "$UNBOUND_SERVICE_HOST" ] || exit 1
             DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy)"
+            [ -z "$DOH_PROXY_SERVICE_HOST" ] || exit 1
         ;;
     esac
 done
+shift $((OPTIND-1))
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
