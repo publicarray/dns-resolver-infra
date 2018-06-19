@@ -78,8 +78,6 @@ EOF
 
     echo "==> Done"
     /usr/sbin/munin-node &
-    exec /sbin/runsvdir -P /etc/service
-    exit
 }
 
 usage() {
