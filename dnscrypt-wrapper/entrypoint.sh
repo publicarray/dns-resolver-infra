@@ -109,7 +109,7 @@ EOT
 }
 
 case "$1" in
-    start) shift; start "$@" ;;
+    start) start ;;
     init) shift; init "$@" ;;
     provider-info) provider_info ;;
     *) usage ;;
