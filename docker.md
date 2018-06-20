@@ -4,14 +4,19 @@ https://docs.docker.com/machine/drivers/
 
 https://github.com/docker/docker.github.io/blob/master/machine/AVAILABLE_DRIVER_PLUGINS.md
 
-## Vultr / Docker
+## Vultr / Digital Ocean
 
 ```sh
 brew install docker docker-machine docker-machine-driver-vultr # https://github.com/janeczku/docker-machine-vultr
 
-docker-machine create -d vultr --vultr-region-id 19 --vultr-plan-id 201 --vultr-api-key "$VTOKEN" --vultr-ssh-key-id xxxxxxxxxxxxxx --vultr-ipv6 rancher-node
+# Vultr
+docker-machine create -d vultr --vultr-region-id 19 --vultr-plan-id 201 --vultr-api-key "$VTOKEN" --vultr-ssh-key-id xxxxxxxxxxxxxx --vultr-ipv6 --vultr-ros-version latest rancher-node
+# Digital Ocean
+docker-machine create -d digitalocean --digitalocean-region sfo1 --digitalocean-size 1gb --digitalocean-ssh-user rancher --digitalocean-image rancheros --digitalocean-access-token $DOTOKEN rancher-node 
 
-# docker-machine create -d digitalocean --digitalocean-region sfo1 --digitalocean-size 1gb --digitalocean-ssh-user xxxxxx --digitalocean-image rancheros --digitalocean-access-token $DOTOKEN rancher-node
+docker-machine ssh rancher-node
+eval "$(docker-machine env rancher-node)" # for fish: eval (docker-machine env rancher-node)
+docker ps
 ```
 
 ## Google Cloud Platform
@@ -37,6 +42,12 @@ docker-machine ssh g-node
 eval "$(docker-machine env g-node)" # for fish: eval (docker-machine env g-node)
 ```
 For logging I suggest you follow: https://cloud.google.com/community/tutorials/docker-gcplogs-driver
+
+## Locally with virtualbox
+
+```sh
+docker-machine create -d virtualbox --virtualbox-boot2docker-url https://releases.rancher.com/os/latest/rancheros.iso <MACHINE-NAME>
+```
 
 # [Docker Swarm](https://docs.docker.com/engine/swarm/) Setup
 
