@@ -10,7 +10,7 @@ https://github.com/docker/docker.github.io/blob/master/machine/AVAILABLE_DRIVER_
 brew install docker docker-machine docker-machine-driver-vultr # https://github.com/janeczku/docker-machine-vultr
 
 # Vultr
-docker-machine create -d vultr --vultr-region-id 19 --vultr-plan-id 201 --vultr-api-key "$VTOKEN" --vultr-ssh-key-id xxxxxxxxxxxxxx --vultr-ipv6 --vultr-ros-version latest rancher-node
+docker-machine create -d vultr --vultr-region-id 19 --vultr-plan-id 201 --vultr-api-key "$VTOKEN" --vultr-ssh-key-id xxxxxxxxxxxxxx --vultr-ipv6 --vultr-ros-version v1.3.0 rancher-node
 # Digital Ocean
 docker-machine create -d digitalocean --digitalocean-region sfo1 --digitalocean-size 1gb --digitalocean-ssh-user rancher --digitalocean-image rancheros --digitalocean-access-token $DOTOKEN rancher-node 
 
