@@ -12,8 +12,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-de
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.7.2
-ARG UNBOUND_SHA256=a85fc7bb34711992cf128b2012638ebb8dc1fe15818baa381f6489240845eaa0
+ARG UNBOUND_VERSION=1.7.3
+ARG UNBOUND_SHA256=c11de115d928a6b48b2165e0214402a7a7da313cd479203a7ce7a8b62cba602d
 ARG UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -34,6 +34,8 @@ RUN set -x && \
 FROM alpine:latest
 
 ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill
+ARG LIBUNBOUND_VERSION=2.5.11
+
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/unbound /usr/local/sbin/unbound
@@ -42,12 +44,12 @@ COPY --from=0 /usr/local/sbin/unbound-control /usr/local/sbin/unbound-control
 COPY --from=0 /usr/local/sbin/unbound-host /usr/local/sbin/unbound-host
 COPY --from=0 /usr/local/sbin/unbound-anchor /usr/local/sbin/unbound-anchor
 COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-control-setup
-COPY --from=0 /usr/local/lib/libunbound.so.2.5.10 /usr/local/lib/libunbound.so.2.5.10
+COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libunbound.so.2.5.10 libunbound.so.2 && \
-    ln -sf libunbound.so.2.5.10 libunbound.so && \
+    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.2 && \
+    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
     groupadd _unbound && \
     useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
