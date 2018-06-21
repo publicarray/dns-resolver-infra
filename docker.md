@@ -43,12 +43,6 @@ eval "$(docker-machine env g-node)" # for fish: eval (docker-machine env g-node)
 ```
 For logging I suggest you follow: https://cloud.google.com/community/tutorials/docker-gcplogs-driver
 
-## Locally with virtualbox
-
-```sh
-docker-machine create -d virtualbox --virtualbox-boot2docker-url https://releases.rancher.com/os/latest/rancheros.iso <MACHINE-NAME>
-```
-
 # [Docker Swarm](https://docs.docker.com/engine/swarm/) Setup
 
 ```sh
@@ -74,9 +68,10 @@ docker exec -it xxxxxxxxxxxxxx /entrypoint.sh provider-info # for dnscrypt-wrapp
 docker stack rm dns-server # when things go wrong and you need to start form a blank slate
 ```
 
-## Local development
+## Local development with virtualbox
 
 ```sh
 docker-machine create -d virtualbox local
+# docker-machine create -d virtualbox --virtualbox-boot2docker-url https://releases.rancher.com/os/latest/rancheros.iso <MACHINE-NAME>
 eval "$(docker-machine env local)" # for fish: eval (docker-machine env local)
 ```
