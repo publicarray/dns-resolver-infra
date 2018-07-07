@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.8
 LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 0
@@ -28,7 +28,7 @@ RUN set -x && \
     make install-bin
 
 #------------------------------------------------------------------------------#
-FROM alpine:latest
+FROM alpine:3.8
 
 ENV HAPROXY_RUN_DEPS openssl shadow curl
 

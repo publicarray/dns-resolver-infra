@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.8
 LABEL maintainer "publicarray"
 ENV REVISION 0
 LABEL org.label-schema.name="unbound"
@@ -31,9 +31,9 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:latest
+FROM alpine:3.8
 
-ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill
+ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill wget bc
 ARG LIBUNBOUND_VERSION=2.5.11
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS

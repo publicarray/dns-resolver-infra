@@ -1,7 +1,7 @@
-FROM alpine:latest
+FROM alpine:3.8
 LABEL maintainer "publicarray"
 LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
-ENV REVISION 1
+ENV REVISION 0
 
 ENV DOH_BUILD_DEPS rust cargo git
 
@@ -17,7 +17,7 @@ RUN set -x && \
     cp target/release/doh-proxy /usr/local/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM alpine:latest
+FROM alpine:3.8
 
 ENV DOH_RUN_DEPS libgcc runit shadow curl
 
