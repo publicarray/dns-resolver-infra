@@ -4,11 +4,11 @@ LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedi
 ENV REVISION 0
 
 ENV DOH_BUILD_DEPS rust cargo git
+ENV VERSION 0.1.7
 
 RUN apk add --no-cache $DOH_BUILD_DEPS
 # RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-RUN cargo install doh-proxy --root /usr/local/
+RUN cargo install doh-proxy --version $VERSION --root /usr/local/
 # RUN set -x && \
 #     cd /tmp && \
 #     git clone https://github.com/jedisct1/rust-doh && \
