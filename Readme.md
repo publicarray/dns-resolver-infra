@@ -8,7 +8,7 @@
 
 <br>
 <p align="center">
-    <img src="dns-infra.svg" alt="Infrastructure" style="max-width:100%;" width="900">
+    <img src="dns-infra.png" alt="Infrastructure" style="max-width:100%;" width="900">
 </p>
 
 * [acme.sh](https://github.com/Neilpang/acme.sh) (TLS certificate generation for haproxy)
