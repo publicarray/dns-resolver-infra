@@ -46,7 +46,8 @@ services:
           cpus: "0.2"
           memory: 50M
       restart_policy:
-        condition: none
+        condition: on-failure
+        max_attempts: 4
     secrets:
       - CF_Email
       - CF_Key
