@@ -28,10 +28,9 @@ RUN set -x && \
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_MAJOR 1.8
 ENV HAPROXY_VERSION 1.8.13
+ENV HAPROXY_SHA256 2bf5dafbb5f1530c0e67ab63666565de948591f8e0ee2a1d3c84c45e738220f1
 RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
-
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
-ENV HAPROXY_SHA256 bcc05ab824bd2f89b8b21ac05459c0a0a0e02247b57ffe441d52cfe771daea92
 
 RUN set -x && \
     mkdir -p /tmp/src && \
