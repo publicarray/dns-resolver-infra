@@ -3,9 +3,26 @@ LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 1
 
-ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl1.1-dev
+ENV OPENSSL_BUILD_DEPS perl zlib-dev
+ENV HAPROXY_BUILD_DEPS gcc linux-headers make musl-dev pcre-dev tar zlib-dev
 
-RUN apk add --no-cache $HAPROXY_BUILD_DEPS
+RUN apk add --no-cache $HAPROXY_BUILD_DEPS $OPENSSL_BUILD_DEPS
+
+ENV OPENSSL_VERSION 1.1.1-pre8
+ENV OPENSSL_SHA256 1205cd763dd92c910cc590658a5b0774599e8587d89d6debd948f242b949321e
+
+# https://git.alpinelinux.org/cgit/aports/tree/testing/openssl1.1/APKBUILD
+RUN set -x && \
+    mkdir -p /tmp/src /tmp/openssl && \
+    cd /tmp/src && \
+    wget -O openssl.tar.gz https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+    echo "${OPENSSL_SHA256} *openssl.tar.gz" | sha256sum -c - && \
+    tar xzf openssl.tar.gz && \
+    cd openssl-${OPENSSL_VERSION} && \
+    ./config no-shared zlib -DOPENSSL_NO_ASYNC --prefix=/tmp/openssl && \
+    make && \
+    make test && \
+    make install_sw
 
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
@@ -22,19 +39,22 @@ RUN set -x && \
     wget -O haproxy.tar.gz $HAPROXY_DOWNLOAD_URL && \
     echo "${HAPROXY_SHA256} *haproxy.tar.gz" | sha256sum -c - && \
     tar xzf haproxy.tar.gz && \
-    rm -f haproxy.tar.gz && \
     cd haproxy-${HAPROXY_VERSION} && \
-    make TARGET=linux2628 USE_OPENSSL=1 USE_ZLIB=1 && \
+    make TARGET=linux2628 USE_OPENSSL=1 SSL_INC=/tmp/openssl/include SSL_LIB=/tmp/openssl/lib USE_STATIC_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 && \
     make install-bin
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.8
 
-ENV HAPROXY_RUN_DEPS openssl shadow curl
+ENV HAPROXY_RUN_DEPS curl shadow zlib
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/haproxy /usr/local/sbin/haproxy
+# COPY --from=0 /usr/local/lib/libcrypto.a /usr/local/lib/libcrypto.a
+# COPY --from=0 /usr/local/lib/libssl.a /usr/local/lib/libssl.a
+# COPY --from=0 /usr/local/bin/openssl /usr/local/bin/openssl
+# COPY --from=0 /usr/local/bin/c_rehash /usr/local/bin/c_rehash
 
 RUN set -x && \
     groupadd _haproxy && \

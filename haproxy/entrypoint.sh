@@ -28,10 +28,17 @@ DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
 while getopts "h?d" opt; do
     case "$opt" in
-        h|\?) echo "-d  domain lookup for service discovery"; exit 0;;
+        h|\?)
+            echo "-d  domain lookup for service discovery";
+            echo "-r  uncomment lines in haproxy.conf with the word 'redirect' in them";
+            exit 0
+        ;;
         d)
             UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
             DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy)"
+        ;;
+        r)
+            sed -i '/^#.* redirect /s/^#//' /etc/haproxy.conf
         ;;
     esac
 done

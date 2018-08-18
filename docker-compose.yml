@@ -31,12 +31,28 @@ services:
       --test
       --dns dns_cf
       --dnssleep 60
-      -d doh.seby.io
+      --domain doh.seby.io
+      --domain cf-doh.seby.io
+      --keylength 4096
       --fullchain-file /opt/ssl/fullchain.pem
       --key-file /opt/ssl/key.pem
       --ca-file /opt/ssl/ca.pem
       --cert-file /opt/ssl/cert.pem
-      --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem'\" > start.sh
+      --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
+
+      acme.sh
+      --issue
+      --dns dns_cf
+      --dnssleep 60
+      --domain doh.seby.io
+      --domain cf-doh.seby.io
+      --keylength ec-384
+      --fullchain-file /opt/ssl/fullchain-ecc.pem
+      --key-file /opt/ssl/key-ecc.pem
+      --ca-file /opt/ssl/ca-ecc.pem
+      --cert-file /opt/ssl/cert-ecc.pem
+      --reloadcmd 'cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa'
+      \" > start.sh
       && chmod +x start.sh
       && ./start.sh"
 
@@ -124,7 +140,7 @@ services:
       - unbound
     build: haproxy
     image: publicarray/haproxy
-    command: -d
+    command: -d -r
     deploy:
       replicas: 1
       resources:
@@ -135,14 +151,13 @@ services:
         condition: any
         delay: 5s
     ports:
-    - "443:443"
-    - target: 853
-      published: 853
+    - target: 443
+      published: 443
       protocol: tcp
       mode: ingress
     - target: 853
       published: 853
-      protocol: udp
+      protocol: tcp
       mode: ingress
     volumes:
        - ssl:/opt/ssl
