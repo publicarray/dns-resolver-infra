@@ -3,7 +3,7 @@ LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 1
 
-ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl-dev
+ENV HAPROXY_BUILD_DEPS make tar gcc musl-dev linux-headers openssl1.1-dev
 
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
