@@ -50,10 +50,6 @@ ENV HAPROXY_RUN_DEPS curl shadow zlib
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
 COPY --from=0 /usr/local/sbin/haproxy /usr/local/sbin/haproxy
-# COPY --from=0 /usr/local/lib/libcrypto.a /usr/local/lib/libcrypto.a
-# COPY --from=0 /usr/local/lib/libssl.a /usr/local/lib/libssl.a
-# COPY --from=0 /usr/local/bin/openssl /usr/local/bin/openssl
-# COPY --from=0 /usr/local/bin/c_rehash /usr/local/bin/c_rehash
 
 RUN set -x && \
     groupadd _haproxy && \
