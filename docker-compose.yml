@@ -4,6 +4,12 @@ volumes:
     ssl:
     nsd:
 services:
+  watchtower:
+    image: v2tec/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $DOCKER_CERT_PATH:/etc/ssl/docker
+    command: --tlsverify
   acme:
     image: neilpang/acme.sh
     command: >
@@ -28,7 +34,6 @@ services:
 
       acme.sh
       --issue
-      --test
       --dns dns_cf
       --dnssleep 60
       --domain doh.seby.io
@@ -55,7 +60,22 @@ services:
       \" > start.sh
       && chmod +x start.sh
       && ./start.sh"
-
+    deploy:
+      resources:
+        reservations :
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 4
+    secrets:
+      - CF_Email
+      - CF_Key
+    volumes:
+       - ssl:/opt/ssl
+  acme-daemon:
+    image: neilpang/acme.sh
+    command: daemon
     deploy:
       resources:
         reservations :
@@ -84,6 +104,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+        max_attempts: 4
     volumes:
       - nsd:/etc/nsd/run
     networks:
@@ -106,6 +127,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+        max_attempts: 4
     ports:
       - target: 4949
         published: 4949
@@ -130,6 +152,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+        max_attempts: 4
     networks:
       - unbound-net
 
@@ -150,6 +173,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+        max_attempts: 4
     ports:
     - target: 443
       published: 443
@@ -185,6 +209,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+        max_attempts: 4
     ports:
       - target: 443
         published: 8443
