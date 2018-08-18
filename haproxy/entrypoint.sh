@@ -26,7 +26,7 @@ UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
-while getopts "h?d" opt; do
+while getopts "h?dr" opt; do
     case "$opt" in
         h|\?)
             echo "-d  domain lookup for service discovery";
