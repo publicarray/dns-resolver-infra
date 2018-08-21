@@ -3,11 +3,11 @@ LABEL maintainer "publicarray"
 LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 ENV REVISION 0
 
-ENV DOH_BUILD_DEPS rust cargo git
-ENV VERSION 0.1.7
+ENV DOH_BUILD_DEPS rust cargo
+ENV VERSION 0.1.8
 
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 RUN apk add --no-cache $DOH_BUILD_DEPS
-# RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 RUN cargo install doh-proxy --version $VERSION --root /usr/local/
 # RUN set -x && \
 #     cd /tmp && \
