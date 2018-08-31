@@ -4,12 +4,12 @@ volumes:
     ssl:
     nsd:
 services:
-  watchtower:
-    image: v2tec/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - $DOCKER_CERT_PATH:/etc/ssl/docker
-    command: --tlsverify
+  # watchtower:
+  #   image: v2tec/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - $DOCKER_CERT_PATH:/etc/ssl/docker
+  #   command: --tlsverify
   acme:
     image: neilpang/acme.sh
     command: >
@@ -62,9 +62,11 @@ services:
       && ./start.sh"
     deploy:
       resources:
+        limits:
+          memory: 10M
         reservations :
           cpus: "0.2"
-          memory: 50M
+          memory: 4M
       restart_policy:
         condition: on-failure
         max_attempts: 4
@@ -78,9 +80,11 @@ services:
     command: daemon
     deploy:
       resources:
+        limits:
+          memory: 4M
         reservations :
           cpus: "0.2"
-          memory: 50M
+          memory: 4M
       restart_policy:
         condition: on-failure
         max_attempts: 4
@@ -97,7 +101,7 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: 200M
+          memory: 150M
         reservations:
           cpus: '0.1'
           memory: 100M
@@ -123,7 +127,7 @@ services:
           memory: 300M
         reservations :
           cpus: "0.2"
-          memory: 256M
+          memory: 250M
       restart_policy:
         condition: any
         delay: 5s
@@ -145,14 +149,9 @@ services:
     command: -d
     deploy:
       replicas: 1
-      resources:
-        reservations :
-          cpus: "0.1"
-          memory: 10M
       restart_policy:
         condition: any
         delay: 5s
-        max_attempts: 4
     networks:
       - unbound-net
 
@@ -167,9 +166,11 @@ services:
     deploy:
       replicas: 1
       resources:
+        limits:
+          memory: 40M
         reservations :
           cpus: "0.2"
-          memory: 50M
+          memory: 20M
       restart_policy:
         condition: any
         delay: 5s
@@ -203,9 +204,11 @@ services:
     deploy:
       replicas: 1
       resources:
+        limits:
+          memory: 5M
         reservations :
           cpus: "0.2"
-          memory: 10M
+          memory: 4M
       restart_policy:
         condition: any
         delay: 5s
@@ -225,29 +228,6 @@ services:
       - dnscrypt-net
       - unbound-net
 
-  # influxdb:
-  #   image: influxdb
-  #   command:
-  #      openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 -keyout /etc/ssl/influxdb.key -out /etc/ssl/influxdb.pem -days 365
-  #   deploy:
-  #     replicas: 1
-  #     resources:
-  #       reservations :
-  #         cpus: "0.2"
-  #         memory: 50M
-  #     restart_policy:
-  #       condition: any
-  #       delay: 5s
-  #   ports:
-  #     - target: 8086
-  #       published: 8086
-  #       protocol: tcp
-  #       mode: ingress
-  #   volumes:
-  #      - influxdb:/opt/influxdb
-  #   networks:
-  #     - influxdb-net
-
 secrets:
   CF_Email:
     external: true
@@ -263,5 +243,3 @@ networks:
     driver: overlay
   unbound-net:
     driver: overlay
-  # influxdb-net:
-  #   driver: overlay
