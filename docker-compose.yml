@@ -64,9 +64,6 @@ services:
       resources:
         limits:
           memory: 10M
-        reservations :
-          cpus: "0.2"
-          memory: 4M
       restart_policy:
         condition: on-failure
         max_attempts: 4
@@ -81,9 +78,6 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4M
-        reservations :
-          cpus: "0.2"
           memory: 4M
       restart_policy:
         condition: on-failure
@@ -149,6 +143,9 @@ services:
     command: -d
     deploy:
       replicas: 1
+      resources:
+        limits:
+          memory: 5M
       restart_policy:
         condition: any
         delay: 5s
@@ -206,9 +203,6 @@ services:
       resources:
         limits:
           memory: 5M
-        reservations :
-          cpus: "0.2"
-          memory: 4M
       restart_policy:
         condition: any
         delay: 5s
