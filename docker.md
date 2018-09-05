@@ -53,9 +53,16 @@ docker swarm init --advertise-addr node_ip_address_from_docker-machine_ls
 # docker swarm join --token your_swarm_token manager_node_ip_address:2377
 docker node ls
 
+# Add Cloudflare API key for acme.sh to do domain validation via DNS
  echo "email@example.com" | docker secret create CF_Email -
  echo "xxxxxxxxxxxxxx" | docker secret create CF_Key -
 
+# You need to modify docker-compose.yml to your needs: 
+#  - Change the domain name for certificate generation (TLS)
+#  - Change the acme.sh script if you are not using Cloudflare
+#  - Change dnscrypt-wrapper external IP address and provider name
+#  - Change memory allocations / limits
+#  - Change any port allocations if you desire
 docker stack deploy --compose-file=docker-compose.yml dns-server
 docker ps -a
 
@@ -66,6 +73,8 @@ docker logs xxxxxxxxxxxxxx
 docker exec -it xxxxxxxxxxxxxx sh
 docker exec -it xxxxxxxxxxxxxx /entrypoint.sh provider-info # for dnscrypt-wrapper
 docker stack rm dns-server # when things go wrong and you need to start form a blank slate
+
+
 ```
 
 ## Local development with virtualbox
