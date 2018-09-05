@@ -3,13 +3,12 @@ volumes:
     dnscrypt:
     ssl:
     nsd:
+    acme-sh:
 services:
-  # watchtower:
-  #   image: v2tec/watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - $DOCKER_CERT_PATH:/etc/ssl/docker
-  #   command: --tlsverify
+  watchtower:
+    image: v2tec/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   acme:
     image: neilpang/acme.sh
     command: >
@@ -72,6 +71,7 @@ services:
       - CF_Key
     volumes:
        - ssl:/opt/ssl
+       - acme-sh:/root/.acme.sh
   acme-daemon:
     image: neilpang/acme.sh
     command: daemon
@@ -87,6 +87,7 @@ services:
       - CF_Key
     volumes:
        - ssl:/opt/ssl
+       - acme-sh:/root/.acme.sh
 
   nsd:
     build: nsd
@@ -118,7 +119,7 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: 300M
+          memory: 280M
         reservations :
           cpus: "0.2"
           memory: 250M
