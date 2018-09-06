@@ -63,9 +63,6 @@ services:
       && chmod +x start.sh
       && ./start.sh"
     deploy:
-      resources:
-        limits:
-          memory: 10M
       restart_policy:
         condition: on-failure
         max_attempts: 4
@@ -79,9 +76,6 @@ services:
     image: neilpang/acme.sh
     command: daemon
     deploy:
-      resources:
-        limits:
-          memory: 4M
       restart_policy:
         condition: on-failure
         max_attempts: 4
@@ -97,12 +91,6 @@ services:
     image: publicarray/nsd
     deploy:
       replicas: 1
-      resources:
-        limits:
-          memory: 150M
-        reservations:
-          cpus: '0.1'
-          memory: 100M
       restart_policy:
         condition: any
         delay: 5s
@@ -122,10 +110,10 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: 280M
+          memory: 260M
         reservations :
           cpus: "0.2"
-          memory: 250M
+          memory: 230M
       restart_policy:
         condition: any
         delay: 5s
@@ -147,9 +135,6 @@ services:
     command: -d
     deploy:
       replicas: 1
-      resources:
-        limits:
-          memory: 5M
       restart_policy:
         condition: any
         delay: 5s
@@ -166,12 +151,6 @@ services:
     command: -d -r
     deploy:
       replicas: 1
-      resources:
-        limits:
-          memory: 40M
-        reservations :
-          cpus: "0.2"
-          memory: 20M
       restart_policy:
         condition: any
         delay: 5s
@@ -204,9 +183,6 @@ services:
       - 149.28.165.94:8443
     deploy:
       replicas: 1
-      resources:
-        limits:
-          memory: 5M
       restart_policy:
         condition: any
         delay: 5s

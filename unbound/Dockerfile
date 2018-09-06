@@ -5,7 +5,6 @@ LABEL org.label-schema.name="unbound"
 LABEL org.label-schema.vendor="publicarray"
 LABEL org.label-schema.description="Unbound is a validating, recursive, and caching DNS resolver."
 LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
-LABEL org.label-schema.version="1.7.1"
 LABEL org.label-schema.license="MIT"
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
