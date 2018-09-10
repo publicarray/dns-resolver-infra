@@ -111,9 +111,6 @@ services:
       resources:
         limits:
           memory: 260M
-        reservations :
-          cpus: "0.2"
-          memory: 230M
       restart_policy:
         condition: any
         delay: 5s

@@ -1,19 +1,13 @@
 FROM alpine:3.8
-LABEL maintainer "publicarray"
 ENV REVISION 0
-LABEL org.label-schema.name="unbound"
-LABEL org.label-schema.vendor="publicarray"
-LABEL org.label-schema.description="Unbound is a validating, recursive, and caching DNS resolver."
-LABEL org.label-schema.vcs-url="https://github.com/publicarray/dns-resolver-infra"
-LABEL org.label-schema.license="MIT"
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.7.3
-ARG UNBOUND_SHA256=c11de115d928a6b48b2165e0214402a7a7da313cd479203a7ce7a8b62cba602d
-ARG UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz
+ARG UNBOUND_VERSION=1.8.0
+ARG UNBOUND_SHA256=78f79d6d3b643fdcd74a14fc76542250da886c82f82bc55b51e189663d61b83f
+ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
     mkdir -p /tmp/src && \
@@ -33,7 +27,9 @@ RUN set -x && \
 FROM alpine:3.8
 
 ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill wget bc
-ARG LIBUNBOUND_VERSION=2.5.11
+
+ARG LIBUNBOUND_VERSION_MAJOR=8
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.0.0
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -47,7 +43,7 @@ COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.2 && \
+    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_VERSION_MAJOR} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
     groupadd _unbound && \
@@ -71,3 +67,12 @@ HEALTHCHECK --start-period=1m \
 CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Metadata
+LABEL org.opencontainers.image.title="unbound" \
+        org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver." \
+        org.opencontainers.image.url="https://nlnetlabs.nl/projects/unbound/about/" \
+        org.opencontainers.image.documentation="https://nlnetlabs.nl/documentation/unbound/" \
+        org.opencontainers.image.source="https://nlnetlabs.nl/svn/unbound/" \
+        org.opencontainers.image.authors="publicarray" \
+        org.opencontainers.image.version=${UNBOUND_VERSION}

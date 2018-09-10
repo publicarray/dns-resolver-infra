@@ -73,8 +73,7 @@ docker logs xxxxxxxxxxxxxx
 docker exec -it xxxxxxxxxxxxxx sh
 docker exec -it xxxxxxxxxxxxxx /entrypoint.sh provider-info # for dnscrypt-wrapper
 docker stack rm dns-server # when things go wrong and you need to start form a blank slate
-
-
+docker run --rm -it <id--of-the-last-working-layer> sh # debug a docker build
 ```
 
 ## Local development with virtualbox
