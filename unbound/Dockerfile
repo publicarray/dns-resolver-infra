@@ -1,5 +1,5 @@
 FROM alpine:3.8
-ENV REVISION 0
+ENV REVISION 1
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
 

@@ -2,7 +2,7 @@ FROM alpine:3.8
 LABEL maintainer "publicarray"
 LABEL name "dnscrypt-wrapper"
 LABEL description ""
-ENV REVISION 0
+ENV REVISION 1
 
 ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev libexecinfo make gcc git musl-dev tar wget
 
