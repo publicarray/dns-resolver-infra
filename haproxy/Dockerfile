@@ -8,8 +8,8 @@ ENV HAPROXY_BUILD_DEPS gcc linux-headers make musl-dev pcre-dev tar zlib-dev
 
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS $OPENSSL_BUILD_DEPS
 
-ENV OPENSSL_VERSION 1.1.1-pre8
-ENV OPENSSL_SHA256 1205cd763dd92c910cc590658a5b0774599e8587d89d6debd948f242b949321e
+ENV OPENSSL_VERSION 1.1.1
+ENV OPENSSL_SHA256 2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d
 
 # https://git.alpinelinux.org/cgit/aports/tree/testing/openssl1.1/APKBUILD
 RUN set -x && \
@@ -27,8 +27,8 @@ RUN set -x && \
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_MAJOR 1.8
-ENV HAPROXY_VERSION 1.8.13
-ENV HAPROXY_SHA256 2bf5dafbb5f1530c0e67ab63666565de948591f8e0ee2a1d3c84c45e738220f1
+ENV HAPROXY_VERSION 1.8.14
+ENV HAPROXY_SHA256 b17e402578be85e58af7a3eac99b1f675953bea9f67af2e964cf8bdbd1bd3fdf
 RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
