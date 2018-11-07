@@ -23,3 +23,9 @@
 
 * [Usage with Docker-Swarm](docker.md)
 * [Usage with Kubernetes](kube.md)
+
+### sysctl
+
+```
+sysctl net.ipv4.tcp_congestion_control=bbr
+```
