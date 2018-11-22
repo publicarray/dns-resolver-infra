@@ -8,8 +8,8 @@ ENV HAPROXY_BUILD_DEPS gcc linux-headers make musl-dev pcre-dev tar zlib-dev
 
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS $OPENSSL_BUILD_DEPS
 
-ENV OPENSSL_VERSION 1.1.1
-ENV OPENSSL_SHA256 2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d
+ENV OPENSSL_VERSION 1.1.1a
+ENV OPENSSL_SHA256 fc20130f8b7cbd2fb918b2f14e2f429e109c31ddd0fb38fc5d71d9ffed3f9f41
 
 # https://git.alpinelinux.org/cgit/aports/tree/testing/openssl1.1/APKBUILD
 RUN set -x && \
