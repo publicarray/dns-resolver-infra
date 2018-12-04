@@ -7,8 +7,8 @@ ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
-ARG NSD_VERSION=4.1.25
-ARG NSD_SHA256=8f5bff5abbbb03c396afd7be575806cde1217e884c189fa34445e0ca4793df7f
+ARG NSD_VERSION=4.1.26
+ARG NSD_SHA256=9f8a41431d21034d64b9a910567b201636521b64b6a9947390bf898388dc15f4
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
 RUN set -x && \
