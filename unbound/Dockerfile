@@ -5,8 +5,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-de
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.8.1
-ARG UNBOUND_SHA256=c362b3b9c35d1b8c1918da02cdd5528d729206c14c767add89ae95acae363c5d
+ARG UNBOUND_VERSION=1.8.2
+ARG UNBOUND_SHA256=19f2235a8936d89e7dc919bbfcef355de759f220e36bb5e1e931ac000ed04993
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -29,7 +29,7 @@ FROM alpine:3.8
 ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill wget bc
 
 ARG LIBUNBOUND_VERSION_MAJOR=8
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.0.1
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.0.2
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
