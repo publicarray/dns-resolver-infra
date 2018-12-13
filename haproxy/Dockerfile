@@ -27,8 +27,8 @@ RUN set -x && \
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_MAJOR 1.8
-ENV HAPROXY_VERSION 1.8.14
-ENV HAPROXY_SHA256 b17e402578be85e58af7a3eac99b1f675953bea9f67af2e964cf8bdbd1bd3fdf
+ENV HAPROXY_VERSION 1.8.15
+ENV HAPROXY_SHA256 7113862f1146d7de8b8e64f45826ab3533c7f7f7b7767e24c08f7c762202a032
 RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
