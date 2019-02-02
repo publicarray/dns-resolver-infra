@@ -17,7 +17,7 @@ RUN cargo install doh-proxy --version $VERSION --root /usr/local/
 #     cp target/release/doh-proxy /usr/local/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.8
+FROM alpine:3.9
 
 ENV DOH_RUN_DEPS libgcc runit shadow curl
 

@@ -26,7 +26,7 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.8
+FROM alpine:3.9
 
 ENV NSD_RUN_DEPS libressl libevent shadow drill
 RUN apk add --no-cache $NSD_RUN_DEPS

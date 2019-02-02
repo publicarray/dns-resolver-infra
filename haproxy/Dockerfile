@@ -43,7 +43,7 @@ RUN set -x && \
     make install-bin
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.8
+FROM alpine:3.9
 
 ENV HAPROXY_RUN_DEPS curl shadow zlib
 

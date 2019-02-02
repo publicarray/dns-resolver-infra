@@ -36,7 +36,7 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.8
+FROM alpine:3.9
 ENV DNSCYPT_RUN_DEPS libevent libexecinfo runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 ARG SODIUM_LIB_VERSION_MAJOR=23
