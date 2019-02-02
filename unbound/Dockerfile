@@ -24,7 +24,7 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.8
+FROM alpine:3.9
 
 ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill wget bc
 
