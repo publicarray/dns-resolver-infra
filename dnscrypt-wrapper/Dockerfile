@@ -39,16 +39,18 @@ RUN set -x && \
 FROM alpine:3.8
 ENV DNSCYPT_RUN_DEPS libevent libexecinfo runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
+ARG SODIUM_LIB_VERSION_MAJOR=23
+ARG SODIUM_LIB_VERSION=23.2.0
 
 COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
 COPY --from=0 /usr/local/lib/libsodium.a /usr/local/lib/libsodium.a
 COPY --from=0 /usr/local/lib/libsodium.la /usr/local/lib/libsodium.la
-COPY --from=0 /usr/local/lib/libsodium.so.23.1.0 /usr/local/lib/libsodium.so.23.1.0
+COPY --from=0 /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libsodium.so.23.1.0 libsodium.so.23 && \
-    ln -sf libsodium.so.23.1.0 libsodium.so && \
+    ln -sf libsodium.so.$SODIUM_LIB_VERSION libsodium.so.$SODIUM_LIB_VERSION_MAJOR && \
+    ln -sf libsodium.so.$SODIUM_LIB_VERSION libsodium.so && \
     cd && \
     mkdir -p /opt/dnscrypt/empty \
         /etc/service/watchdog \
