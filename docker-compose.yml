@@ -34,7 +34,7 @@ services:
       --issue
       --dns dns_cf
       --dnssleep 60
-      --domain *.seby.io
+      --domain '*.seby.io'
       --keylength 4096
       --fullchain-file /opt/ssl/fullchain.pem
       --key-file /opt/ssl/key.pem
@@ -46,7 +46,7 @@ services:
       --issue
       --dns dns_cf
       --dnssleep 60
-      --domain *.seby.io
+      --domain '*.seby.io'
       --keylength ec-384
       --fullchain-file /opt/ssl/fullchain-ecc.pem
       --key-file /opt/ssl/key-ecc.pem
