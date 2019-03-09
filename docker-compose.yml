@@ -13,18 +13,28 @@ services:
       set -e
 
       # Check if certificate is still valid for the next 30 days, if so exit.
+
       if [ -f /opt/ssl/fullchain.pem ]; then
+
         if openssl x509 -checkend 2592000 -noout -in /opt/ssl/fullchain.pem; then
+
           echo 'Certificate is still valid!'
+
           exit 0
+
         else
           echo 'Certificate has expired or will do so within 30 days!'
+
           echo 'Renewing...'
+
         fi
+
       fi
 
       # Grab docker secrets
+
       export CF_Key='$$(cat /run/secrets/CF_Key)'
+
       export CF_Email='$$(cat /run/secrets/CF_Email)'
 
       # Issue Certificates
