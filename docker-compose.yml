@@ -34,8 +34,7 @@ services:
       --issue
       --dns dns_cf
       --dnssleep 60
-      --domain doh.seby.io
-      --domain cf-doh.seby.io
+      --domain *.seby.io
       --keylength 4096
       --fullchain-file /opt/ssl/fullchain.pem
       --key-file /opt/ssl/key.pem
@@ -47,8 +46,7 @@ services:
       --issue
       --dns dns_cf
       --dnssleep 60
-      --domain doh.seby.io
-      --domain cf-doh.seby.io
+      --domain *.seby.io
       --keylength ec-384
       --fullchain-file /opt/ssl/fullchain-ecc.pem
       --key-file /opt/ssl/key-ecc.pem
@@ -72,6 +70,7 @@ services:
     image: neilpang/acme.sh
     command: daemon
     deploy:
+      replicas: 1
       restart_policy:
         condition: on-failure
         max_attempts: 4
