@@ -4,6 +4,7 @@ volumes:
     ssl:
     nsd:
     acme-sh:
+    acme-acc:
 services:
   acme:
     image: neilpang/acme.sh
@@ -76,6 +77,7 @@ services:
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
+       - acme-acc:/acme.sh/
   acme-daemon:
     image: neilpang/acme.sh
     command: daemon
