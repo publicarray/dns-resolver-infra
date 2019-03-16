@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: m13253-doh
+  labels:
+    app: dns-server
+    component: m13253-doh
+spec:
+  selector:
+    app: dns-server
+    component: m13253-doh
+  ports:
+    - name: doh-tcp
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
+  # type: ClusterIP

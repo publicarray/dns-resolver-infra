@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m13253-doh
+spec:
+  selector:
+    matchLabels:
+      app: dns-server
+      component: m13253-doh
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dns-server
+        component: m13253-doh
+    spec:
+      containers:
+        - name: m13253-doh
+          image: publicarray/m13253-doh
+          # command: ["/entrypoint.sh"]
+          ports:
+            - name: dns
+              containerPort: 4000
+          # resources:
+          #   requests:
+          #     cpu: 100m
+          #     memory: 50Mi
+      restartPolicy: Always
