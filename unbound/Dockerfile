@@ -1,7 +1,7 @@
 FROM alpine:3.9
 ENV REVISION 1
 
-ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev libressl-dev make musl-dev
+ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
@@ -26,7 +26,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.9
 
-ENV UNBOUND_RUN_DEPS expat libevent libressl runit shadow drill wget bc
+ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
 
 ARG LIBUNBOUND_VERSION_MAJOR=8
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.0.2
@@ -52,7 +52,8 @@ RUN set -x && \
     unbound-anchor -a /etc/unbound/run/root.key || true && \
     chown _unbound:_unbound /etc/unbound/run && \
     chown _unbound:_unbound /etc/unbound/run/root.key && \
-    wget -O /etc/unbound/root.hints https://www.internic.net/domain/named.root
+    wget -O /etc/unbound/root.hints https://www.internic.net/domain/named.root \
+    update-ca-certificates 2> /dev/null || true
 
 COPY unbound.conf /etc/unbound/unbound.conf
 COPY unbound.sh /etc/service/unbound/run
