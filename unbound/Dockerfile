@@ -1,7 +1,7 @@
 FROM alpine:3.9
 ENV REVISION 1
 
-ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
+ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev byacc
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
@@ -28,8 +28,10 @@ FROM alpine:3.9
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
 
-ARG LIBUNBOUND_VERSION_MAJOR=8
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.0.2
+# https://github.com/NLnetLabs/unbound/blob/master/configure#L2789
+ARG LIBUNBOUND_VERSION_MAJOR=9
+# {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.1.1
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
