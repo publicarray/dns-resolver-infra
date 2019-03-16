@@ -2,7 +2,9 @@
 set -e
 
 getServiceIP () {
-    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+    for arg
+    do nslookup "$arg" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+    done
 }
 
 waitOrFail () {
@@ -26,6 +28,7 @@ UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
+
 while getopts "h?dr" opt; do
     case "$opt" in
         h|\?)
@@ -35,7 +38,7 @@ while getopts "h?dr" opt; do
         ;;
         d)
             UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
-            DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy)"
+            DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy m13253-doh)"
         ;;
         r)
             sed -i '/^#.* redirect /s/^#//' /etc/haproxy.conf
