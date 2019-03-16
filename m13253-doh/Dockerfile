@@ -20,16 +20,11 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.9
 
-# ENV DOH_RUN_DEPS libgcc runit shadow curl
+ENV DOH_RUN_DEPS curl
 
-# RUN apk add --no-cache $DOH_RUN_DEPS
+RUN apk add --no-cache $DOH_RUN_DEPS
 
 COPY --from=0 /usr/local/bin/doh-server /usr/local/bin/doh-server
-
-# RUN set -x && \
-#     groupadd _doh_server && \
-#     useradd -g _doh_server -s /dev/null -d /dev/null _doh_server && \
-#     mkdir -p /etc/service/doh-server
 
 COPY entrypoint.sh /
 COPY doh-server.conf /etc/dns-over-https/doh-server.conf
