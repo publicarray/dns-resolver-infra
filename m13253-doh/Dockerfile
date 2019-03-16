@@ -29,11 +29,11 @@ COPY --from=0 /usr/local/bin/doh-server /usr/local/bin/doh-server
 COPY entrypoint.sh /
 COPY doh-server.conf /etc/dns-over-https/doh-server.conf
 
-EXPOSE 4000/udp 4000/tcp
+EXPOSE 3000/udp 3000/tcp
 
 RUN /usr/local/bin/doh-server -version
 
 HEALTHCHECK --start-period=5s --interval=60s \
-CMD curl -H 'accept: application/dns-message' 'http://127.0.0.1:4000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
+CMD curl -H 'accept: application/dns-message' 'http://127.0.0.1:3000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

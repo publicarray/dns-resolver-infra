@@ -22,7 +22,7 @@ spec:
           # command: ["/entrypoint.sh"]
           ports:
             - name: dns
-              containerPort: 4000
+              containerPort: 3000
           # resources:
           #   requests:
           #     cpu: 100m
