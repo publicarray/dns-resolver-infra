@@ -1,7 +1,7 @@
-FROM alpine:3.9
+FROM alpine:3.9 as unbound-build
 ENV REVISION 1
 
-ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev byacc
+ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
@@ -21,7 +21,8 @@ RUN set -x && \
     --with-pthreads --with-username=_unbound --with-libevent \
     CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
     LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
-    make install
+    make install && \
+    ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.9
@@ -29,7 +30,7 @@ FROM alpine:3.9
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2789
-ARG LIBUNBOUND_VERSION_MAJOR=9
+ARG LIBUNBOUND_VERSION_MAJOR=8
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.1.1
 
