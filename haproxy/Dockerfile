@@ -3,10 +3,9 @@ LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 2
 
-ENV OPENSSL_BUILD_DEPS perl zlib-dev
 ENV HAPROXY_BUILD_DEPS gcc linux-headers make openssl-dev musl-dev pcre-dev tar zlib-dev
 
-RUN apk add --no-cache $HAPROXY_BUILD_DEPS $OPENSSL_BUILD_DEPS
+RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
@@ -29,7 +28,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.9
 
-ENV HAPROXY_RUN_DEPS curl shadow zlib openssl
+ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
@@ -38,11 +37,16 @@ COPY --from=0 /usr/local/sbin/haproxy /usr/local/sbin/haproxy
 RUN set -x && \
     groupadd _haproxy && \
     useradd -g _haproxy -s /dev/null -d /dev/null _haproxy && \
-    mkdir -p /etc/service/haproxy \
+    mkdir -p \
+        /etc/service/haproxy/ \
+        /run/haproxy/ \
+        /etc/service/ocsp-updater && \
     update-ca-certificates 2> /dev/null || true
 
 COPY entrypoint.sh /
 COPY haproxy.conf /etc/haproxy.conf
+COPY haproxy.sh /etc/service/haproxy/run
+COPY ocsp-updater.sh /etc/service/ocsp-updater/run
 
 VOLUME ["/opt/ssl"]
 

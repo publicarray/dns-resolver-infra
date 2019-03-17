@@ -54,9 +54,9 @@ sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
     /etc/haproxy.conf
 
 if [ $# -eq 0 ]; then
-    exec /usr/local/sbin/haproxy -V -f /etc/haproxy.conf # [-de] single threaded - poll is likely faster then epoll
+    exec /sbin/runsvdir -P /etc/service
 fi
-# /usr/local/sbin/haproxy -D -V -f /etc/haproxy.conf
 
 [ "$1" = '--' ] && shift
+/sbin/runsvdir -P /etc/service
 exec "$@"
