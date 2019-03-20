@@ -6,6 +6,7 @@
 # Certificates path and names
 DIR="/opt/ssl"
 CERT="fullchain-key.pem"
+CERT_ECC="fullchain-key.pem.ecdsa"
 RUNTIME_API=/run/haproxy/admin.sock
 
 # Get the issuer URI, download it's certificate and convert into PEM format
@@ -22,6 +23,9 @@ ocsp_host=$(echo "$ocsp_url" | cut -d/ -f3)
 # Create/update the ocsp response file and update HAProxy
 openssl ocsp -noverify -no_nonce -issuer ${DIR}/${ISSUER_NAME}.pem -cert ${DIR}/${CERT} -url "$ocsp_url" -header Host="$ocsp_host" -respout ${DIR}/${CERT}.ocsp
 [ $? -eq 0 ] && [ "$(pidof haproxy)" ] && [ -s ${DIR}/${CERT}.ocsp ] && echo "set ssl ocsp-response $(base64 ${DIR}/${CERT}.ocsp)" | socat $RUNTIME_API stdio
+
+openssl ocsp -noverify -no_nonce -issuer ${DIR}/${ISSUER_NAME}.pem -cert ${DIR}/${CERT_ECC} -url "$ocsp_url" -header Host="$ocsp_host" -respout ${DIR}/${CERT_ECC}.ocsp
+[ $? -eq 0 ] && [ "$(pidof haproxy)" ] && [ -s ${DIR}/${CERT_ECC}.ocsp ] && echo "set ssl ocsp-response $(base64 ${DIR}/${CERT_ECC}.ocsp)" | socat $RUNTIME_API stdio
 
 sleep 259200 # 3 days
 exit 0
