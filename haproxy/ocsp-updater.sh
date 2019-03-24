@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -x
+set -e
+
 # https://www.haproxy.com/blog/haproxy-1-9-has-arrived/
 # https://icicimov.github.io/blog/server/HAProxy-OCSP-stapling/
 
@@ -16,6 +19,10 @@ create_ocsp () {
     # Get the issuer URI, download it's certificate and convert into PEM format
     ISSUER_URI=$(openssl x509 -in ${DIR}/${CERT} -text -noout | grep 'CA Issuers' | cut -d: -f2,3)
     ISSUER_NAME=letsencrypt
+    if [ -z "$ISSUER_URI" ]; then
+        exit 1
+    fi
+
     wget -q -O- "$ISSUER_URI" | openssl x509 -inform DER -outform PEM -out ${DIR}/${ISSUER_NAME}.pem
 
     # Get the OCSP URL from the certificate
@@ -26,7 +33,7 @@ create_ocsp () {
 
     # Create/update the ocsp response file and update HAProxy
     openssl ocsp -noverify -no_nonce -issuer ${DIR}/${ISSUER_NAME}.pem -cert ${DIR}/${CERT} -url "$ocsp_url" -header Host="$ocsp_host" -respout ${DIR}/${CERT}.ocsp
-    [ $? -eq 0 ] && [ "$(pidof haproxy)" ] && [ -s ${DIR}/${CERT}.ocsp ] && echo "set ssl ocsp-response $(base64 ${DIR}/${CERT}.ocsp)" | socat $RUNTIME_API stdio
+    [ $? -eq 0 ] && [ "$(pidof haproxy)" ] && [ -s ${DIR}/${CERT}.ocsp ] && echo "set ssl ocsp-response $(base64 -w 0 ${DIR}/${CERT}.ocsp)" | socat $RUNTIME_API stdio
 }
 
 create_ocsp $CERT
