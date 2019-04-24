@@ -41,17 +41,17 @@ services:
       # Issue Certificates
       #### Remember to remove '--staging' in production! ####
 
-      acme.sh
-      --issue
-      --dns dns_cf
-      --dnssleep 60
-      --domain '*.seby.io'
-      --keylength 4096
-      --fullchain-file /opt/ssl/fullchain.pem
-      --key-file /opt/ssl/key.pem
-      --ca-file /opt/ssl/ca.pem
-      --cert-file /opt/ssl/cert.pem
-      --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
+      # acme.sh
+      # --issue
+      # --dns dns_cf
+      # --dnssleep 60
+      # --domain '*.seby.io'
+      # --keylength 4096
+      # --fullchain-file /opt/ssl/fullchain.pem
+      # --key-file /opt/ssl/key.pem
+      # --ca-file /opt/ssl/ca.pem
+      # --cert-file /opt/ssl/cert.pem
+      # --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
 
       acme.sh
       --issue
