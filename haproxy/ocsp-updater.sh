@@ -20,7 +20,7 @@ create_ocsp () {
     ISSUER_URI=$(openssl x509 -in ${DIR}/${CERT} -text -noout | grep 'CA Issuers' | cut -d: -f2,3)
     ISSUER_NAME=letsencrypt
     if [ -z "$ISSUER_URI" ]; then
-        exit 1
+        return
     fi
 
     wget -q -O- "$ISSUER_URI" | openssl x509 -inform DER -outform PEM -out ${DIR}/${ISSUER_NAME}.pem
