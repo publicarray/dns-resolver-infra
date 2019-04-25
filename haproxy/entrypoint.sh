@@ -29,6 +29,8 @@ UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
 
+openssl dhparam -out /opt/ssl/dhparam.pem 4096
+
 while getopts "h?dr" opt; do
     case "$opt" in
         h|\?)
