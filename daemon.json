@@ -1,0 +1,9 @@
+{
+    "userns-remap": "dockerremap",
+    "experimental": false,
+    "live-restore": false,
+    "ipv6": false,
+    "icc": false,
+    "no-new-privileges": true,
+    "storage-driver": "overlay2"
+}
