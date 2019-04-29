@@ -62,7 +62,6 @@ RUN set -x && \
     useradd -g _dnscrypt-signer -s /dev/null -d /dev/null _dnscrypt-signer && \
     chown -R _dnscrypt-wrapper:_dnscrypt-wrapper /opt/dnscrypt
 
-COPY dnscrypt-auto.sh /usr/local/sbin/dnscript-auto
 COPY entrypoint.sh /
 
 COPY dnscrypt-wrapper.sh /etc/service/dnscrypt-wrapper/run
