@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "dockerfile_lint": "^0.3.2",
+    "dockerfile_lint": "^0.3.3",
     "dockerlint": "^0.3.9"
   }
 }
