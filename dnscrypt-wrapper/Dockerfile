@@ -8,8 +8,8 @@ ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev libexecinf
 
 RUN apk add --no-cache $DNSCRYPT_BUILD_DEPS
 
-ARG LIBSODIUM_VERSION=1.0.17
-ARG LIBSODIUM_SHA256=0cc3dae33e642cc187b5ceb467e0ad0e1b51dcba577de1190e9ffa17766ac2b1
+ARG LIBSODIUM_VERSION=1.0.18
+ARG LIBSODIUM_SHA256=6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1
 ARG LIBSODIUM_DOWNLOAD_URL=https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz
 
 RUN set -x && \
