@@ -5,8 +5,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.9.1
-ARG UNBOUND_SHA256=c3c0bf9b86ccba4ca64f93dd4fe7351308ab54293f297a67de5a8914c1dc59c5
+ARG UNBOUND_VERSION=1.9.2
+ARG UNBOUND_SHA256=6f7acec5cf451277fcda31729886ae7dd62537c4f506855603e3aa153fcb6b95
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -30,9 +30,9 @@ FROM alpine:3.9
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2789
-ARG LIBUNBOUND_VERSION_MAJOR=8
+ARG LIBUNBOUND_CURRENT=9
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_VERSION_MAJOR}.1.1
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.2.1
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -46,7 +46,7 @@ COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_VERSION_MAJOR} && \
+    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_CURRENT} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
     groupadd _unbound && \
