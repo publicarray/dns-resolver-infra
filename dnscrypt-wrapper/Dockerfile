@@ -33,14 +33,15 @@ RUN set -x && \
     make configure && \
     ./configure CFLAGS="-Ofast -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
     LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
-    make install
+    make install && \
+    ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.9
 ENV DNSCYPT_RUN_DEPS libevent libexecinfo runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 ARG SODIUM_LIB_VERSION_MAJOR=23
-ARG SODIUM_LIB_VERSION=23.2.0
+ARG SODIUM_LIB_VERSION=23.3.0
 
 COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
 COPY --from=0 /usr/local/lib/libsodium.a /usr/local/lib/libsodium.a

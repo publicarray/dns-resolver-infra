@@ -45,7 +45,7 @@ COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-cont
 COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
 
 RUN set -x && \
-    cd /usr/local/lib/ && ls && \
+    cd /usr/local/lib/ && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_CURRENT} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
