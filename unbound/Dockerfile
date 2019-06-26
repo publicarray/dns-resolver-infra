@@ -30,9 +30,9 @@ FROM alpine:3.9
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2789
-ARG LIBUNBOUND_CURRENT=9
+ARG LIBUNBOUND_CURRENT=8
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.2.1
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.2
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -45,7 +45,7 @@ COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-cont
 COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
 
 RUN set -x && \
-    cd /usr/local/lib/ && \
+    cd /usr/local/lib/ && ls \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_CURRENT} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
