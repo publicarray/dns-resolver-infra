@@ -45,7 +45,7 @@ COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-cont
 COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
 
 RUN set -x && \
-    cd /usr/local/lib/ && ls \
+    cd /usr/local/lib/ && ls && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_CURRENT} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
@@ -64,10 +64,11 @@ COPY entrypoint.sh /
 
 EXPOSE 53/udp 53/tcp
 EXPOSE 4949/tcp
+EXPOSE 853/tcp
 
 RUN unbound -h || true
 
-HEALTHCHECK --start-period=1m \
+HEALTHCHECK --start-period=1m --interval=2m \
 CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
 
 ENTRYPOINT ["/entrypoint.sh"]

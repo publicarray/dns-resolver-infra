@@ -48,7 +48,7 @@ COPY --from=0 /usr/local/lib/libsodium.la /usr/local/lib/libsodium.la
 COPY --from=0 /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION
 
 RUN set -x && \
-    cd /usr/local/lib/ && \
+    cd /usr/local/lib/ && ls && \
     ln -sf libsodium.so.$SODIUM_LIB_VERSION libsodium.so.$SODIUM_LIB_VERSION_MAJOR && \
     ln -sf libsodium.so.$SODIUM_LIB_VERSION libsodium.so && \
     cd && \
