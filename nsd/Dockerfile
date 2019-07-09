@@ -7,8 +7,8 @@ ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
-ARG NSD_VERSION=4.2.0
-ARG NSD_SHA256=51df1ca44a00e588c09ff0696e588c13566ce889b50d953896d8b6e507eda74c
+ARG NSD_VERSION=4.2.1
+ARG NSD_SHA256=d17c0ea3968cb0eb2be79f2f83eb299b7bfcc554b784007616eed6ece828871f
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
 RUN set -x && \
@@ -54,7 +54,7 @@ EXPOSE 53/udp 53/tcp
 
 RUN nsd -v
 
-HEALTHCHECK --start-period=5s \
+HEALTHCHECK --start-period=5s --interval=2m \
 CMD ["drill", "-Q", "dns.opennic.glue", "@127.0.0.1", "SOA"]
 
 CMD ["-d"]
