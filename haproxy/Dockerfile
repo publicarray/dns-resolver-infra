@@ -10,8 +10,8 @@ RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_MAJOR 2
-ENV HAPROXY_VERSION 2.0.0
-ENV HAPROXY_SHA256 fe0a0d69e1091066a91b8d39199c19af8748e0e872961c6fc43c91ec7a28ff20
+ENV HAPROXY_VERSION 2.0.2
+ENV HAPROXY_SHA256 92cdc40d57557e902d32554e29c9132b4dabd61ce03ae7a3559167163f60d7f4
 RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
