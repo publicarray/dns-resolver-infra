@@ -9,11 +9,10 @@ RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
-ENV HAPROXY_MAJOR 2.0
+ENV HAPROXY_VERSION_SHORT 2.0
 ENV HAPROXY_VERSION 2.0.3
 ENV HAPROXY_SHA256 aac1ff3e5079997985b6560f46bf265447d0cd841f11c4d77f15942c9fe4b770
-RUN export HAPROXY_MAJOR=$(echo ${HAPROXY_VERSION} | awk -F \. '{print $1"."$2}')
-ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_MAJOR}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
+ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
     mkdir -p /tmp/src && \
@@ -22,7 +21,7 @@ RUN set -x && \
     echo "${HAPROXY_SHA256} *haproxy.tar.gz" | sha256sum -c - && \
     tar xzf haproxy.tar.gz && \
     cd haproxy-${HAPROXY_VERSION} && \
-    make TARGET=linux2628 USE_OPENSSL=1 USE_STATIC_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 && \
+    make TARGET=linux-glibc USE_OPENSSL=1 USE_STATIC_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 && \
     make install-bin
 
 #------------------------------------------------------------------------------#
@@ -57,7 +56,7 @@ RUN haproxy -v
 # Gracefully exit
 # All services are then put into soft-stop state,
 # which means that they will refuse to accept new connections
-# STOPSIGNAL SIGUSR1
+STOPSIGNAL SIGUSR1
 
 # HEALTHCHECK --start-period=5s --interval=3m \
 # CMD curl -f -H 'accept: application/dns-message' -k 'https://127.0.0.1/dns-query?ct&dns=AAABAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB'>/dev/null || exit 1
