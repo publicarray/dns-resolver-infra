@@ -29,7 +29,6 @@ action "Action for unbound Docker" {
   uses = "actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699"
   needs = ["Docker Registry", "unbound filter"]
   args = "docker build -t publicarray/unbound unbound && docker push publicarray/unbound"
-  secrets = ["DOCKER_PASSWORD", "DOCKER_USERNAME"]
 }
 
 action "haproxy filter" {
@@ -41,7 +40,6 @@ action "Action for haproxy Docker" {
   uses = "actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699"
   needs = ["Docker Registry", "haproxy filter"]
   args = "docker build -t publicarray/haproxy haproxy && docker push publicarray/haproxy"
-  secrets = ["DOCKER_PASSWORD", "DOCKER_USERNAME"]
 }
 
 action "dnscrypt-wrapper filter" {
@@ -53,7 +51,6 @@ action "Action for dnscrypt-wrapper Docker" {
   uses = "actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699"
   needs = ["Docker Registry", "dnscrypt-wrapper filter"]
   args = "docker build -t publicarray/dnscrypt-wrapper dnscrypt-wrapper && docker push publicarray/dnscrypt-wrapper"
-  secrets = ["DOCKER_PASSWORD", "DOCKER_USERNAME"]
 }
 
 action "m13253-doh filter" {
@@ -65,5 +62,4 @@ action "Action for m13253-doh Docker" {
   uses = "actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699"
   needs = ["Docker Registry", "m13253-doh filter"]
   args = "docker build -t publicarray/m13253-doh m13253-doh && docker push publicarray/m13253-doh"
-  secrets = ["DOCKER_PASSWORD", "DOCKER_USERNAME"]
 }
