@@ -70,7 +70,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        max_attempts: 4
+        max_attempts: 20
     secrets:
       - CF_Email
       - CF_Key
@@ -85,7 +85,7 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-        max_attempts: 4
+        max_attempts: 20
     secrets:
       - CF_Email
       - CF_Key
@@ -102,7 +102,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
-        max_attempts: 4
+        max_attempts: 20
     volumes:
       - nsd:/etc/nsd/run
     networks:
@@ -173,7 +173,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
-        max_attempts: 4
+        max_attempts: 20
     ports:
       - target: 443
         published: 443
@@ -205,7 +205,7 @@ services:
       restart_policy:
         condition: any
         delay: 5s
-        max_attempts: 4
+        max_attempts: 20
     ports:
       - target: 443
         published: 8443
