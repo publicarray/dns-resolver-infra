@@ -4,7 +4,7 @@ LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedi
 ENV REVISION 1
 
 ENV DOH_BUILD_DEPS rust cargo make
-ENV VERSION 0.1.17
+ENV VERSION 0.1.19
 
 RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 RUN apk add --no-cache $DOH_BUILD_DEPS
@@ -36,7 +36,7 @@ EXPOSE 3000/udp 3000/tcp
 
 RUN doh-proxy --version
 
-HEALTHCHECK --start-period=5s --interval=60s \
-CMD curl -H 'accept: application/dns-message' 'http://127.0.0.1:3000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
+HEALTHCHECK --start-period=5s --interval=2m \
+CMD curl -f -H 'accept: application/dns-message' 'http://127.0.0.1:3000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
