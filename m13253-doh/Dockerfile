@@ -4,8 +4,8 @@ LABEL description "High performance DNS over HTTPS server in golang. https://git
 ENV REVISION 1
 
 ENV DOH_BUILD_DEPS git make
-ENV VERSION 2.1.0
-ENV COMMIT 1ec9548ff1e9075fb3a93c517b472c1ef17e8ce6
+ENV VERSION 2.1.2
+ENV COMMIT 9b8fab691c00b9e5380b19ce882f3271
 
 RUN apk add --no-cache $DOH_BUILD_DEPS
 
