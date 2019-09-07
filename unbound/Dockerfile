@@ -1,5 +1,5 @@
 FROM alpine:3.10 as unbound-build
-ENV REVISION 1
+ENV REVISION 2
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 

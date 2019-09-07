@@ -2,7 +2,7 @@ FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL name "dnscrypt-wrapper"
 LABEL description "https://github.com/jedisct1/dnscrypt-wrapper"
-ENV REVISION 2
+ENV REVISION 3
 
 ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev libexecinfo make gcc git musl-dev tar wget
 

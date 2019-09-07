@@ -1,7 +1,7 @@
 FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL description "NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
-ENV REVISION 1
+ENV REVISION 2
 
 ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
 
