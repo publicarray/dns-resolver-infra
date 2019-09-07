@@ -1,7 +1,7 @@
 FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
-ENV REVISION 3
+ENV REVISION 2
 
 ENV HAPROXY_BUILD_DEPS gcc linux-headers make openssl-dev musl-dev pcre-dev tar zlib-dev
 

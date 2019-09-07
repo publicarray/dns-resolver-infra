@@ -13,6 +13,7 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - uses: actions/checkout@v1
       - name: Action for m13253-doh Docker
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
