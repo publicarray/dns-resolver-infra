@@ -16,4 +16,4 @@ jobs:
       - name: Action for haproxy Docker
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
-          args: docker build -t publicarray/haproxy haproxy && docker push publicarray/haproxy
+          args: build -t publicarray/haproxy haproxy && docker push publicarray/haproxy

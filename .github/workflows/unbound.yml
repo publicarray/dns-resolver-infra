@@ -16,4 +16,4 @@ jobs:
       - name: Action for unbound Docker
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
-          args: docker build -t publicarray/unbound unbound && docker push publicarray/unbound
+          args: build -t publicarray/unbound unbound && docker push publicarray/unbound

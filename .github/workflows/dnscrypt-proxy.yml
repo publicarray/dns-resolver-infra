@@ -16,4 +16,4 @@ jobs:
       - name: Action for dnscrypt-proxy Docker
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
-          args: docker build -t publicarray/dnscrypt-proxy dnscrypt-proxy && docker push publicarray/dnscrypt-proxy
+          args: build -t publicarray/dnscrypt-proxy dnscrypt-proxy && docker push publicarray/dnscrypt-proxy
