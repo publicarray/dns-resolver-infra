@@ -1,0 +1,19 @@
+name: nsd Workflow
+on:
+  push:
+    paths:
+      - 'nsd/*'
+jobs:
+  build:
+    name: Build & Push nsd Container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker Registry
+        uses: actions/docker/login@86ff551d26008267bb89ac11198ba7f1d807b699
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: Action for dnscrypt-proxy Docker
+        uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
+        with:
+          args: docker build -t publicarray/nsd nsd && docker push publicarray/nsd
