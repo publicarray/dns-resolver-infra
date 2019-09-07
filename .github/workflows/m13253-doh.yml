@@ -1,4 +1,4 @@
-name: m13253-doh Workflow
+name: m13253-doh
 on:
   push:
     paths:

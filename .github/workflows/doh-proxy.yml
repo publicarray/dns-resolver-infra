@@ -1,4 +1,4 @@
-name: doh-proxy Workflow
+name: doh-proxy
 on:
   push:
     paths:

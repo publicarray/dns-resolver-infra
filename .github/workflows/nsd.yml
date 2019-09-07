@@ -1,4 +1,4 @@
-name: nsd Workflow
+name: nsd
 on:
   push:
     paths:

@@ -1,4 +1,4 @@
-name: dnscrypt-wrapper Workflow
+name: dnscrypt-wrapper
 on:
   push:
     paths:

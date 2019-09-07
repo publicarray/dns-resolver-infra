@@ -1,4 +1,4 @@
-name: haproxy Workflow
+name: haproxy
 on:
   push:
     paths:
