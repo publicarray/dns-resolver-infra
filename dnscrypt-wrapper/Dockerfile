@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL name "dnscrypt-wrapper"
 LABEL description "https://github.com/jedisct1/dnscrypt-wrapper"
@@ -37,7 +37,7 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.9
+FROM alpine:3.10
 ENV DNSCYPT_RUN_DEPS libevent libexecinfo runit shadow findutils drill
 RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 ARG SODIUM_LIB_VERSION_MAJOR=23
