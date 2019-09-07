@@ -5,7 +5,6 @@ ENV REVISION 2
 
 ENV DOH_BUILD_DEPS git make
 ENV VERSION 2.1.2
-ENV COMMIT 9b8fab691c00b9e5380b19ce882f3271
 
 RUN apk add --no-cache $DOH_BUILD_DEPS
 
@@ -14,10 +13,9 @@ RUN set -x && \
     export GOPATH=~/gopath && \
     git clone https://github.com/m13253/dns-over-https.git && \
     cd dns-over-https && \
-    git checkout ${COMMIT} && \
+    git checkout tags/v${VERSION} && \
     make && \
     make install
-# git checkout tags/v${VERSION} && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.10
 
