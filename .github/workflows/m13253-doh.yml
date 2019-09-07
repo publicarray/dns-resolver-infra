@@ -8,13 +8,13 @@ jobs:
     name: Build & Push m13253-doh Container
     runs-on: ubuntu-latest
     steps:
-      - name: Docker Registry
+      - name: Login to Docker Registry
         uses: actions/docker/login@86ff551d26008267bb89ac11198ba7f1d807b699
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       - uses: actions/checkout@v1
-      - name: Action for m13253-doh Docker
+      - name: Docker build & push
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
           args: build -t publicarray/m13253-doh m13253-doh && docker push publicarray/m13253-doh

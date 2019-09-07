@@ -1,11 +1,11 @@
-name: haproxy Workflow
+name: doh-proxy Workflow
 on:
   push:
     paths:
-      - 'haproxy/*'
+      - 'doh-proxy/*'
 jobs:
   build:
-    name: Build & Push haproxy Container
+    name: Build & Push doh-proxy Container
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Registry
@@ -17,4 +17,4 @@ jobs:
       - name: Docker build & push
         uses: actions/docker/cli@86ff551d26008267bb89ac11198ba7f1d807b699
         with:
-          args: build -t publicarray/haproxy haproxy && docker push publicarray/haproxy
+          args: build -t publicarray/doh-proxy doh-proxy && docker push publicarray/doh-proxy
