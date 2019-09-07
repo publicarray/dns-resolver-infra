@@ -6,6 +6,13 @@
 
 ## Infrastructure Overview
 
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/dnscrypt-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/doh-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/haproxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/m13253-doh/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/nsd/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/unbound/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+
 <br>
 <p align="center">
     <img src="dns-infra.png" alt="Infrastructure" style="max-width:100%;" width="900">
