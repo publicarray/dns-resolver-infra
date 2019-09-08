@@ -53,6 +53,7 @@ VOLUME ["/etc/nsd/run"]
 EXPOSE 53/udp 53/tcp
 
 RUN nsd -v
+RUN nsd-checkconf /etc/nsd/nsd.conf
 
 HEALTHCHECK --start-period=5s --interval=2m \
 CMD ["drill", "-Q", "dns.opennic.glue", "@127.0.0.1", "SOA"]
