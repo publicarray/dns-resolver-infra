@@ -51,7 +51,8 @@ VOLUME ["/opt/ssl"]
 
 EXPOSE 853/udp 853/tcp 443/udp 443/tcp
 
-RUN haproxy -v
+RUN haproxy -vv
+RUN haproxy -f /etc/haproxy.conf -c
 
 # Gracefully exit
 # All services are then put into soft-stop state,
