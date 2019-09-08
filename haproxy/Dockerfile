@@ -46,6 +46,8 @@ COPY entrypoint.sh /
 COPY haproxy.conf /etc/haproxy.conf
 COPY haproxy.sh /etc/service/haproxy/run
 COPY ocsp-updater.sh /etc/service/ocsp-updater/run
+# wget https://ssl-config.mozilla.org/ffdhe2048.txt -O /opt/ssl/dhparam.pem
+COPY ffdhe2048.txt /opt/ssl/dhparam.pem
 
 VOLUME ["/opt/ssl"]
 
