@@ -67,6 +67,7 @@ EXPOSE 4949/tcp
 EXPOSE 853/tcp
 
 RUN unbound -h || true
+RUN unbound-checkconf /etc/unbound/unbound.conf
 
 HEALTHCHECK --start-period=1m --interval=2m \
 CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
