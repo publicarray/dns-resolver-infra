@@ -12,7 +12,7 @@ jobs:
       - run: docker build -t publicarray/m13253-doh m13253-doh
       - uses: azure/container-actions/docker-login@master
         with:
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          username: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_USERNAME }}
       - run: docker push publicarray/m13253-doh
       - uses: azure/container-actions/docker-logout@master
