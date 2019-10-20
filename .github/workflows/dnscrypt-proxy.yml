@@ -9,11 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Login, Build and Push to Docker Registry
+      - run: docker build -t publicarray/dnscrypt-wrapper dnscrypt-wrapper
       - uses: azure/container-actions/docker-login@master
-          with:
-            username: ${{ secrets.REGISTRY_USERNAME }}
-            password: ${{ secrets.REGISTRY_PASSWORD }}
-          - run: |
-              docker build -t publicarray/dnscrypt-wrapper dnscrypt-wrapper
-              docker push publicarray/dnscrypt-wrapper
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - run: docker push publicarray/dnscrypt-wrapper
+      - uses: azure/container-actions/docker-securelogout@master

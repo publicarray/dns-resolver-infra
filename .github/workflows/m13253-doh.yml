@@ -9,11 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Login, Build and Push to Docker Registry
+      - run: docker build -t publicarray/m13253-doh m13253-doh
       - uses: azure/container-actions/docker-login@master
-          with:
-            username: ${{ secrets.REGISTRY_USERNAME }}
-            password: ${{ secrets.REGISTRY_PASSWORD }}
-          - run: |
-              docker build -t publicarray/m13253-doh m13253-doh
-              docker push publicarray/m13253-doh
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - run: docker push publicarray/m13253-doh
+      - uses: azure/container-actions/docker-securelogout@master
