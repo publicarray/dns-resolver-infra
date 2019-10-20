@@ -189,17 +189,18 @@ services:
       - haproxy-net
       - unbound-net
 
-  dnscrypt-wrapper:
+  dnscrypt-server:
     depends_on:
       - unbound
-    image: publicarray/dnscrypt-wrapper
+    image: publicarray/dnscrypt-server
     command:
       - init
-      - -d
+      - -d unbound
       - -N
       - dns.seby.io
       - -E
       - 149.28.165.94:8443
+      - -A
     deploy:
       replicas: 1
       restart_policy:
@@ -216,7 +217,7 @@ services:
         protocol: udp
         mode: ingress
     volumes:
-       - dnscrypt:/opt/dnscrypt
+       - dnscrypt:/opt/encrypted-dns
     networks:
       - dnscrypt-net
       - unbound-net
