@@ -15,4 +15,4 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - run: docker push publicarray/doh-proxy
-      - uses: azure/container-actions/docker-securelogout@master
+      - uses: azure/container-actions/docker-logout@master
