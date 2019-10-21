@@ -193,7 +193,11 @@ start() {
     /usr/local/bin/encrypted-dns \
         --config "$CONFIG_FILE" --dry-run |
         tee "${KEYS_DIR}/provider-info.txt"
-    exec /etc/runit/2 </dev/null >/dev/null 2>/dev/null
+
+    if [ ! -f "${KEYS_DIR}/provider_name" ]; then
+        exit 1
+    fi
+    exec /usr/local/bin/encrypted-dns --config "$CONFIG_FILE"
 }
 
 shell() {
