@@ -200,7 +200,7 @@ services:
       - -N
       - dns.seby.io
       - -E
-      - 149.28.165.94:8443
+      - 139.99.222.72:8443
       - -A
     deploy:
       replicas: 1
