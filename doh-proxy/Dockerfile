@@ -1,29 +1,21 @@
-FROM alpine:3.10
-LABEL maintainer "publicarray"
-LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
-ENV REVISION 2
-
-ENV DOH_BUILD_DEPS rust cargo make
-ENV VERSION 0.1.19
-
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
-RUN apk add --no-cache $DOH_BUILD_DEPS
-RUN cargo install doh-proxy --version $VERSION --root /usr/local/
-# RUN set -x && \
-#     cd /tmp && \
-#     git clone https://github.com/jedisct1/rust-doh && \
-#     cd rust-doh && \
-#     cargo build --release && \
-#     cp target/release/doh-proxy /usr/local/bin/doh-proxy
+FROM rustlang/rust:nightly-alpine AS doh-proxy-build
+ENV REVISION 0
+ENV VERSION 0.1.21
+SHELL ["/bin/sh", "-x", "-c"]
+ENV RUSTFLAGS "-C link-arg=-s"
+RUN cargo install doh-proxy --version $VERSION && \
+    strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.10
+LABEL maintainer "publicarray"
+LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
 ENV DOH_RUN_DEPS libgcc runit shadow curl
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 
-COPY --from=0 /usr/local/bin/doh-proxy /usr/local/bin/doh-proxy
+COPY --from=doh-proxy-build /usr/local/cargo/bin/doh-proxy /usr/local/bin/doh-proxy
 
 RUN set -x && \
     groupadd _doh_proxy && \
