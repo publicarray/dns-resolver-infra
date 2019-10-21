@@ -1,6 +1,7 @@
 version: '3.2'
 volumes:
     dnscrypt:
+    dnscrypt-server:
     ssl:
     nsd:
     acme-sh:
@@ -217,7 +218,8 @@ services:
         protocol: udp
         mode: ingress
     volumes:
-       - dnscrypt:/opt/encrypted-dns
+       - dnscrypt:/opt/dnscrypt-wrapper
+       - dnscrypt-server:/opt/encrypted-dns
     networks:
       - dnscrypt-net
       - unbound-net
