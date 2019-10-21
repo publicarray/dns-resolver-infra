@@ -20,10 +20,7 @@ RUN update-ca-certificates 2> /dev/null || true
 
 COPY --from=encrypted-dns-build /usr/local/cargo/bin/encrypted-dns /usr/local/bin/encrypted-dns
 
-RUN mkdir -p /opt/encrypted-dns/empty \
-        /etc/service/watchdog \
-        /etc/service/key-rotation \
-        /etc/service/dnscrypt-wrapper && \
+RUN mkdir -p /opt/encrypted-dns/empty && \
     groupadd _encrypted-dns && \
     useradd -g _encrypted-dns -s /etc -d /opt/encrypted-dns/empty _encrypted-dns && \
     mkdir -m 700 -p /opt/encrypted-dns/etc/keys && \
