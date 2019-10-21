@@ -204,6 +204,10 @@ shell() {
     exec /bin/bash
 }
 
+bin() {
+    exec /usr/local/bin/encrypted-dns "$@"
+}
+
 usage() {
     cat <<EOT
 Commands
@@ -227,6 +231,8 @@ Ports 443/udp and 443/tcp have to be publicly exposed.
 
 * shell: run a shell.
 
+* bin: run the binary with custom arguments
+
 This container has a single volume that you might want to securely keep a
 backup of: /opt/encrypted-dns/etc/keys
 EOT
@@ -241,5 +247,6 @@ init)
     ;;
 provider-info) provider_info ;;
 shell) shell ;;
+bin) bin "$@";;
 *) usage ;;
 esac
