@@ -49,12 +49,12 @@ init() {
 
     while getopts "h?N:E:d:T:A" opt; do
         case "$opt" in
-        h | \?) usage ;;
-        N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
-        E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
-        d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)");;
-        T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
-        A) anondns_enabled="true" ;;
+            h | \?) usage ;;
+            N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
+            E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
+            d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)" unbound) ;;
+            T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
+            A) anondns_enabled="true" ;;
         esac
     done
     [ -z "$provider_name" ] && usage
