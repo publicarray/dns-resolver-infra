@@ -8,4 +8,4 @@ if [ ! -f "$KEYS_DIR/provider_name" ]; then
     exit 1
 fi
 
-exec /opt/encrypted-dns/sbin/encrypted-dns --config "$CONFIG_FILE"
+exec /usr/local/bin/encrypted-dns --config "$CONFIG_FILE"
