@@ -16,7 +16,7 @@ CONFIG_FILE_TEMPLATE="${CONF_DIR}/encrypted-dns.toml.in"
 
 getServiceIP() {
     for arg; do
-        nslookup "$arg" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+        dig "$arg" +short
     done
 }
 waitOrFail() {
@@ -52,7 +52,7 @@ init() {
             h | \?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
-            d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)" unbound) ;;
+            d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
             T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             A) anondns_enabled="true" ;;
         esac

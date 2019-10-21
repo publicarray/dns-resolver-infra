@@ -12,7 +12,7 @@ LABEL name "dnscrypt-server"
 LABEL description "https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
 SHELL ["/bin/sh", "-x", "-c"]
 WORKDIR /tmp
-ENV RUN_DEPS bash runit runit-helper coreutils findutils grep ca-certificates libevent-2.1 libssl1.1 expat
+ENV RUN_DEPS bash dnsutils runit runit-helper coreutils findutils grep ca-certificates libevent-2.1 libssl1.1 expat
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends $RUN_DEPS && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
