@@ -14,26 +14,28 @@ CONF_DIR="/opt/encrypted-dns/etc"
 CONFIG_FILE="${CONF_DIR}/encrypted-dns.toml"
 CONFIG_FILE_TEMPLATE="${CONF_DIR}/encrypted-dns.toml.in"
 
-getServiceIP () {
-    nslookup "$1" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+getServiceIP() {
+    for arg; do
+        nslookup "$arg" 2>/dev/null | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+    done
 }
-
-waitOrFail () {
+waitOrFail() {
     maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
         outStr="$($@)"
-        if [ $? -eq 0 ];then
+        if [ $? -eq 0 ]; then
             echo "$outStr"
             return
         fi
-        i=$((i+1))
+        i=$((i + 1))
         echo "==> waiting for a dependent service $i/$maxTries" >&2
         sleep 5
     done
     echo "Too many failed attempts" >&2
     exit 1
 }
+
 # -N provider-name -E external-ip-address:port -d dns-name
 init() {
     if [ "$(is_initialized)" = yes ]; then
