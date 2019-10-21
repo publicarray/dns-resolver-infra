@@ -1,8 +1,9 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
 ENV REVISION 0
+ENV VERSION 0.3.7
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
-RUN cargo install encrypted-dns && \
+RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
