@@ -3,7 +3,8 @@ ENV REVISION 0
 ENV VERSION 0.1.21
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
-RUN cargo install doh-proxy --version $VERSION && \
+RUN apk add --no-cache jemalloc jemalloc-dev && \
+    cargo install doh-proxy --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
@@ -11,7 +12,7 @@ FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
-ENV DOH_RUN_DEPS libgcc runit shadow curl
+ENV DOH_RUN_DEPS libgcc runit shadow curl jemalloc
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 
