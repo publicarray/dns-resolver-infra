@@ -36,7 +36,6 @@ waitOrFail() {
     exit 1
 }
 
-# -N provider-name -E external-ip-address:port -d dns-name
 init() {
     if [ "$(is_initialized)" = yes ]; then
         start
@@ -46,8 +45,9 @@ init() {
     anondns_enabled="false"
     anondns_blacklisted_ips=""
     upstream_address="127.0.0.1"
+    metrics_address="127.0.0.1:9100"
 
-    while getopts "h?N:E:d:T:A" opt; do
+    while getopts "h?N:E:d:T:AM:" opt; do
         case "$opt" in
             h | \?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
@@ -55,6 +55,7 @@ init() {
             d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
             T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             A) anondns_enabled="true" ;;
+            M) metrics_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
         esac
     done
     [ -z "$provider_name" ] && usage
@@ -97,6 +98,7 @@ init() {
         -e "s#@DOMAIN_BLACKLIST_CONFIGURATION@#${domain_blacklist_configuration}#" \
         -e "s#@ANONDNS_ENABLED@#${anondns_enabled}#" \
         -e "s#@ANONDNS_BLACKLISTED_IPS@#${anondns_blacklisted_ips}#" \
+        -e "s#@METRICS_ADDRESS@#${metrics_address}#" \
         "$CONFIG_FILE_TEMPLATE" >"$CONFIG_FILE"
 
     mkdir -p -m 700 "${STATE_DIR}"
