@@ -6,13 +6,13 @@
 
 ## Infrastructure Overview
 
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/dnscrypt-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/dnscrypt-server/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/doh-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/haproxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/m13253-doh/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/nsd/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
-[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/unbound/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/dnscrypt-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=dnscrypt-proxy)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/dnscrypt-server/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=dnscrypt-server)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/doh-proxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=doh-proxy)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/haproxy/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=haproxy)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/m13253-doh/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=m13253-doh)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/nsd/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=nsd)
+[![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/unbound/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions?workflow=unbound)
 
 <br>
 <!-- <p align="center">
