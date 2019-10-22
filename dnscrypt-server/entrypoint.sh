@@ -205,6 +205,7 @@ shell() {
 }
 
 bin() {
+    shift
     exec /usr/local/bin/encrypted-dns "$@"
 }
 
