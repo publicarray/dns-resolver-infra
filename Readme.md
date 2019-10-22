@@ -15,9 +15,9 @@
 [![Actions Status](https://github.com/publicarray/dns-resolver-infra/workflows/unbound/badge.svg)](https://github.com/publicarray/dns-resolver-infra/actions)
 
 <br>
-<p align="center">
+<!-- <p align="center">
     <img src="dns-infra.png" alt="Infrastructure" style="max-width:100%;" width="900">
-</p>
+</p> -->
 
 * [acme.sh](https://github.com/Neilpang/acme.sh) (TLS certificate generation for haproxy)
 * [nsd](https://www.nlnetlabs.nl/projects/nsd/) ([OpenNIC](https://www.opennic.org/)) [![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/nsd.svg?maxAge=86400)](https://hub.docker.com/r/publicarray/nsd/) [![MicroBadger Size](https://images.microbadger.com/badges/image/publicarray/nsd.svg)](https://microbadger.com/images/publicarray/nsd)
