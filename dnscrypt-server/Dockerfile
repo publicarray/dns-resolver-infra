@@ -7,7 +7,7 @@ RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
-FROM debian:buster-slim
+FROM ubuntu:19.04
 LABEL maintainer "publicarray"
 LABEL name "dnscrypt-server"
 LABEL description "https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"

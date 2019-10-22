@@ -7,7 +7,7 @@ RUN cargo install doh-proxy --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM debian:buster-slim
+FROM ubuntu:19.04
 LABEL maintainer "publicarray"
 LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
