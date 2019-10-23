@@ -19,7 +19,8 @@ RUN apt-get update && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 RUN update-ca-certificates 2> /dev/null || true
 
-COPY --from=encrypted-dns-build /usr/local/cargo/bin/encrypted-dns /usr/local/bin/encrypted-dns
+COPY --from=encrypted-dns-build /usr/local/cargo/bin/encrypted-dns /opt/encrypted-dns/sbin/encrypted-dns
+ENV PATH="/opt/encrypted-dns/sbin/:${PATH}"
 
 RUN mkdir -p /opt/encrypted-dns/empty && \
     groupadd _encrypted-dns && \
@@ -38,7 +39,7 @@ VOLUME ["/opt/encrypted-dns/etc/keys"]
 
 EXPOSE 443/udp 443/tcp 9100/tcp
 
-RUN /usr/local/bin/encrypted-dns --version
+RUN /opt/encrypted-dns/sbin/encrypted-dns --version
 
 CMD ["/entrypoint.sh", "start"]
 

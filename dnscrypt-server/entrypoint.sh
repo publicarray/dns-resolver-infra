@@ -106,14 +106,14 @@ init() {
 
     if [ -f "${KEYS_DIR}/secret.key" ]; then
         echo "Importing the previous secret key [${KEYS_DIR}/secret.key]"
-        /usr/local/bin/encrypted-dns \
+        /opt/encrypted-dns/sbin/encrypted-dns \
             --config "$CONFIG_FILE" \
             --import-from-dnscrypt-wrapper "${KEYS_DIR}/secret.key" \
             --dry-run >/dev/null || exit 1
         mv -f "${KEYS_DIR}/secret.key" "${KEYS_DIR}/secret.key.migrated"
     fi
 
-    /usr/local/bin/encrypted-dns \
+    /opt/encrypted-dns/sbin/encrypted-dns \
         --config "$CONFIG_FILE" --dry-run |
         tee "${KEYS_DIR}/provider-info.txt"
 
@@ -184,20 +184,20 @@ start() {
     ensure_initialized
     if [ -f "${KEYS_DIR}/secret.key" ]; then
         echo "Importing the previous secret key [${KEYS_DIR}/secret.key]"
-        /usr/local/bin/encrypted-dns \
+        /opt/encrypted-dns/sbin/encrypted-dns \
             --config "$CONFIG_FILE" \
             --import-from-dnscrypt-wrapper "${KEYS_DIR}/secret.key" \
             --dry-run >/dev/null || exit 1
         mv -f "${KEYS_DIR}/secret.key" "${KEYS_DIR}/secret.key.migrated"
     fi
-    /usr/local/bin/encrypted-dns \
+    /opt/encrypted-dns/sbin/encrypted-dns \
         --config "$CONFIG_FILE" --dry-run |
         tee "${KEYS_DIR}/provider-info.txt"
 
     if [ ! -f "${KEYS_DIR}/provider_name" ]; then
         exit 1
     fi
-    exec /usr/local/bin/encrypted-dns --config "$CONFIG_FILE"
+    exec /opt/encrypted-dns/sbin/encrypted-dns --config "$CONFIG_FILE"
 }
 
 shell() {
@@ -206,7 +206,7 @@ shell() {
 
 bin() {
     shift
-    exec /usr/local/bin/encrypted-dns "$@"
+    exec /opt/encrypted-dns/sbin/encrypted-dns "$@"
 }
 
 usage() {
