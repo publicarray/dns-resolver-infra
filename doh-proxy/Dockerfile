@@ -3,7 +3,7 @@ ENV REVISION 0
 ENV VERSION 0.1.21
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
-RUN cargo install doh-proxy --version $VERSION && \
+RUN cargo install doh-proxy --features=tls --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
