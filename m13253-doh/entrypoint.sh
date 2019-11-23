@@ -35,7 +35,7 @@ shift $((OPTIND-1))
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 echo "==> Configuring doh"
 sed \
-    -e "s/\"127.0.0.1:53\"/\"${RESOLVER}\"/g" \
+    -e "s/\"udp:127.0.0.1:53\"/\"udp:${RESOLVER}\"/g" \
     -i  "/etc/dns-over-https/doh-server.conf"
 
 if [ $# -eq 0 ]; then
