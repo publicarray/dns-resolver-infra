@@ -27,7 +27,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.10
 
-ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc
+ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2789
 ARG LIBUNBOUND_CURRENT=8

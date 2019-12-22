@@ -7,7 +7,7 @@ RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:19.04
+FROM ubuntu:19.10
 LABEL maintainer "publicarray"
 LABEL name "dnscrypt-server"
 LABEL description "https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
@@ -33,6 +33,7 @@ RUN mkdir -p /opt/encrypted-dns/empty && \
     chown _encrypted-dns:_encrypted-dns /opt/dnscrypt-wrapper/etc/keys
 
 COPY encrypted-dns.toml.in /opt/encrypted-dns/etc/
+COPY undelegated.txt /opt/encrypted-dns/etc/
 COPY entrypoint.sh /
 
 VOLUME ["/opt/encrypted-dns/etc/keys"]
