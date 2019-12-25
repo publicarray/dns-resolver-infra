@@ -1,13 +1,13 @@
 FROM rustlang/rust:nightly AS doh-proxy-build
 ENV REVISION 0
-ENV VERSION 0.1.21
+ENV VERSION 0.2.1
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
 RUN cargo install doh-proxy --features=tls --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:19.04
+FROM ubuntu:19.10
 LABEL maintainer "publicarray"
 LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
