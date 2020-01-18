@@ -72,6 +72,11 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 20
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     secrets:
       - CF_Email
       - CF_Key
@@ -87,6 +92,11 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 20
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     secrets:
       - CF_Email
       - CF_Key
@@ -104,6 +114,11 @@ services:
         condition: any
         delay: 5s
         max_attempts: 20
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     volumes:
       - nsd:/etc/nsd/run
     networks:
@@ -124,6 +139,11 @@ services:
         condition: any
         delay: 5s
         max_attempts: 4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     ports:
       - target: 4949
         published: 4949
@@ -144,6 +164,11 @@ services:
       restart_policy:
         condition: any
         delay: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - unbound-net
 
