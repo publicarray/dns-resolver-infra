@@ -1,4 +1,4 @@
-FROM golang:alpine3.10 as doh-build
+FROM golang:alpine3.11 as doh-build
 LABEL maintainer "publicarray"
 LABEL description "High performance DNS over HTTPS server in golang. https://github.com/m13253/dns-over-https"
 ENV REVISION 2
@@ -17,7 +17,7 @@ RUN set -x && \
     make && \
     make install
 #------------------------------------------------------------------------------#
-FROM alpine:3.10
+FROM alpine:3.11
 
 ENV DOH_RUN_DEPS curl
 

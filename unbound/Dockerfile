@@ -1,4 +1,4 @@
-FROM alpine:3.10 as unbound-build
+FROM alpine:3.11 as unbound-build
 ENV REVISION 3
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
@@ -25,7 +25,7 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.10
+FROM alpine:3.11
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates
 
