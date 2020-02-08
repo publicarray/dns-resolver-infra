@@ -1,4 +1,4 @@
-version: '3.2'
+version: '3.4'
 volumes:
     dnscrypt:
     dnscrypt-server:
@@ -71,7 +71,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        max_attempts: 20
+        max_attempts: 2
     logging:
       driver: "json-file"
       options:
@@ -85,6 +85,7 @@ services:
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
   acme-daemon:
+    container_name: acme
     image: neilpang/acme.sh
     command: daemon
     deploy:
@@ -104,8 +105,17 @@ services:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
+       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain.pem"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
 
   nsd:
+    container_name: nsd
     build: nsd
     image: publicarray/nsd
     deploy:
@@ -125,6 +135,7 @@ services:
       - nsd-net
 
   unbound:
+    container_name: unbound
     depends_on:
       - nsd
     build: unbound
@@ -154,6 +165,7 @@ services:
       - unbound-net
 
   m13253-doh:
+    container_name: doh
     depends_on:
       - unbound
     build: m13253-doh
@@ -187,10 +199,13 @@ services:
   #     - unbound-net
 
   haproxy:
+    container_name: haproxy
     depends_on:
       - acme
       - doh-proxy
       - unbound
+    labels:
+      - sh.acme.autoload.domain=*.seby.io
     build: haproxy
     image: publicarray/haproxy
     command: -d -r
