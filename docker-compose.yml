@@ -111,7 +111,7 @@ services:
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
       - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
       - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
       - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
 
   nsd:
