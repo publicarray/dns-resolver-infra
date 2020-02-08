@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.10
 LABEL maintainer "publicarray"
 LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 4
@@ -25,7 +25,7 @@ RUN set -x && \
     make install-bin
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.11
+FROM alpine:3.10
 
 ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils
 
