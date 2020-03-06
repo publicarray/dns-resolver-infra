@@ -8,7 +8,7 @@ RUN apt-get update && \
 
 RUN rustup target add x86_64-unknown-linux-musl
 ENV RUSTFLAGS "-Clinker=musl-gcc -C link-arg=-s"
-RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-musl && \
+RUN cargo install doh-proxy --features=tls --version $VERSION --target=x86_64-unknown-linux-musl && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
