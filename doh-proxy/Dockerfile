@@ -1,4 +1,4 @@
-FROM rust:latest as cargo-build
+FROM rust:latest as doh-proxy-build
 
 ARG VERSION=0.2.1
 
