@@ -24,7 +24,7 @@ RUN set -x && \
     groupadd _doh_proxy && \
     useradd -g _doh_proxy -s /dev/null -d /dev/null _doh_proxy
 
-USER doh-proxy
+USER _doh_proxy
 
 COPY entrypoint.sh /
 
