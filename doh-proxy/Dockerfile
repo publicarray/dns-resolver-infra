@@ -1,6 +1,6 @@
 FROM rust:latest as doh-proxy-build
 
-ARG VERSION=0.2.1
+ARG VERSION=0.3.1
 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends musl-tools libssl-dev && \
