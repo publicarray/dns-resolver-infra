@@ -1,6 +1,6 @@
 FROM golang:alpine3.10 as doh-build
-LABEL maintainer "publicarray"
-LABEL description "High performance DNS over HTTPS server in golang. https://github.com/m13253/dns-over-https"
+LABEL maintainer="publicarray"
+LABEL description="High performance DNS over HTTPS server in golang. https://github.com/m13253/dns-over-https"
 ENV REVISION 2
 
 ENV DOH_BUILD_DEPS git make
