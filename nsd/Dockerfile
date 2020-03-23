@@ -1,6 +1,6 @@
 FROM alpine:3.10
-LABEL maintainer "publicarray"
-LABEL description "NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
+LABEL maintainer="publicarray"
+LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
 ENV REVISION 2
 
 ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
@@ -31,11 +31,11 @@ FROM alpine:3.10
 ENV NSD_RUN_DEPS libressl libevent shadow drill
 RUN apk add --no-cache $NSD_RUN_DEPS
 
-COPY --from=0 /usr/local/sbin/nsd /usr/local/sbin/nsd
-COPY --from=0 /usr/local/sbin/nsd-control-setup /usr/local/sbin/nsd-control-setup
-COPY --from=0 /usr/local/sbin/nsd-checkconf /usr/local/sbin/nsd-checkconf
-COPY --from=0 /usr/local/sbin/nsd-checkzone /usr/local/sbin/nsd-checkzone
-COPY --from=0 /usr/local/sbin/nsd-control /usr/local/sbin/nsd-control
+COPY --from=build /usr/local/sbin/nsd /usr/local/sbin/nsd
+COPY --from=build /usr/local/sbin/nsd-control-setup /usr/local/sbin/nsd-control-setup
+COPY --from=build /usr/local/sbin/nsd-checkconf /usr/local/sbin/nsd-checkconf
+COPY --from=build /usr/local/sbin/nsd-checkzone /usr/local/sbin/nsd-checkzone
+COPY --from=build /usr/local/sbin/nsd-control /usr/local/sbin/nsd-control
 
 RUN set -x && \
     groupadd _nsd && \

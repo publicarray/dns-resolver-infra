@@ -1,4 +1,4 @@
-FROM alpine:3.10 as unbound-build
+FROM alpine:3.10 as build
 ENV REVISION 3
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
@@ -36,13 +36,13 @@ ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.7
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
-COPY --from=0 /usr/local/sbin/unbound /usr/local/sbin/unbound
-COPY --from=0 /usr/local/sbin/unbound-checkconf /usr/local/sbin/unbound-checkconf
-COPY --from=0 /usr/local/sbin/unbound-control /usr/local/sbin/unbound-control
-COPY --from=0 /usr/local/sbin/unbound-host /usr/local/sbin/unbound-host
-COPY --from=0 /usr/local/sbin/unbound-anchor /usr/local/sbin/unbound-anchor
-COPY --from=0 /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-control-setup
-COPY --from=0 /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
+COPY --from=build /usr/local/sbin/unbound /usr/local/sbin/unbound
+COPY --from=build /usr/local/sbin/unbound-checkconf /usr/local/sbin/unbound-checkconf
+COPY --from=build /usr/local/sbin/unbound-control /usr/local/sbin/unbound-control
+COPY --from=build /usr/local/sbin/unbound-host /usr/local/sbin/unbound-host
+COPY --from=build /usr/local/sbin/unbound-anchor /usr/local/sbin/unbound-anchor
+COPY --from=build /usr/local/sbin/unbound-control-setup /usr/local/sbin/unbound-control-setup
+COPY --from=build /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION} /usr/local/lib/libunbound.so.${LIBUNBOUND_VERSION}
 
 RUN set -x && \
     cd /usr/local/lib/ && \

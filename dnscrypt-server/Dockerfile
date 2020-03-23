@@ -8,9 +8,9 @@ RUN cargo install encrypted-dns --version $VERSION && \
 
 #------------------------------------------------------------------------------#
 FROM ubuntu:19.10
-LABEL maintainer "publicarray"
-LABEL name "dnscrypt-server"
-LABEL description "https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
+LABEL maintainer="publicarray"
+LABEL name="dnscrypt-server"
+LABEL description="https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
 SHELL ["/bin/sh", "-x", "-c"]
 WORKDIR /tmp
 ENV RUN_DEPS bash dnsutils coreutils findutils grep ca-certificates libevent-2.1 libssl1.1 expat

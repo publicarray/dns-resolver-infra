@@ -1,6 +1,6 @@
-FROM alpine:3.10
-LABEL maintainer "publicarray"
-LABEL description "The Reliable, High Performance TCP/HTTP Load Balancer"
+FROM alpine:3.10 as build
+LABEL maintainer="publicarray"
+LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 4
 
 ENV HAPROXY_BUILD_DEPS gcc linux-headers make openssl-dev musl-dev pcre-dev tar zlib-dev
@@ -31,7 +31,7 @@ ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
-COPY --from=0 /usr/local/sbin/haproxy /usr/local/sbin/haproxy
+COPY --from=build /usr/local/sbin/haproxy /usr/local/sbin/haproxy
 
 RUN set -x && \
     groupadd _haproxy && \

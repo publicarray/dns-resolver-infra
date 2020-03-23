@@ -1,7 +1,7 @@
-FROM alpine:3.10
-LABEL maintainer "publicarray"
-LABEL name "dnscrypt-wrapper"
-LABEL description "https://github.com/jedisct1/dnscrypt-wrapper"
+FROM alpine:3.10 as build
+LABEL maintainer="publicarray"
+LABEL name="dnscrypt-wrapper"
+LABEL description="https://github.com/jedisct1/dnscrypt-wrapper"
 ENV REVISION 3
 
 ENV DNSCRYPT_BUILD_DEPS autoconf bsd-compat-headers file libevent-dev libexecinfo make gcc git musl-dev tar wget
@@ -43,10 +43,10 @@ RUN apk add --no-cache $DNSCYPT_RUN_DEPS
 ARG SODIUM_LIB_VERSION_MAJOR=23
 ARG SODIUM_LIB_VERSION=23.3.0
 
-COPY --from=0 /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
-COPY --from=0 /usr/local/lib/libsodium.a /usr/local/lib/libsodium.a
-COPY --from=0 /usr/local/lib/libsodium.la /usr/local/lib/libsodium.la
-COPY --from=0 /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION
+COPY --from=build /usr/local/sbin/dnscrypt-wrapper /usr/local/sbin/dnscrypt-wrapper
+COPY --from=build /usr/local/lib/libsodium.a /usr/local/lib/libsodium.a
+COPY --from=build /usr/local/lib/libsodium.la /usr/local/lib/libsodium.la
+COPY --from=build /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION /usr/local/lib/libsodium.so.$SODIUM_LIB_VERSION
 
 RUN set -x && \
     cd /usr/local/lib/ && ls && \

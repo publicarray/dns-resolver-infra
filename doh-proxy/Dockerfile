@@ -13,8 +13,8 @@ RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-mus
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
-LABEL maintainer "publicarray"
-LABEL description "A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
+LABEL maintainer="publicarray"
+LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
 RUN apk add --no-cache bash libgcc runit shadow curl openssl
 
