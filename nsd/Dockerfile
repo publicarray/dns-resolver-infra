@@ -3,7 +3,7 @@ LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
 ENV REVISION 2
 
-ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev libressl-dev
+ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev openssl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
@@ -28,7 +28,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
 
-ENV NSD_RUN_DEPS libressl libevent shadow drill
+ENV NSD_RUN_DEPS openssl libevent shadow drill
 RUN apk add --no-cache $NSD_RUN_DEPS
 
 COPY --from=build /usr/local/sbin/nsd /usr/local/sbin/nsd
