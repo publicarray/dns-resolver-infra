@@ -1,4 +1,4 @@
-FROM alpine:3.10 as build
+FROM alpine:3.11 as build
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV REVISION 4
@@ -10,8 +10,8 @@ RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 # haproxy v 1.8 + is required for http/2
 # https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_VERSION_SHORT 2.1
-ENV HAPROXY_VERSION 2.1.2
-ENV HAPROXY_SHA256 6079b08a8905ade5a9a2835ead8963ee10a855d8508a85efb7181eea2d310b77
+ENV HAPROXY_VERSION 2.1.3
+ENV HAPROXY_SHA256 bb678e550374d0d9d9312885fb9d270b501dae9e3b336f0a4379c667dae00b59
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
@@ -25,7 +25,7 @@ RUN set -x && \
     make install-bin
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.10
+FROM alpine:3.11
 
 ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils
 
