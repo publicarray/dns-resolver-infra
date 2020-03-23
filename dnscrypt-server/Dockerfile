@@ -1,6 +1,6 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
 ENV REVISION 0
-ENV VERSION 0.3.12
+ENV VERSION 0.3.14
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
 RUN cargo install encrypted-dns --version $VERSION && \
