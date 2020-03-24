@@ -19,7 +19,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
 
-ENV DOH_RUN_DEPS curl
+ENV DOH_RUN_DEPS curl bind-tools
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 
