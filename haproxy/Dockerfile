@@ -27,7 +27,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
 
-ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils
+ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils bind-tools
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 

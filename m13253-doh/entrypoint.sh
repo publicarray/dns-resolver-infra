@@ -2,7 +2,7 @@
 set -e
 
 getServiceIP () {
-    nslookup "$1" 2>/dev/null | tail -n 9 | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+    nslookup "$1" 2>/dev/null | awk '/Non-authoritative answer/ {getline;print;getline;print}' | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
 }
 
 waitOrFail () {
