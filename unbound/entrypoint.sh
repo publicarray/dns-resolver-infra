@@ -48,9 +48,8 @@ munin() {
         -re "s/user\\s{0,}\\root\\w/user _munin-node/" \
         -re "s/group\\s{0,}\\root\\w/group _munin-node/" \
         -i  "/etc/munin/munin-node.conf"
-    # Allow connections
-    echo "cidr_allow ${1-"0.0.0.0/0"}" >> /etc/munin/munin-node.conf
-
+    # Allow all connections (we are in a nat environment)
+    echo "allow .*" >> /etc/munin/munin-node.conf
     # enable tls
     openssl req -x509 -nodes -sha256 -subj '/CN=localhost' -newkey rsa:4096 \
         -keyout /etc/ssl/munin.key \
@@ -130,12 +129,12 @@ if [ ! -f /etc/unbound/unbound_server.pem ]; then
     unbound-control-setup
 fi
 
-while getopts "h?dm:" opt; do
+while getopts "h?dm" opt; do
     case "$opt" in
         h|\?) usage;;
         d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)"
         ;;
-        m) munin "$OPTARG";;
+        m) munin;;
     esac
 done
 shift $((OPTIND-1))
