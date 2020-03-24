@@ -170,7 +170,7 @@ services:
       - unbound
     build: m13253-doh
     image: publicarray/m13253-doh
-    command: -d
+    command: -d unbound
     deploy:
       replicas: 1
       restart_policy:

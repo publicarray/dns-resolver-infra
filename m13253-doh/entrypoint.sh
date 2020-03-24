@@ -24,10 +24,10 @@ waitOrFail () {
 
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
-while getopts "h?d" opt; do
+while getopts "h?d:" opt; do
     case "$opt" in
         h|\?) echo "-d  domain lookup for service discovery"; exit 0;;
-        d) UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
+        d) UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP "$OPTARG")"
         ;;
     esac
 done
