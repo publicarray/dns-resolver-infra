@@ -140,7 +140,7 @@ services:
       - nsd
     build: unbound
     image: publicarray/unbound
-    command: -m -d
+    command: -m -d nsd
     deploy:
       replicas: 1
       resources:

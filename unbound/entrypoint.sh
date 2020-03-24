@@ -82,8 +82,8 @@ EOF
 }
 
 usage() {
-    echo "-d  domain lookup for service discovery"
-    echo "-m  setup munin node"
+    echo "-d [domain name]  domain lookup for service discovery"
+    echo "-m                setup munin node"
     exit 0
 }
 
@@ -119,26 +119,34 @@ optimise_unbound_memory() {
         -re "s/rrset-cache-size:\\s{0,}\\d{1,}\\w/rrset-cache-size: $((memory * 2))m/" \
         -re "s/key-cache-size:\\s{0,}\\d{1,}\\w/key-cache-size: $((memory / 2))m/" \
         -re "s/neg-cache-size:\\s{0,}\\d{1,}\\w/neg-cache-size: $((memory / 2))m/" \
-        -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE}\"/g" \
         -i  "/etc/unbound/unbound.conf"
+
+    if [ -n "$NSD_SERVICE_HOST" ]; then
+        export NSD_SERVICE="${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}"
+        echo "==> Info: NSD_SERVICE=$NSD_SERVICE"
+        sed -e  "s/stub-addr: \"127.0.0.1@552\"/stub-addr: \"${NSD_SERVICE}\"/g" \
+            -i  "/etc/unbound/unbound.conf"
+    else
+        echo "==> Info: NSD_SERVICE_HOST is not defined"
+    fi
 }
 
-NSD_SERVICE_HOST=${NSD_SERVICE_HOST-"127.0.0.1"}
-NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"53"}
-if [ ! -f /etc/unbound/unbound_server.pem ]; then
-    unbound-control-setup
-fi
-
-while getopts "h?dm" opt; do
+while getopts "h?d:m" opt; do
     case "$opt" in
         h|\?) usage;;
-        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP nsd)"
+        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP "$OPTARG")"
         ;;
         m) munin;;
     esac
 done
+
+NSD_SERVICE_HOST=${NSD_SERVICE_HOST-""}
+NSD_SERVICE_PORT=${NSD_SERVICE_PORT-"53"}
+
 shift $((OPTIND-1))
-export NSD_SERVICE="${NSD_SERVICE_HOST}@${NSD_SERVICE_PORT}"
+if [ ! -f /etc/unbound/unbound_server.pem ]; then
+    unbound-control-setup
+fi
 optimise_unbound_memory
 echo "==> Done configuring unbound"
 
