@@ -202,7 +202,7 @@ services:
     container_name: haproxy
     depends_on:
       - acme
-      - doh-proxy
+      - m13253-doh
       - unbound
     labels:
       - sh.acme.autoload.domain=*.seby.io
