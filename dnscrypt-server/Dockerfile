@@ -1,13 +1,13 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
 ENV REVISION 0
-ENV VERSION 0.3.14
+ENV VERSION 0.3.17
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
 RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:19.10
+FROM ubuntu:20.04
 LABEL maintainer="publicarray"
 LABEL name="dnscrypt-server"
 LABEL description="https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
