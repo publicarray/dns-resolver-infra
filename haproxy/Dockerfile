@@ -1,10 +1,9 @@
-FROM alpine:3.11 as build
+FROM alpine:3.12 as build
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
-ENV REVISION 4
 
-ENV HAPROXY_BUILD_DEPS gcc linux-headers make openssl-dev musl-dev pcre-dev tar zlib-dev
 
+ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-dev pcre2-dev readline-dev tar zlib-dev
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 # haproxy v 1.8 + is required for http/2
@@ -15,23 +14,32 @@ ENV HAPROXY_SHA256 392e6cf18e75fe7e166102e8c4512942890a0b5ae738f6064faab4687f60a
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
-    mkdir -p /tmp/src && \
-    cd /tmp/src && \
+    mkdir -p /tmp/src/haproxy && \
+    cd /tmp/src/haproxy && \
     wget -O haproxy.tar.gz $HAPROXY_DOWNLOAD_URL && \
     echo "${HAPROXY_SHA256} *haproxy.tar.gz" | sha256sum -c - && \
-    tar xzf haproxy.tar.gz && \
-    cd haproxy-${HAPROXY_VERSION} && \
-    make TARGET=linux-glibc USE_OPENSSL=1 USE_STATIC_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 && \
-    make install-bin
+    tar xzf haproxy.tar.gz -C /tmp/src/haproxy --strip-components=1 && \
+    nproc="$(getconf _NPROCESSORS_ONLN)" && \
+    makeOpts=' \
+        TARGET=linux-musl \
+        USE_GETADDRINFO=1 \
+        USE_OPENSSL=1 \
+        USE_PCRE2=1 \
+        USE_PCRE2_JIT=1 \
+        USE_ZLIB=1 \
+    ' && \
+    eval "make $makeOpts -j '$nproc' all"  && \
+    eval "make $makeOpts install-bin"
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
 
-ENV HAPROXY_RUN_DEPS curl shadow zlib openssl socat runit coreutils bind-tools
+ENV HAPROXY_RUN_DEPS curl shadow zlib pcre2 openssl socat runit coreutils bind-tools
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 
 COPY --from=build /usr/local/sbin/haproxy /usr/local/sbin/haproxy
+COPY --from=build /tmp/src/haproxy/examples/errorfiles /usr/local/etc/haproxy/errors
 
 RUN set -x && \
     groupadd _haproxy && \
