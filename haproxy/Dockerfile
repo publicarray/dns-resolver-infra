@@ -32,7 +32,7 @@ RUN set -x && \
     eval "make $makeOpts install-bin"
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.12
+FROM alpine:3.11
 
 ENV HAPROXY_RUN_DEPS curl shadow zlib pcre2 openssl socat runit coreutils bind-tools
 
