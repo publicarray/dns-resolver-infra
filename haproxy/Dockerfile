@@ -6,11 +6,9 @@ LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-dev pcre2-dev readline-dev tar zlib-dev
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
-# haproxy v 1.8 + is required for http/2
-# https://www.haproxy.org/download/1.8/src/CHANGELOG
 ENV HAPROXY_VERSION_SHORT 2.2
-ENV HAPROXY_VERSION 2.2.0
-ENV HAPROXY_SHA256 3c1a87160eea40e067f1e2813bfe692280a10c455beb17a8ee7fae11e4223274
+ENV HAPROXY_VERSION 2.2.1
+ENV HAPROXY_SHA256 536552af1316807c01de727ad3dac84b3a2f5285db32e9bfdfe234e47ff9d124
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
