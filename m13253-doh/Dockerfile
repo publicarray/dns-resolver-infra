@@ -4,8 +4,7 @@ LABEL description="High performance DNS over HTTPS server in golang. https://git
 ENV REVISION 2
 
 ENV DOH_BUILD_DEPS git make
-ENV VERSION 2.2.1
-
+ENV COMMIT a8aed7e09aab8983b8f0f77e8380f8530315df66
 RUN apk add --no-cache $DOH_BUILD_DEPS
 
 RUN set -x && \
@@ -13,7 +12,7 @@ RUN set -x && \
     export GOPATH=~/gopath && \
     git clone https://github.com/m13253/dns-over-https.git && \
     cd dns-over-https && \
-    git checkout tags/v${VERSION} && \
+    git checkout ${COMMIT} && \
     make && \
     make install
 #------------------------------------------------------------------------------#
