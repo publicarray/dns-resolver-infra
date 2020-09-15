@@ -1,0 +1,119 @@
+version: '3.4'
+volumes:
+    ssl:
+    acme-sh:
+    acme-acc:
+services:
+  acme:
+    image: neilpang/acme.sh
+    command: >
+      /bin/sh -c "echo \"#!/bin/sh
+
+      set -e
+
+      # Check if certificate is still valid for the next 30 days, if so exit.
+
+      if [ -f /opt/ssl/fullchain.pem ]; then
+
+        if openssl x509 -checkend 2592000 -noout -in /opt/ssl/fullchain.pem; then
+
+          echo 'Certificate is still valid!'
+
+          exit 0
+
+        else
+          echo 'Certificate has expired or will do so within 30 days!'
+
+          echo 'Renewing...'
+
+        fi
+
+      fi
+
+      # Grab docker secrets
+
+      export CF_Key='$$(cat /run/secrets/CF_Key)'
+
+      export CF_Email='$$(cat /run/secrets/CF_Email)'
+
+      # Issue Certificates
+      #### Remember to remove '--staging' in production! ####
+
+      # acme.sh
+      # --issue
+      # --dns dns_cf
+      # --dnssleep 60
+      # --domain '*.seby.io'
+      # --keylength 4096
+      # --fullchain-file /opt/ssl/fullchain.pem
+      # --key-file /opt/ssl/key.pem
+      # --ca-file /opt/ssl/ca.pem
+      # --cert-file /opt/ssl/cert.pem
+      # --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
+
+      acme.sh
+      --issue
+      --dns dns_cf
+      --dnssleep 60
+      --domain '*.seby.io'
+      --keylength ec-384
+      --fullchain-file /opt/ssl/fullchain-ecc.pem
+      --key-file /opt/ssl/key-ecc.pem
+      --ca-file /opt/ssl/ca-ecc.pem
+      --cert-file /opt/ssl/cert-ecc.pem
+      --reloadcmd 'cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa'
+      \" > start.sh
+      && chmod +x start.sh
+      && ./start.sh"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    secrets:
+      - CF_Email
+      - CF_Key
+    volumes:
+       - ssl:/opt/ssl
+       - acme-sh:/root/.acme.sh
+       - acme-acc:/acme.sh
+  acme-daemon:
+    container_name: acme
+    image: neilpang/acme.sh
+    command: daemon
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 20
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    secrets:
+      - CF_Email
+      - CF_Key
+    volumes:
+       - ssl:/opt/ssl
+       - acme-sh:/root/.acme.sh
+       - acme-acc:/acme.sh
+       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
+
+
+secrets:
+  CF_Email:
+    external: true
+  CF_Key:
+    external: true

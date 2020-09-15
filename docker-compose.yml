@@ -33,12 +33,6 @@ services:
 
       fi
 
-      # Grab docker secrets
-
-      export CF_Key='$$(cat /run/secrets/CF_Key)'
-
-      export CF_Email='$$(cat /run/secrets/CF_Email)'
-
       # Issue Certificates
       #### Remember to remove '--staging' in production! ####
 
@@ -68,18 +62,18 @@ services:
       \" > start.sh
       && chmod +x start.sh
       && ./start.sh"
-    deploy:
-      restart_policy:
-        condition: on-failure
-        max_attempts: 2
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
+    #     max_attempts: 2
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    secrets:
-      - CF_Email
-      - CF_Key
+    environment:
+      - CF_Email=${CF_EMAIL}
+      - CF_Key-${CF_KEY}
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
@@ -88,19 +82,16 @@ services:
     container_name: acme
     image: neilpang/acme.sh
     command: daemon
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        max_attempts: 20
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: on-failure
+    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    secrets:
-      - CF_Email
-      - CF_Key
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
@@ -118,12 +109,12 @@ services:
     container_name: nsd
     build: nsd
     image: publicarray/nsd
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 20
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
+    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -141,15 +132,15 @@ services:
     build: unbound
     image: publicarray/unbound
     command: -m -d nsd
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 260M
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 4
+    # deploy:
+    #   replicas: 1
+    #   resources:
+    #     limits:
+    #       memory: 260M
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
+    #     max_attempts: 4
     logging:
       driver: "json-file"
       options:
@@ -171,11 +162,11 @@ services:
     build: m13253-doh
     image: publicarray/m13253-doh
     command: -d unbound
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-        delay: 5s
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
     logging:
       driver: "json-file"
       options:
@@ -184,19 +175,19 @@ services:
     networks:
       - unbound-net
 
-  # doh-proxy:
-  #   depends_on:
-  #     - unbound
-  #   build: doh-proxy
-  #   image: publicarray/doh-proxy
-  #   command: -d
-  #   deploy:
-  #     replicas: 1
-  #     restart_policy:
-  #       condition: any
-  #       delay: 5s
-  #   networks:
-  #     - unbound-net
+  doh-proxy:
+    depends_on:
+      - unbound
+    build: doh-proxy
+    image: publicarray/doh-proxy
+    command: -d
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
+    networks:
+      - unbound-net
 
   haproxy:
     container_name: haproxy
@@ -209,12 +200,12 @@ services:
     build: haproxy
     image: publicarray/haproxy
     command: -d -r
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 20
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
+    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -247,12 +238,12 @@ services:
       - -E
       - 139.99.222.72:8443
       - -A
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 20
+    # deploy:
+    #   replicas: 1
+    #   restart_policy:
+    #     condition: any
+    #     delay: 5s
+    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -274,18 +265,12 @@ services:
       - dnscrypt-net
       - unbound-net
 
-secrets:
-  CF_Email:
-    external: true
-  CF_Key:
-    external: true
-
 networks:
   dnscrypt-net:
-    driver: overlay
+    # driver: overlay
   haproxy-net:
-    driver: overlay
+    # driver: overlay
   nsd-net:
-    driver: overlay
+    # driver: overlay
   unbound-net:
-    driver: overlay
+    # driver: overlay

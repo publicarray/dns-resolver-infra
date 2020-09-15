@@ -4,3 +4,4 @@ node_modules
 *.pcap
 *.log
 node.yml
+.env
