@@ -9,6 +9,7 @@ volumes:
 services:
   acme:
     image: neilpang/acme.sh
+    container_name: acme
     command: >
       /bin/sh -c "echo \"#!/bin/sh
 
