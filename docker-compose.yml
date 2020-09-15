@@ -63,10 +63,6 @@ services:
       \" > start.sh
       && chmod +x start.sh
       && ./start.sh"
-    # deploy:
-    #   restart_policy:
-    #     condition: on-failure
-    #     max_attempts: 2
     logging:
       driver: "json-file"
       options:
@@ -83,11 +79,6 @@ services:
     container_name: acme-deamon
     image: neilpang/acme.sh
     command: daemon
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: on-failure
-    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -110,12 +101,6 @@ services:
     container_name: nsd
     build: nsd
     image: publicarray/nsd
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
-    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -132,29 +117,17 @@ services:
       - nsd
     build: unbound
     image: publicarray/unbound
-    command: -m -d nsd
-    # deploy:
-    #   replicas: 1
-    #   resources:
-    #     limits:
-    #       memory: 260M
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
-    #     max_attempts: 4
+    command: -d nsd
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    ports:
-      - target: 4949
-        published: 4949
-        protocol: tcp
-        mode: ingress
-    networks:
-      - nsd-net
-      - unbound-net
+    # ports:
+    #   - target: 4949
+    #     published: 4949
+    #     protocol: tcp
+    #     mode: ingress
 
   m13253-doh:
     container_name: doh
@@ -163,11 +136,6 @@ services:
     build: m13253-doh
     image: publicarray/m13253-doh
     command: -d unbound
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
     logging:
       driver: "json-file"
       options:
@@ -183,13 +151,6 @@ services:
     build: doh-proxy
     image: publicarray/doh-proxy
     command: -d
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
-    networks:
-      - unbound-net
 
   haproxy:
     container_name: haproxy
@@ -202,12 +163,6 @@ services:
     build: haproxy
     image: publicarray/haproxy
     command: -d -r
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
-    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -224,9 +179,6 @@ services:
         mode: ingress
     volumes:
        - ssl:/opt/ssl
-    networks:
-      - haproxy-net
-      - unbound-net
 
   dnscrypt-server:
     container_name: dnscrypt-server
@@ -241,12 +193,6 @@ services:
       - -E
       - 139.99.222.72:8443
       - -A
-    # deploy:
-    #   replicas: 1
-    #   restart_policy:
-    #     condition: any
-    #     delay: 5s
-    #     max_attempts: 20
     logging:
       driver: "json-file"
       options:
@@ -264,16 +210,3 @@ services:
     volumes:
        - dnscrypt:/opt/dnscrypt-wrapper
        - dnscrypt-server:/opt/encrypted-dns
-    networks:
-      - dnscrypt-net
-      - unbound-net
-
-networks:
-  dnscrypt-net:
-    # driver: overlay
-  haproxy-net:
-    # driver: overlay
-  nsd-net:
-    # driver: overlay
-  unbound-net:
-    # driver: overlay
