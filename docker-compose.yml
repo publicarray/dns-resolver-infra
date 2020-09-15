@@ -147,14 +147,14 @@ services:
         max-size: "200k"
         max-file: "10"
 
-  doh-proxy:
-    container_name: doh-proxy
-    restart: on-failure:5
-    depends_on:
-      - unbound
-    build: doh-proxy
-    image: publicarray/doh-proxy
-    command: -d
+  # doh-proxy:
+  #   container_name: doh-proxy
+  #   restart: on-failure:5
+  #   depends_on:
+  #     - unbound
+  #   build: doh-proxy
+  #   image: publicarray/doh-proxy
+  #   command: -d
 
   haproxy:
     container_name: haproxy
