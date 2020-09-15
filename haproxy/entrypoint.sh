@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+set -x
 
 getServiceIP () {
     for arg
