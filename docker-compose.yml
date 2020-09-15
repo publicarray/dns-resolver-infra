@@ -71,6 +71,9 @@ services:
     environment:
       - CF_Email=${CF_EMAIL}
       - CF_Key=${CF_KEY}
+      - CF_Token=${CF_TOKEN}
+      - CF_Account_ID=${CF_ACCOUNT_ID}
+      - CF_Zone_ID=${CF_ZONE_ID}
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
