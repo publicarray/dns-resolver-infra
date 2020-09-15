@@ -80,7 +80,7 @@ services:
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
   acme-daemon:
-    container_name: acme
+    container_name: acme-deamon
     image: neilpang/acme.sh
     command: daemon
     # deploy:
