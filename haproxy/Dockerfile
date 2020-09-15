@@ -1,4 +1,4 @@
-FROM alpine:3.12 as build
+FROM alpine:3.11 as build
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 
@@ -7,8 +7,8 @@ ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-d
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 ENV HAPROXY_VERSION_SHORT 2.2
-ENV HAPROXY_VERSION 2.2.1
-ENV HAPROXY_SHA256 536552af1316807c01de727ad3dac84b3a2f5285db32e9bfdfe234e47ff9d124
+ENV HAPROXY_VERSION 2.2.3
+ENV HAPROXY_SHA256 7209db363d4dbecb21133f37b01048df666aebc14ff543525dbea79be202064e
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
