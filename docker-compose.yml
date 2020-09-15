@@ -176,6 +176,7 @@ services:
       - unbound-net
 
   doh-proxy:
+    container_name: doh-proxy
     depends_on:
       - unbound
     build: doh-proxy
@@ -227,6 +228,7 @@ services:
       - unbound-net
 
   dnscrypt-server:
+    container_name: dnscrypt-server
     depends_on:
       - unbound
     image: publicarray/dnscrypt-server
