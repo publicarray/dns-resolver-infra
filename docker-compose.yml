@@ -6,6 +6,9 @@ volumes:
     nsd:
     acme-sh:
     acme-acc:
+networks:
+  nsd-net:
+  unbound-net:
 services:
   acme:
     image: neilpang/acme.sh
@@ -108,8 +111,6 @@ services:
         max-file: "10"
     volumes:
       - nsd:/etc/nsd/run
-    networks:
-      - nsd-net
 
   unbound:
     container_name: unbound
@@ -141,8 +142,6 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - unbound-net
 
   doh-proxy:
     container_name: doh-proxy
