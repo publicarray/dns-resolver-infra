@@ -74,7 +74,7 @@ services:
         max-file: "10"
     environment:
       - CF_Email=${CF_EMAIL}
-      - CF_Key-${CF_KEY}
+      - CF_Key=${CF_KEY}
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
