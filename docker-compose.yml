@@ -6,9 +6,6 @@ volumes:
     nsd:
     acme-sh:
     acme-acc:
-networks:
-  nsd-net:
-  unbound-net:
 services:
   acme:
     image: neilpang/acme.sh
