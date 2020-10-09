@@ -1,12 +1,12 @@
 FROM alpine:3.11 as build
 ENV REVISION 3
 
-ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
+ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
 ARG UNBOUND_VERSION=1.12.0
-ARG UNBOUND_SHA256=9f2f0798f76eb8f30feaeda7e442ceed479bc54db0e3ac19c052d68685e51ef7
+ARG UNBOUND_SHA256=5b9253a97812f24419bf2e6b3ad28c69287261cf8c8fa79e3e9f6d3bf7ef5835
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -18,7 +18,7 @@ RUN set -x && \
     rm -f unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure --with-conf-file=/etc/unbound/unbound.conf --with-run-dir=/etc/unbound \
-    --with-pthreads --with-username=_unbound --with-libevent \
+    --with-pthreads --with-username=_unbound --with-libevent --with-libnghttp2 \
     CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
     LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
     make install && \
@@ -27,7 +27,7 @@ RUN set -x && \
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
 
-ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates
+ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2807
 ARG LIBUNBOUND_CURRENT=8
