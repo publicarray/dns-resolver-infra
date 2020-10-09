@@ -14,6 +14,7 @@ RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-mus
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 

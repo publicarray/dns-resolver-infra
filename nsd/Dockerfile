@@ -28,6 +28,7 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV NSD_RUN_DEPS openssl libevent shadow drill
 RUN apk add --no-cache $NSD_RUN_DEPS

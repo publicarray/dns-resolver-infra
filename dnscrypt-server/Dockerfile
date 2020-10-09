@@ -9,6 +9,7 @@ RUN cargo install encrypted-dns --version $VERSION && \
 
 #------------------------------------------------------------------------------#
 FROM ubuntu:20.04
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL name="dnscrypt-server"
 LABEL description="https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"

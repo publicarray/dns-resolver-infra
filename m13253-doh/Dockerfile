@@ -18,6 +18,7 @@ RUN set -x && \
     make install
 #------------------------------------------------------------------------------#
 FROM alpine:3.11
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV DOH_RUN_DEPS curl bind-tools
 

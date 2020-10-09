@@ -37,7 +37,6 @@ jobs:
         with:
           context: ${{ env.APP }}
           file: ${{ env.APP }}/Dockerfile
-          platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/${{ env.APP }}:latest
