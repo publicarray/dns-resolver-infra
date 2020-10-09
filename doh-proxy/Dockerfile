@@ -1,5 +1,5 @@
 FROM rust:latest as doh-proxy-build
-
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ARG VERSION=0.3.3
 
 RUN apt-get update && \

@@ -40,5 +40,5 @@ jobs:
           platforms: linux/386,linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/dns-resolver-infra/${{ env.APP }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ env.APP }}:latest
             ${{ github.repository_owner }}/${{ env.APP }}:latest

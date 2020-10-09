@@ -1,4 +1,5 @@
 FROM alpine:3.11 as build
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 9
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev
