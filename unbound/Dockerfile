@@ -1,5 +1,5 @@
 FROM alpine:3.11 as build
-ENV REVISION 8
+ENV REVISION 9
 
 ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev
 
