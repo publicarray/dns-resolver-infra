@@ -5,7 +5,7 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.11.0
+ARG UNBOUND_VERSION=1.12.0
 ARG UNBOUND_SHA256=9f2f0798f76eb8f30feaeda7e442ceed479bc54db0e3ac19c052d68685e51ef7
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 

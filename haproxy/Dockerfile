@@ -7,8 +7,8 @@ ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-d
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 ENV HAPROXY_VERSION_SHORT 2.2
-ENV HAPROXY_VERSION 2.2.3
-ENV HAPROXY_SHA256 7209db363d4dbecb21133f37b01048df666aebc14ff543525dbea79be202064e
+ENV HAPROXY_VERSION 2.2.4
+ENV HAPROXY_SHA256 87a4d9d4ff8dc3094cb61bbed4a8eed2c40b5ac47b9604daebaf036d7b541be2
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
