@@ -1,5 +1,5 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
-ENV REVISION 0
+ENV REVISION 1
 ENV VERSION 0.3.17
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
