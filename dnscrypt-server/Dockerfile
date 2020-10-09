@@ -1,6 +1,6 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
-ENV REVISION 1
+ENV REVISION 2
 ENV VERSION 0.3.17
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
