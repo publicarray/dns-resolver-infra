@@ -3,23 +3,20 @@ LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolve
 ENV REVISION 1
 ARG VERSION=0.3.8
 
-RUN apt-get update && \
-    apt-get install -qy --no-install-recommends musl-tools libssl-dev && \
-    rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
-
-RUN rustup target add x86_64-unknown-linux-musl
-ENV RUSTFLAGS "-Clinker=musl-gcc -C link-arg=-s"
-RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-musl && \
+ENV RUSTFLAGS "-C link-arg=-s"
+RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.13
+FROM ubuntu:20.10
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
 
-RUN apk add --no-cache bash libgcc runit shadow curl openssl bind-tools
-
+RUN apt-get update && \
+    apt-get install -qy --no-install-recommends bash libc6 curl ca-certificates dnsutils libssl1.1 && \
+    rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
+RUN update-ca-certificates 2> /dev/null || true
 COPY --from=doh-proxy-build /usr/local/cargo/bin/doh-proxy /usr/local/bin/doh-proxy
 
 RUN set -x && \
