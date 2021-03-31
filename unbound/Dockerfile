@@ -1,4 +1,4 @@
-FROM alpine:3.11 as build
+FROM alpine:3.13 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 9
 
@@ -6,8 +6,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.12.0
-ARG UNBOUND_SHA256=5b9253a97812f24419bf2e6b3ad28c69287261cf8c8fa79e3e9f6d3bf7ef5835
+ARG UNBOUND_VERSION=1.13.1
+ARG UNBOUND_SHA256=8504d97b8fc5bd897345c95d116e0ee0ddf8c8ff99590ab2b4bd13278c9f50b8
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -26,14 +26,14 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.11
+FROM alpine:3.13
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2807
 ARG LIBUNBOUND_CURRENT=8
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.10
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.12
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 

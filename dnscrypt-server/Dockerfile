@@ -1,14 +1,14 @@
 FROM rustlang/rust:nightly AS encrypted-dns-build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 2
-ENV VERSION 0.3.19
+ENV VERSION 0.3.23
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS "-C link-arg=-s"
 RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL name="dnscrypt-server"

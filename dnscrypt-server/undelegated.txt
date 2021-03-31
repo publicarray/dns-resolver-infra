@@ -114,7 +114,6 @@ grp
 gw==
 home
 hub
-id.opendns.com
 internal
 intra
 intranet

@@ -1,7 +1,7 @@
 FROM rust:latest as doh-proxy-build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 1
-ARG VERSION=0.3.3
+ARG VERSION=0.3.8
 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends musl-tools libssl-dev && \
@@ -13,7 +13,7 @@ RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-mus
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.11
+FROM alpine:3.13
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
