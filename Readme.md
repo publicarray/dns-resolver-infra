@@ -36,8 +36,11 @@ docker-compose build # docker-compose pull
 echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env
+ 
+# Create Certificates for the first time
+docker-compose up -d docker-compose.acme.yml
 
-# Launch:
+# Launch
 docker-compose up -d
 ```
 
