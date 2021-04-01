@@ -26,6 +26,21 @@
 
 ## Getting started
 
+### Docker Compose
+
+```
+# Build Images or pull them:
+docker-compose build # docker-compose pull
+
+# Add Cloudflare cedentials for acme.sh / TLS certificates
+echo 'CF_TOKEN=xxx' >> .env
+echo 'CF_ACCOUNT_ID=xxx' >> .env
+echo 'CF_ZONE_ID=xxx' >> .env
+
+# Launch:
+docker-compose up -d
+```
+
 * [Usage with Docker-Swarm](docker.md)
 * [Usage with Kubernetes](kube.md)
 
