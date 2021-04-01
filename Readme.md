@@ -28,14 +28,14 @@
 
 ### Docker Compose
 
-```
+```sh
 # Build Images or pull them:
 docker-compose build # docker-compose pull
 
 # Add Cloudflare cedentials for acme.sh / TLS certificates
-echo 'CF_TOKEN=xxx' >> .env
-echo 'CF_ACCOUNT_ID=xxx' >> .env
-echo 'CF_ZONE_ID=xxx' >> .env
+echo 'CF_TOKEN=xxxx' >> .env
+echo 'CF_ACCOUNT_ID=xxxx' >> .env
+echo 'CF_ZONE_ID=xxxx' >> .env
 
 # Launch:
 docker-compose up -d
