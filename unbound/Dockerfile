@@ -1,4 +1,4 @@
-FROM alpine:3.13 as build
+FROM alpine:3.14 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 9
 
@@ -26,7 +26,7 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.13
+FROM alpine:3.14
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
 

@@ -23,7 +23,7 @@
 # ]
 
 listen_addrs = [
-    { local = "0.0.0.0:443", external = "@EXTERNAL_IPV4@" }
+    { local = "0.0.0.0:443",    external = "@EXTERNAL_IPV4@" }
 ]
 
 
@@ -34,7 +34,7 @@ upstream_addr = "@UPSTREAM_IPV4@:53"
 
 ## File name to save the state to
 
-state_file = "/opt/encrypted-dns/etc/keys/state/encrypted-dns.state"
+state_file = "encrypted-dns.state"
 
 
 ## UDP timeout in seconds
@@ -95,7 +95,7 @@ client_ttl_holdon = 60
 daemonize = false
 
 
-## Log file
+## Log file, when running as a background process
 
 # log_file = "/tmp/encrypted-dns.log"
 
@@ -167,9 +167,7 @@ key_cache_capacity = 10000
 
 ## Where to proxy TLS connections to (e.g. DoH server)
 
-# upstream_addr = "127.0.0.1:4343"
-
-@TLS_PROXY_CONFIGURATION@
+upstream_addr = "haproxy:443"
 
 
 
@@ -181,7 +179,7 @@ key_cache_capacity = 10000
 
 ## List of domains to block, one per line
 
-@DOMAIN_BLACKLIST_CONFIGURATION@
+# domain_blacklist = "/etc/domain_blacklist.txt"
 
 
 ## List of undelegated TLDs
@@ -189,12 +187,12 @@ key_cache_capacity = 10000
 ## but will never resolve to anything. The server will immediately return a
 ## synthesized NXDOMAIN response instead of hitting root servers.
 
-undelegated_list = "/opt/encrypted-dns/etc/undelegated.txt"
+# undelegated_list = "/etc/undelegated.txt"
 
 
 ## Ignore A and AAAA queries for unqualified host names.
 
-ignore_unqualified_hostnames = true
+# ignore_unqualified_hostnames = true
 
 
 
@@ -202,11 +200,11 @@ ignore_unqualified_hostnames = true
 #        Metrics        #
 #########################
 
-[metrics]
+# [metrics]
 
-type = "prometheus"
-listen_addr = "0.0.0.0:9100"
-path = "/metrics"
+# type = "prometheus"
+# listen_addr = "0.0.0.0:9100"
+# path = "/metrics"
 
 
 
