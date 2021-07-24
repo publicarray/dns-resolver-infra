@@ -3,7 +3,7 @@
 set +x
 set -e
 
-function step {
+step() {
     echo "=====> $@ <====="
 }
 # kdig -d @139.99.222.72 +tls-ca +tls-host=dot.seby.io example.com
