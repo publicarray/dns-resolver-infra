@@ -33,7 +33,7 @@ ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certif
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2807
 ARG LIBUNBOUND_CURRENT=8
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.12
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.1.13
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
