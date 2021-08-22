@@ -47,7 +47,7 @@ init() {
     upstream_address="127.0.0.1"
     metrics_address="127.0.0.1:9100"
 
-    while getopts "h?N:E:d:T:AM:" opt; do
+    while getopts "h?N:E:d:T:P:AM:" opt; do
         case "$opt" in
             h | \?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
