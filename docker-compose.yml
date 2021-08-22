@@ -114,7 +114,7 @@ services:
     container_name: nsd
     restart: on-failure:5
     build: nsd
-    image: ghcr.io/publicarray/nsd
+    image: ghcr.io/publicarray/dns-resolver-infra/nsd
     logging:
       driver: "json-file"
       options:
@@ -130,6 +130,7 @@ services:
       - nsd
     build: unbound
     image: ghcr.io/publicarray/unbound
+    # image: ghcr.io/publicarray/dns-resolver-infra/unbound
     command: -d nsd
     logging:
       driver: "json-file"
@@ -148,7 +149,7 @@ services:
     depends_on:
       - unbound
     build: m13253-doh
-    image: ghcr.io/publicarray/m13253-doh
+    image: ghcr.io/publicarray/dns-resolver-infra/m13253-doh
     command: -d unbound
     logging:
       driver: "json-file"
@@ -162,7 +163,7 @@ services:
   #   depends_on:
   #     - unbound
   #   build: doh-proxy
-  #   image: ghcr.io/publicarray/doh-proxy
+  #   image: ghcr.io/publicarray/dns-resolver-infra/doh-proxy
   #   command: -d
 
   haproxy:
@@ -175,7 +176,7 @@ services:
     labels:
       - sh.acme.autoload.domain=*.seby.io
     build: haproxy
-    image: ghcr.io/publicarray/haproxy
+    image: ghcr.io/publicarray/dns-resolver-infra/haproxy
     command: -d -r
     logging:
       driver: "json-file"
@@ -207,7 +208,7 @@ services:
     restart: on-failure:5
     depends_on:
       - unbound
-    image: ghcr.io/publicarray/dnscrypt-server
+    image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
     command:
       - init
       - -d unbound
