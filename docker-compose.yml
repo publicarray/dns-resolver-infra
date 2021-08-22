@@ -35,6 +35,7 @@ services:
       fi
 
       # Issue Certificates
+      acme.sh --set-default-ca --server letsencrypt
       #### Remember to remove '--staging' in production! ####
 
       # acme.sh
