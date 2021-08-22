@@ -37,6 +37,11 @@ echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env
 
+# Setup CA
+docker-compose run acme --register-account -m my@example.com
+# or
+docker-compose run acme.sh --set-default-ca --server letsencrypt
+
 # Launch
 docker-compose up -d
 ```
