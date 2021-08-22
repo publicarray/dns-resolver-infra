@@ -99,9 +99,9 @@ services:
       #  - ./data/acme/vhost.d:/etc/nginx/vhost.d
       #  - ./data/acme/dhparam:/etc/nginx/dhparam
       #  - ./run/acme/acme:/acmecerts
-    ports:
-      - "80:80"
-      - "443:443"
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
     environment:
       - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
