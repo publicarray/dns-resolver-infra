@@ -78,6 +78,7 @@ services:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
+
   acme-daemon:
     container_name: acme-deamon
     restart: on-failure:2
@@ -93,6 +94,14 @@ services:
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
        - /var/run/docker.sock:/var/run/docker.sock
+       - ./data/acme/cron:/etc/crontabs/root
+      #  - ./data/acme/conf.d:/etc/nginx/conf.d
+      #  - ./data/acme/vhost.d:/etc/nginx/vhost.d
+      #  - ./data/acme/dhparam:/etc/nginx/dhparam
+      #  - ./run/acme/acme:/acmecerts
+    ports:
+      - "80:80"
+      - "443:443"
     environment:
       - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
