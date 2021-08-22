@@ -53,7 +53,8 @@ init() {
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
-            T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
+            T) tls_proxy_upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
+            P) tls_proxy_upstream_port=443 ;;
             A) anondns_enabled="true" ;;
             M) metrics_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
         esac
@@ -76,7 +77,7 @@ init() {
 
     tls_proxy_configuration=""
     if [ -n "$tls_proxy_upstream_address" ]; then
-        tls_proxy_configuration="upstream_addr = \"${tls_proxy_upstream_address}\""
+        tls_proxy_configuration="upstream_addr = \"${tls_proxy_upstream_address}:${tls_proxy_upstream_port}\""
     fi
 
     domain_blacklist_file="${LISTS_DIR}/blacklist.txt"

@@ -213,6 +213,8 @@ services:
       - -d unbound
       - -N
       - dns.seby.io
+      - -T
+      - haproxy
       - -E
       - 139.99.222.72:8443
       - -A

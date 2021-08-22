@@ -167,7 +167,7 @@ key_cache_capacity = 10000
 
 ## Where to proxy TLS connections to (e.g. DoH server)
 
-upstream_addr = "haproxy:443"
+@TLS_PROXY_CONFIGURATION@
 
 
 
