@@ -16,10 +16,11 @@ doggo @tls://dot.seby.io example.com
 step 'test opennic:'
 
 # domains="opennic.glue grep.geek nic.fur be.libre register.null opennic.oz www.opennic.chan"
-# for domain in $domains; do
-#     doggo @tls://139.99.222.72 $domain
-#     doggo @tls://45.76.113.31 $domain
-# done
+for domain in $domains; do
+    doggo @tls://dot.seby.io $domain
+    # doggo @tls://139.99.222.72 $domain
+    # doggo @tls://45.76.113.31 $domain
+done
 
 step 'test DNS-over-HTTPS'
 doggo @https://doh-2.seby.io/dns-query example.com

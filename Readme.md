@@ -26,21 +26,33 @@
 
 ## Getting started
 
+### Quick start**
+
+```sh
+git clone https://github.com/publicarray/dns-resolver-infra.git && cd dns-resolver-infra
+# Add Cloudflare cedentials for acme.sh / TLS certificates
+echo 'CF_TOKEN=xxxx' >> .env
+echo 'CF_ACCOUNT_ID=xxxx' >> .env
+echo 'CF_ZONE_ID=xxxx' >> .env
+
+./deploy.sh
+```
+
 ### Docker Compose
 
 ```sh
 # Build Images or pull them:
-docker-compose build # docker-compose pull
+docker-compose pull
 
 # Add Cloudflare cedentials for acme.sh / TLS certificates
 echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env
 
-# Setup CA
-docker-compose run acme --register-account -m my@example.com
-# or
-docker-compose run acme.sh --set-default-ca --server letsencrypt
+# # Setup CA
+# docker-compose run acme --register-account -m my@example.com
+# # or
+# docker-compose run acme.sh --set-default-ca --server letsencrypt
 
 # Launch
 docker-compose up -d

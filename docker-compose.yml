@@ -208,6 +208,7 @@ services:
     restart: on-failure:5
     depends_on:
       - unbound
+      - haproxy
     image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
     command:
       - init
