@@ -31,6 +31,16 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
+bats-assert@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/bats-assert/-/bats-assert-2.0.0.tgz#ba1b4eeee2c7848f1a25948b623790dd41a2b94b"
+  integrity sha512-qO3kNilWxW8iCONu9NDUfvsCiC6JzL6DPOc/DGq9z3bZ9/A7wURJ+FnFMxGbofOmWbCoy7pVhofn0o47A95qkQ==
+
+bats-support@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/bats-support/-/bats-support-0.3.0.tgz#a1f6b8878d2a51837911fdffa0750036f60701ef"
+  integrity sha512-z+2WzXbI4OZgLnynydqH8GpI3+DcOtepO66PlK47SfEzTkiuV9hxn9eIQX+uLVFbt2Oqoc7Ky3TJ/N83lqD+cg==
+
 bats@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/bats/-/bats-1.4.1.tgz"
