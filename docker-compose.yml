@@ -130,8 +130,7 @@ services:
     depends_on:
       - nsd
     build: unbound
-    image: ghcr.io/publicarray/unbound
-    # image: ghcr.io/publicarray/dns-resolver-infra/unbound
+    image: ghcr.io/publicarray/dns-resolver-infra/unbound
     command: -d nsd
     logging:
       driver: "json-file"
