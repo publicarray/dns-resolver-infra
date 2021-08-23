@@ -27,6 +27,7 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.14
+LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
 
