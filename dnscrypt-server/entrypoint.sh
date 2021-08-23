@@ -55,7 +55,7 @@ init() {
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
             T) tls_proxy_upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
-            P) tls_proxy_upstream_port="$OPTARG" ;;
+            P) tls_proxy_upstream_port=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)  ;;
             A) anondns_enabled="true" ;;
             M) metrics_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
         esac
