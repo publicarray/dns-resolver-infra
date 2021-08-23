@@ -6,20 +6,20 @@ openssl_client() {
 
 @test "139.99.222.72 TLS 1.3 support DNS-over-TLS" {
     run openssl_client 139.99.222.72:853
-    [[ "$result" =~ "TLSv1.3" ]]
+    [[ "$output" =~ "TLSv1.3" ]]
 }
 
 @test "139.99.222.72 TLS 1.3 support DNS-over-HTTPS" {
     run openssl_client 139.99.222.72:443
-    [[ "$result" =~ "TLSv1.3" ]]
+    [[ "$output" =~ "TLSv1.3" ]]
 }
 
 @test "45.76.113.31 TLS 1.3 support DNS-over-TLS" {
     run openssl_client 45.76.113.31:853
-    [[ "$result" =~ "TLSv1.3" ]]
+    [[ "$output" =~ "TLSv1.3" ]]
 }
 
 @test "45.76.113.31 TLS 1.3 support DNS-over-HTTPS" {
     run openssl_client 45.76.113.31:8443
-    [[ "$result" =~ "TLSv1.3" ]]
+    [[ "$output" =~ "TLSv1.3" ]]
 }
