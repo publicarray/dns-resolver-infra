@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "bats": "^1.4.1",
     "dockerfilelint": "https://github.com/replicatedhq/dockerfilelint#master",
     "dockerlint": "^0.3.9"
   }
