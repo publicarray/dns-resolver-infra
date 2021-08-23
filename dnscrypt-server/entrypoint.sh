@@ -46,6 +46,7 @@ init() {
     anondns_blacklisted_ips=""
     upstream_address="127.0.0.1"
     metrics_address="127.0.0.1:9100"
+    tls_proxy_upstream_port="443"
 
     while getopts "h?N:E:d:T:P:AM:" opt; do
         case "$opt" in
@@ -54,7 +55,7 @@ init() {
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
             T) tls_proxy_upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
-            P) tls_proxy_upstream_port=443 ;;
+            P) tls_proxy_upstream_port="$OPTARG" ;;
             A) anondns_enabled="true" ;;
             M) metrics_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
         esac
