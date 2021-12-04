@@ -8,7 +8,7 @@ volumes:
     acme-acc:
 services:
   acme:
-    image: neilpang/acme.sh
+    image: docker.io/neilpang/acme.sh
     container_name: acme
     command: >
       /bin/sh -c "echo \"#!/bin/sh
@@ -83,7 +83,7 @@ services:
   acme-daemon:
     container_name: acme-deamon
     restart: on-failure:2
-    image: neilpang/acme.sh
+    image: docker.io/neilpang/acme.sh
     command: daemon
     logging:
       driver: "json-file"
@@ -184,22 +184,10 @@ services:
         max-size: "200k"
         max-file: "10"
     ports:
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: ingress
-      - target: 853
-        published: 853
-        protocol: tcp
-        mode: ingress
-      - target: 443
-        published: 443
-        protocol: udp
-        mode: ingress
-      - target: 853
-        published: 853
-        protocol: udp
-        mode: ingress
+      - "443"
+      - "853"
+      - "443:443/udp"
+      - "853:853/udp"
     volumes:
        - ssl:/opt/ssl
 
@@ -226,14 +214,8 @@ services:
         max-size: "200k"
         max-file: "10"
     ports:
-      - target: 443
-        published: 8443
-        protocol: tcp
-        mode: ingress
-      - target: 443
-        published: 8443
-        protocol: udp
-        mode: ingress
+      - "443:8443"
+      - "443:8443/udp"
     volumes:
        - dnscrypt:/opt/dnscrypt-wrapper
        - dnscrypt-server:/opt/encrypted-dns
