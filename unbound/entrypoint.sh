@@ -150,9 +150,9 @@ fi
 optimise_unbound_memory
 echo "==> Done configuring unbound"
 
-if [ "$1" = '--' ] && shift; then
-    /sbin/runsvdir -P /etc/service &
-    exec "$@"
-fi
+# if [ "$1" = '--' ] && shift; then
+#     /sbin/runsvdir -P /etc/service &
+#     exec "$@"
+# fi
 
-exec /sbin/runsvdir -P /etc/service
+# exec /sbin/runsvdir -P /etc/service

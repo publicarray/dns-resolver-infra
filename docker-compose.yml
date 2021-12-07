@@ -1,221 +1,43 @@
-version: '3.4'
+version: '3.8'
 volumes:
-    dnscrypt:
-    dnscrypt-server:
+    keys:
     ssl:
-    nsd:
     acme-sh:
     acme-acc:
+    zone:
 services:
-  acme:
-    image: docker.io/neilpang/acme.sh
-    container_name: acme
-    command: >
-      /bin/sh -c "echo \"#!/bin/sh
-
-      set -e
-
-      # Check if certificate is still valid for the next 30 days, if so exit.
-
-      if [ -f /opt/ssl/fullchain.pem ]; then
-
-        if openssl x509 -checkend 2592000 -noout -in /opt/ssl/fullchain.pem; then
-
-          echo 'Certificate is still valid!'
-
-          exit 0
-
-        else
-          echo 'Certificate has expired or will do so within 30 days!'
-
-          echo 'Renewing...'
-
-        fi
-
-      fi
-
-      # Issue Certificates
-      acme.sh --set-default-ca --server letsencrypt
-      #### Remember to remove '--staging' in production! ####
-
-      # acme.sh
-      # --issue
-      # --dns dns_cf
-      # --dnssleep 60
-      # --domain '*.seby.io'
-      # --keylength 4096
-      # --fullchain-file /opt/ssl/fullchain.pem
-      # --key-file /opt/ssl/key.pem
-      # --ca-file /opt/ssl/ca.pem
-      # --cert-file /opt/ssl/cert.pem
-      # --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
-
-      acme.sh
-      --issue
-      --dns dns_cf
-      --dnssleep 60
-      --domain '*.seby.io'
-      --keylength ec-384
-      --fullchain-file /opt/ssl/fullchain-ecc.pem
-      --key-file /opt/ssl/key-ecc.pem
-      --ca-file /opt/ssl/ca-ecc.pem
-      --cert-file /opt/ssl/cert-ecc.pem
-      --reloadcmd 'cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa'
-      \" > start.sh
-      && chmod +x start.sh
-      && ./start.sh"
+  dns:
+    image: dns-privacy
+    hostname: doh-server
+    build:
+      context: ./dns-privacy
+    container_name: dns
+    restart: on-failure:5
+    # init: true
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    # env_file: .env
     environment:
       - CF_Email=${CF_EMAIL}
       - CF_Key=${CF_KEY}
       - CF_Token=${CF_TOKEN}
       - CF_Account_ID=${CF_ACCOUNT_ID}
       - CF_Zone_ID=${CF_ZONE_ID}
+      - DOMAIN=${DOMAIN}
+      - PROVIDER_NAME=${PROVIDER_NAME}
     volumes:
+       - keys:/opt/encrypted-dns/keys
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
-
-  acme-daemon:
-    container_name: acme-deamon
-    restart: on-failure:2
-    image: docker.io/neilpang/acme.sh
-    command: daemon
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    volumes:
-       - ssl:/opt/ssl
-       - acme-sh:/root/.acme.sh
-       - acme-acc:/acme.sh
-       - /var/run/docker.sock:/var/run/docker.sock
-       - ./data/acme/cron:/etc/crontabs/root
-      #  - ./data/acme/conf.d:/etc/nginx/conf.d
-      #  - ./data/acme/vhost.d:/etc/nginx/vhost.d
-      #  - ./data/acme/dhparam:/etc/nginx/dhparam
-      #  - ./run/acme/acme:/acmecerts
-    # ports:
-    #   - "80:80"
-    #   - "443:443"
-    environment:
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
-      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
-      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
-
-  nsd:
-    container_name: nsd
-    restart: on-failure:5
-    build: nsd
-    image: ghcr.io/publicarray/dns-resolver-infra/nsd
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    volumes:
-      - nsd:/etc/nsd/run
-
-  unbound:
-    container_name: unbound
-    restart: on-failure:5
-    depends_on:
-      - nsd
-    build: unbound
-    image: ghcr.io/publicarray/dns-resolver-infra/unbound
-    command: -d nsd
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    # ports:
-    #   - target: 4949
-    #     published: 4949
-    #     protocol: tcp
-    #     mode: ingress
-
-  m13253-doh:
-    container_name: doh
-    restart: on-failure:5
-    depends_on:
-      - unbound
-    build: m13253-doh
-    image: ghcr.io/publicarray/dns-resolver-infra/m13253-doh
-    command: -d unbound
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-
-  # doh-proxy:
-  #   container_name: doh-proxy
-  #   restart: on-failure:5
-  #   depends_on:
-  #     - unbound
-  #   build: doh-proxy
-  #   image: ghcr.io/publicarray/dns-resolver-infra/doh-proxy
-  #   command: -d
-
-  haproxy:
-    container_name: haproxy
-    restart: on-failure:5
-    depends_on:
-      - acme
-      - m13253-doh
-      - unbound
-    labels:
-      - sh.acme.autoload.domain=*.seby.io
-    build: haproxy
-    image: ghcr.io/publicarray/dns-resolver-infra/haproxy
-    command: -d -r
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
+       - zone:/etc/unbound/run
     ports:
-      - "443"
-      - "853"
+      - "443:443/tcp"
+      - "853:853/tcp"
       - "443:443/udp"
       - "853:853/udp"
-    volumes:
-       - ssl:/opt/ssl
-
-  dnscrypt-server:
-    container_name: dnscrypt-server
-    restart: on-failure:5
-    depends_on:
-      - unbound
-      - haproxy
-    image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
-    command:
-      - init
-      - -d unbound
-      - -N
-      - dns.seby.io
-      - -T
-      - haproxy
-      - -E
-      - 139.99.222.72:8443
-      - -A
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    ports:
-      - "443:8443"
-      - "443:8443/udp"
-    volumes:
-       - dnscrypt:/opt/dnscrypt-wrapper
-       - dnscrypt-server:/opt/encrypted-dns
+    # sysctls:
+    #   net.ipv4.tcp_congestion_control: bbr

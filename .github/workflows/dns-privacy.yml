@@ -1,0 +1,45 @@
+name: dns-privacy
+on:
+  push:
+    paths:
+      - 'dns-privacy/*'
+jobs:
+  build:
+    name: Build & Push dns-privacy Container
+    runs-on: ubuntu-latest
+    env:
+      APP: dns-privacy
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64,arm
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_PACKAGE_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ env.APP }}
+          file: ${{ env.APP }}/Dockerfile
+          platforms: linux/amd64,linux/arm64,linsux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/${{ env.APP }}:latest
+            ${{ github.repository_owner }}/${{ env.APP }}:latest
