@@ -1,6 +1,19 @@
 #! /bin/bash
 # env
 
+get_public_ip() {
+    public_ip4=$(curl -4qs https://ip.seby.io)
+    public_ip6=$(curl -6qs https://ip.seby.ios)
+    if [ -z "$public_ip4" ]; then
+        public_ip4='0.0.0.0:443'
+    fi
+    if [ -z "$public_ip6" ]; then
+        public_ip6='[::]:443'
+    fi
+    export PUBLIC_IP4=$public_ip4
+    export PUBLIC_IP6=$public_ip6
+}
+
 validate() {
     missing=
     if [ -z "$DOMAIN" ]; then
@@ -86,6 +99,7 @@ optimise_unbound_memory() {
 
 # Start
 validate
+get_public_ip
 generate_cert
 if [ ! -f /etc/unbound/unbound_server.pem ]; then
     unbound-control-setup

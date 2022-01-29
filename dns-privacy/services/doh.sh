@@ -1,15 +1,13 @@
 #! /usr/bin/env bash
 
-
 exec /usr/local/cargo/bin/doh-proxy -O \
                                     -H doh.seby.io \
                                     -l 0.0.0.0:3000 \
                                     -b 0.0.0.0:0 \
                                     -u 127.0.0.1:53 \
+                                    -g "$PUBLIC_IP" \
                                     -I /opt/ssl/pkcs8.pem \
                                     -i /opt/ssl/fullchain-ecc.pem
-                                   
-                                    # -g <public ip>
 
 # https://github.com/DNSCrypt/doh-server
 # USAGE:
@@ -38,6 +36,5 @@ exec /usr/local/cargo/bin/doh-proxy -O \
 #     -t, --timeout <timeout>                          Timeout, in seconds [default: 10]
 #     -I, --tls-cert-key-path <tls_cert_key_path>
 #             Path to the PEM-encoded secret keys (only required for built-in TLS)
-
 #     -i, --tls-cert-path <tls_cert_path>
 #             Path to the PEM/PKCS#8-encoded certificates (only required for built-in TLS)
