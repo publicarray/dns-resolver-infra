@@ -1,7 +1,32 @@
 #! /bin/bash
 # env
 
+validate() {
+    missing=
+    if [ -z "$DOMAIN" ]; then
+        echo "Please specify a DOMAIN for the TLS certificate"
+        missing=1
+    fi
+    if [ -z "$PROVIDER_NAME" ]; then
+        echo "Please specify a PROVIDER_NAME for dnscrypt"
+        missing=1
+    fi
+    if [ -z "$CF_Key" ] && [ -z "$CF_Token" ]; then
+        echo "Please specify Cloudflare credentials"
+        missing=1
+    fi
+    if [ -z "$CF_Email" ] && [ -z "$CF_Account_ID" ] && [ -z "$CF_Zone_ID" ]; then
+        echo "Please specify Cloudflare credentials"
+        missing=1
+    fi
+    if [ -n "$missing" ]; then
+        exit 1
+    fi
+
+}
+
 generate_cert() {
+    mkdir -p /opt/ssl
     /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     /root/.acme.sh/acme.sh --issue \
         --domain "$DOMAIN" \
@@ -60,6 +85,7 @@ optimise_unbound_memory() {
 }
 
 # Start
+validate
 generate_cert
 if [ ! -f /etc/unbound/unbound_server.pem ]; then
     unbound-control-setup
