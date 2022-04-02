@@ -3,7 +3,7 @@
     "bats": "^1.4.1",
     "bats-assert": "^2.0.0",
     "bats-support": "^0.3.0",
-    "dockerfilelint": "https://github.com/replicatedhq/dockerfilelint#master",
+    "dockerfilelint": "https://github.com/replicatedhq/dockerfilelint#main",
     "dockerlint": "^0.3.9"
   }
 }
