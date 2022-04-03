@@ -61,7 +61,7 @@ services:
       --ca-file /opt/ssl/ca-ecc.pem
       --cert-file /opt/ssl/cert-ecc.pem
 
-      acme.sh --deploy -d '*.seby.io' -ecc --deploy-hook docker
+      acme.sh --deploy -d '*.seby.io' --ecc --deploy-hook docker
 
       \" > start.sh
       && chmod +x start.sh
