@@ -15,6 +15,8 @@ services:
 
       set -e
 
+      acme.sh --set-default-ca --server letsencrypt
+
       # Check if certificate is still valid for the next 30 days, if so exit.
 
       if [ -f /opt/ssl/fullchain.pem ]; then
@@ -35,7 +37,6 @@ services:
       fi
 
       # Issue Certificates
-      acme.sh --set-default-ca --server letsencrypt
       #### Remember to remove '--staging' in production! ####
 
       # acme.sh
@@ -89,7 +90,7 @@ services:
        - /var/run/docker.sock:/var/run/docker.sock
 
   acme-daemon:
-    container_name: acme-deamon
+    container_name: acme-daemon
     restart: on-failure:2
     image: docker.io/neilpang/acme.sh
     command: daemon
