@@ -48,7 +48,6 @@ services:
       # --key-file /opt/ssl/key.pem
       # --ca-file /opt/ssl/ca.pem
       # --cert-file /opt/ssl/cert.pem
-      # --reloadcmd 'cat /opt/ssl/key.pem > cat /opt/ssl/fullchain.pem > /opt/ssl/fullchain-key.pem.rsa'
 
       acme.sh
       --issue
@@ -60,7 +59,9 @@ services:
       --key-file /opt/ssl/key-ecc.pem
       --ca-file /opt/ssl/ca-ecc.pem
       --cert-file /opt/ssl/cert-ecc.pem
-      --reloadcmd 'cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa'
+
+      acme.sh --deploy -d '*.seby.io' -ecc --deploy-hook docker
+
       \" > start.sh
       && chmod +x start.sh
       && ./start.sh"
@@ -75,10 +76,17 @@ services:
       - CF_Token=${CF_TOKEN}
       - CF_Account_ID=${CF_ACCOUNT_ID}
       - CF_Zone_ID=${CF_ZONE_ID}
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
     volumes:
        - ssl:/opt/ssl
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
+       - /var/run/docker.sock:/var/run/docker.sock
 
   acme-daemon:
     container_name: acme-deamon
