@@ -29,6 +29,7 @@
 ### Quick start**
 
 ```sh
+pacman -S docker docker-composer docker-buildx
 git clone https://github.com/publicarray/dns-resolver-infra.git && cd dns-resolver-infra
 # Add Cloudflare cedentials for acme.sh / TLS certificates
 echo 'CF_TOKEN=xxxx' >> .env

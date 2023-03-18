@@ -1,7 +1,7 @@
 FROM rust:latest as doh-proxy-build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 1
-ARG VERSION=0.9.0
+ARG VERSION=0.9.8
 
 ENV RUSTFLAGS "-C link-arg=-s"
 RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu && \
@@ -11,7 +11,7 @@ RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu
 FROM ubuntu:20.10
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
-LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/jedisct1/rust-doh"
+LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/DNSCrypt/doh-server"
 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends bash libc6 curl ca-certificates dnsutils libssl1.1 && \
