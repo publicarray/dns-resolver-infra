@@ -6,7 +6,17 @@
 # docker run -it --rm bats/bats:latest --tap
 # docker run -it -v "$PWD":/opt/bats" --workdir /opt/bats bats/bats:latest test
 
-yarn bats tests
+npm i --legacy-peer-deps
+
+if ! command -v kdig; then
+    echo "Please install knot first:"
+    echo "https://www.knot-dns.cz/"
+    echo "Arch: pacman -S knot"
+    echo "macOS: brew install knot"
+    exit
+fi
+
+npm run bats tests
 
 exit
 
@@ -36,12 +46,15 @@ done
 
 step 'test DNS-over-HTTPS'
 # curl -so /dev/null --doh-url https://doh.seby.io:8443/dns-query https://example.com
-curl 'https://doh-2.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
-curl 'https://doh.seby.io:8443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl 'https://doh.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl 'https://doh-1.seby.io:443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl 'https://doh-2.seby.io:443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl -H 'content-type: application/dns-message' 'https://doh.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl -H 'content-type: application/dns-message' 'https://doh-1.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
 curl -H 'content-type: application/dns-message' 'https://doh-2.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
-curl -H 'content-type: application/dns-message' 'https://doh.seby.io:8443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+curl --doh-url https://doh.seby.io/dns-query https://ip.seby.io
+curl --doh-url https://doh-1.seby.io/dns-query https://ip.seby.io
 curl --doh-url https://doh-2.seby.io/dns-query https://ip.seby.io
-curl --doh-url https://doh.seby.io:8443/dns-query https://ip.seby.io
 
 step 'test for TLS 1.3'
 echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
@@ -49,14 +62,14 @@ echo "Q" | openssl s_client -connect 45.76.113.31:853 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:8443 | grep TLSv1.3
 
-step 'test dnscrypt-proxy:'
+# step 'test dnscrypt-proxy:'
 
 # echo doggo install
 
-doggo example.com @sdns://AQcAAAAAAAAADDQ1Ljc2LjExMy4zMSAIVGh4i6eKXqlF6o9Fg92cgD2WcDvKQJ7v_Wq4XrQsVhsyLmRuc2NyeXB0LWNlcnQuZG5zLnNlYnkuaW8
-doggo example.com @sdns://AgcAAAAAAAAADDQ1Ljc2LjExMy4zMaA-GhoPbFPz6XpJLVcIS1uYBwWe4FerFQWHb9g_2j24OCAyhv9lpl-vMghe6hOIw3OLp-N4c8kGzOPEootMwqWJiBBkb2guc2VieS5pbzo4NDQzCi9kbnMtcXVlcnk
-doggo example.com @sdns://AQcAAAAAAAAAEjEzOS45OS4yMjIuNzI6ODQ0MyDR7bj6zoAmbRaE1B8qTkCL_O84QCDMYPUgXZy5FRqUYRsyLmRuc2NyeXB0LWNlcnQuZG5zLnNlYnkuaW8
-doggo example.com @sdns://AgcAAAAAAAAADTEzOS45OS4yMjIuNzKgPhoaD2xT8-l6SS1XCEtbmAcFnuBXqxUFh2_YP9o9uDggMob_ZaZfrzIIXuoTiMNzi6fjeHPJBszjxKKLTMKliYgRZG9oLTIuc2VieS5pbzo0NDMKL2Rucy1xdWVyeQ
+# doggo example.com @sdns://AQcAAAAAAAAADDQ1Ljc2LjExMy4zMSAIVGh4i6eKXqlF6o9Fg92cgD2WcDvKQJ7v_Wq4XrQsVhsyLmRuc2NyeXB0LWNlcnQuZG5zLnNlYnkuaW8
+# doggo example.com @sdns://AgcAAAAAAAAADDQ1Ljc2LjExMy4zMaA-GhoPbFPz6XpJLVcIS1uYBwWe4FerFQWHb9g_2j24OCAyhv9lpl-vMghe6hOIw3OLp-N4c8kGzOPEootMwqWJiBBkb2guc2VieS5pbzo4NDQzCi9kbnMtcXVlcnk
+# doggo example.com @sdns://AQcAAAAAAAAAEjEzOS45OS4yMjIuNzI6ODQ0MyDR7bj6zoAmbRaE1B8qTkCL_O84QCDMYPUgXZy5FRqUYRsyLmRuc2NyeXB0LWNlcnQuZG5zLnNlYnkuaW8
+# doggo example.com @sdns://AgcAAAAAAAAADTEzOS45OS4yMjIuNzKgPhoaD2xT8-l6SS1XCEtbmAcFnuBXqxUFh2_YP9o9uDggMob_ZaZfrzIIXuoTiMNzi6fjeHPJBszjxKKLTMKliYgRZG9oLTIuc2VieS5pbzo0NDMKL2Rucy1xdWVyeQ
 
 # fetch the public-resolvers.md
 # dnscrypt-proxy -config tests/publicarray-au.toml -show-certs

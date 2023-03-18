@@ -13,3 +13,4 @@ load ../node_modules/bats-assert/load.bash
     assert_success
     assert_output -p "NOERROR;"
 }
+

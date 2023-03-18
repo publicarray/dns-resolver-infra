@@ -21,16 +21,16 @@ exampledotcom="q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB"
 }
 
 @test "45.76.113.31 GET DNS-over-HTTPS" {
-    run curl "https://doh.seby.io:8443/dns-query?dns=$exampledotcom"
+    run curl "https://doh-1.seby.io/dns-query?dns=$exampledotcom"
     assert_success
 }
 
 @test "45.76.113.31 GET with content-type DNS-over-HTTPS" {
-    run curl -H 'content-type: application/dns-message' "https://doh.seby.io:8443/dns-query?dns=$exampledotcom"
+    run curl -H 'content-type: application/dns-message' "https://doh-1.seby.io/dns-query?dns=$exampledotcom"
     assert_success
 }
 
 @test "45.76.113.31 curl-url DNS-over-HTTPS" {
-    run curl --doh-url https://doh.seby.io:8443/dns-query https://ip.seby.io
+    run curl --doh-url https://doh-1.seby.io/dns-query https://ip.seby.io
     assert_success
 }

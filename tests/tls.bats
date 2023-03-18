@@ -22,6 +22,6 @@ openssl_client() {
 }
 
 @test "45.76.113.31 TLS 1.3 support DNS-over-HTTPS" {
-    run openssl_client 45.76.113.31:8443
+    run openssl_client 45.76.113.31:443
     assert_output -p "TLSv1.3"
 }

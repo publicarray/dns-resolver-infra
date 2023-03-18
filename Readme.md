@@ -66,3 +66,15 @@ docker-compose up -d
 ```
 sysctl net.ipv4.tcp_congestion_control=bbr
 ```
+
+
+### Tests
+
+```
+npm i --legacy-peer-deps
+./lint.sh
+npm run bats tests
+./test.sh
+```
+
+###
