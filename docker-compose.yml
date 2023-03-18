@@ -208,31 +208,31 @@ services:
     volumes:
        - ssl:/opt/ssl
 
-  dnscrypt-server:
-    container_name: dnscrypt-server
-    restart: on-failure:5
-    depends_on:
-      - unbound
-      - haproxy
-    image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
-    command:
-      - init
-      - -d unbound
-      - -N
-      - dns.seby.io
-      - -T
-      - haproxy
-      - -E
-      - 139.99.222.72:8443
-      - -A
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    ports:
-      - "443:8443/tcp"
-      - "443:8443/udp"
-    volumes:
-       - dnscrypt:/opt/dnscrypt-wrapper
-       - dnscrypt-server:/opt/encrypted-dns
+  # dnscrypt-server:
+  #   container_name: dnscrypt-server
+  #   restart: on-failure:5
+  #   depends_on:
+  #     - unbound
+  #     - haproxy
+  #   image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
+  #   command:
+  #     - init
+  #     - -d unbound
+  #     - -N
+  #     - dns.seby.io
+  #     - -T
+  #     - haproxy
+  #     - -E
+  #     - 139.99.222.72:8443
+  #     - -A
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "200k"
+  #       max-file: "10"
+  #   ports:
+  #     - "443:8443/tcp"
+  #     - "443:8443/udp"
+  #   volumes:
+  #      - dnscrypt:/opt/dnscrypt-wrapper
+  #      - dnscrypt-server:/opt/encrypted-dns
