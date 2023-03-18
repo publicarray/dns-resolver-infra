@@ -37,29 +37,35 @@ services:
       fi
 
       # Issue Certificates
-      #### Remember to remove '--staging' in production! ####
 
-      # acme.sh
-      # --issue
-      # --dns dns_cf
-      # --dnssleep 60
-      # --domain '*.seby.io'
-      # --keylength 4096
-      # --fullchain-file /opt/ssl/fullchain.pem
-      # --key-file /opt/ssl/key.pem
-      # --ca-file /opt/ssl/ca.pem
-      # --cert-file /opt/ssl/cert.pem
+      if [ -n ${HEALTHCHECK} ]; then
 
-      acme.sh
-      --issue
-      --dns dns_cf
-      --dnssleep 60
-      --domain '*.seby.io'
-      --keylength ec-384
-      --fullchain-file /opt/ssl/fullchain-ecc.pem
-      --key-file /opt/ssl/key-ecc.pem
-      --ca-file /opt/ssl/ca-ecc.pem
-      --cert-file /opt/ssl/cert-ecc.pem
+        acme.sh
+        --issue
+        --dns dns_cf
+        --dnssleep 60
+        --domain '*.seby.io'
+        --keylength ec-384
+        --fullchain-file /opt/ssl/fullchain-ecc.pem
+        --key-file /opt/ssl/key-ecc.pem
+        --ca-file /opt/ssl/ca-ecc.pem
+        --cert-file /opt/ssl/cert-ecc.pem
+        --pre-hook 'curl -m 10 --retry 5 https://hc-ping.com/${HEALTHCHECK}'
+
+      else
+
+        acme.sh
+        --issue
+        --dns dns_cf
+        --dnssleep 60
+        --domain '*.seby.io'
+        --keylength ec-384
+        --fullchain-file /opt/ssl/fullchain-ecc.pem
+        --key-file /opt/ssl/key-ecc.pem
+        --ca-file /opt/ssl/ca-ecc.pem
+        --cert-file /opt/ssl/cert-ecc.pem
+      
+      fi
 
       acme.sh --deploy -d '*.seby.io' --ecc --deploy-hook docker
 
@@ -72,6 +78,7 @@ services:
         max-size: "200k"
         max-file: "10"
     environment:
+      - HEALTHCHECK=${HEALTHCHECK}
       - CF_Email=${CF_EMAIL}
       - CF_Key=${CF_KEY}
       - CF_Token=${CF_TOKEN}
@@ -104,7 +111,7 @@ services:
        - acme-sh:/root/.acme.sh
        - acme-acc:/acme.sh
        - /var/run/docker.sock:/var/run/docker.sock
-       - ./data/acme/cron:/etc/crontabs/root
+      #  - ./data/acme/cron:/etc/crontabs/root
       #  - ./data/acme/conf.d:/etc/nginx/conf.d
       #  - ./data/acme/vhost.d:/etc/nginx/vhost.d
       #  - ./data/acme/dhparam:/etc/nginx/dhparam
@@ -113,6 +120,7 @@ services:
     #   - "80:80"
     #   - "443:443"
     environment:
+      - HEALTHCHECK=${HEALTHCHECK}
       - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
       - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
