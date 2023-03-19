@@ -8,7 +8,7 @@ RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:20.10
+FROM ubuntu:22.04
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/DNSCrypt/doh-server"
