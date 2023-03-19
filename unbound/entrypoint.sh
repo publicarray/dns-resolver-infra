@@ -91,8 +91,14 @@ optimise_unbound_memory() {
     reserved=25
     memoryMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
     # https://fabiokung.com/2014/03/13/memory-inside-linux-containers/
-    dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) / 1024)) / 1024))
-    if [ $dokerMemoryLimitMB -le $memoryMB ]; then
+    dokerMemoryLimitMB=0
+    if [ -f "/sys/fs/cgroup/memory/memory.limit_in_bytes" ]; then
+        dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory/memory.limit_in_bytes) / 1024)) / 1024))
+    elif [ -f "/sys/fs/cgroup/memory.max" ]; then
+        dokerMemoryLimitMB=$(($(( $(cat /sys/fs/cgroup/memory.max) / 1024)) / 1024))
+    fi
+
+    if [ $dokerMemoryLimitMB -gt 0 ] && [ $dokerMemoryLimitMB -le $memoryMB ]; then
         memoryMB=$dokerMemoryLimitMB
     fi
 
