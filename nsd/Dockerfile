@@ -1,4 +1,4 @@
-FROM alpine:3.17 as build
+FROM alpine:3.18 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
@@ -27,7 +27,7 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.17
+FROM alpine:3.18
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV NSD_RUN_DEPS openssl libevent shadow drill
