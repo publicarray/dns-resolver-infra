@@ -40,7 +40,7 @@ services:
 
       if [ -n ${HEALTHCHECK} ]; then
 
-        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem --pre-hook 'curl -m 10 --retry 5 https://hc-ping.com/${HEALTHCHECK}'
+        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem --pre-hook 'curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/${HEALTHCHECK}'
 
       else
 
