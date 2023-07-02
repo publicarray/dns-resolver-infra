@@ -17,27 +17,6 @@ services:
 
       acme.sh --set-default-ca --server letsencrypt
 
-      # Check if certificate is still valid for the next 30 days, if so exit.
-
-      if [ -f /opt/ssl/fullchain.pem ]; then
-
-        if openssl x509 -checkend 2592000 -noout -in /opt/ssl/fullchain.pem; then
-
-          echo 'Certificate is still valid!'
-
-          exit 0
-
-        else
-          echo 'Certificate has expired or will do so within 30 days!'
-
-          echo 'Renewing...'
-
-        fi
-
-      fi
-
-      # Issue Certificates
-
       if [ -n ${HEALTHCHECK} ]; then
 
         acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem --pre-hook 'curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/${HEALTHCHECK}'
