@@ -40,34 +40,15 @@ services:
 
       if [ -n ${HEALTHCHECK} ]; then
 
-        acme.sh
-        --issue
-        --dns dns_cf
-        --dnssleep 60
-        --domain '*.seby.io'
-        --keylength ec-384
-        --fullchain-file /opt/ssl/fullchain-ecc.pem
-        --key-file /opt/ssl/key-ecc.pem
-        --ca-file /opt/ssl/ca-ecc.pem
-        --cert-file /opt/ssl/cert-ecc.pem
-        --pre-hook 'curl -m 10 --retry 5 https://hc-ping.com/${HEALTHCHECK}'
+        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem --pre-hook 'curl -m 10 --retry 5 https://hc-ping.com/${HEALTHCHECK}'
 
       else
 
-        acme.sh
-        --issue
-        --dns dns_cf
-        --dnssleep 60
-        --domain '*.seby.io'
-        --keylength ec-384
-        --fullchain-file /opt/ssl/fullchain-ecc.pem
-        --key-file /opt/ssl/key-ecc.pem
-        --ca-file /opt/ssl/ca-ecc.pem
-        --cert-file /opt/ssl/cert-ecc.pem
+        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem
       
       fi
 
-      acme.sh --deploy -d '*.seby.io' --ecc --deploy-hook docker
+      acme.sh --deploy -d '${DOMAIN}' --ecc --deploy-hook docker
 
       \" > start.sh
       && chmod +x start.sh
@@ -84,7 +65,8 @@ services:
       - CF_Token=${CF_TOKEN}
       - CF_Account_ID=${CF_ACCOUNT_ID}
       - CF_Zone_ID=${CF_ZONE_ID}
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
+      - DOMAIN=${DOMAIN}
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN}
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
       - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
       - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
@@ -120,8 +102,9 @@ services:
     #   - "80:80"
     #   - "443:443"
     environment:
+      - DOMAIN=${DOMAIN}
       - HEALTHCHECK=${HEALTHCHECK}
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN}
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
       - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
       - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
@@ -191,7 +174,7 @@ services:
       - m13253-doh
       - unbound
     labels:
-      - sh.acme.autoload.domain=*.seby.io
+      - sh.acme.autoload.domain=${DOMAIN}
     build: haproxy
     image: ghcr.io/publicarray/dns-resolver-infra/haproxy
     command: -d -r
@@ -207,6 +190,8 @@ services:
       - "853:853/udp"
     volumes:
        - ssl:/opt/ssl
+    environment:
+      - DOMAIN=${DOMAIN}
 
   # dnscrypt-server:
   #   container_name: dnscrypt-server
