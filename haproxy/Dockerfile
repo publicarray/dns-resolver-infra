@@ -2,14 +2,14 @@ FROM alpine:3.18 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
-
+# https://github.com/docker-library/haproxy/tree/master
 
 ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-dev pcre2-dev readline-dev tar zlib-dev
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
-ENV HAPROXY_VERSION_SHORT 2.7
-ENV HAPROXY_VERSION 2.7.5
-ENV HAPROXY_SHA256 e2c6e43270c35a4009a70052d26c1ddb90b63a650f81305a748f229737a74502
+ENV HAPROXY_VERSION_SHORT 2.8
+ENV HAPROXY_VERSION 2.8.4
+ENV HAPROXY_SHA256 81bacbf50ec6d0f7ecaaad7c03e59978b00322fbdad6ed4a989dd31754b6f25d
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
