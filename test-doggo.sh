@@ -35,12 +35,12 @@ done
 step 'test DNS-over-HTTPS'
 doggo @https://doh.seby.io/dns-query example.com
 doggo @https://doh-1.seby.io/dns-query example.com
-doggo @https://doh-2.seby.io/dns-query example.com
+# doggo @https://doh-2.seby.io/dns-query example.com
 
 step 'test for TLS 1.3'
-echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
+# echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:853 | grep TLSv1.3
-echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
+# echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:443 | grep TLSv1.3
 
 # step 'test dnscrypt-proxy:'

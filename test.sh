@@ -27,16 +27,16 @@ step() {
 # kdig -d @45.76.113.31 +tls-ca +tls-host=dot.seby.io example.com
 
 step 'test DNS -over-TLS:'
-kdig @139.99.222.72 +tls-ca +tls-host=dot.seby.io example.com
+# kdig @139.99.222.72 +tls-ca +tls-host=dot.seby.io example.com
 kdig @45.76.113.31 +tls-ca +tls-host=dot.seby.io example.com
 
 step 'test opennic:'
 
 domains="opennic.glue grep.geek nic.fur be.libre register.null opennic.oz www.opennic.chan"
-step '139.99.222.72'
-for domain in $domains; do
-    kdig @139.99.222.72 +short +tls-ca +tls-host=dot.seby.io $domain
-done
+# step '139.99.222.72'
+# for domain in $domains; do
+#     kdig @139.99.222.72 +short +tls-ca +tls-host=dot.seby.io $domain
+# done
 step '45.76.113.31'
 for domain in $domains; do
     kdig @45.76.113.31 +short +tls-ca +tls-host=dot.seby.io $domain
@@ -48,18 +48,18 @@ step 'test DNS-over-HTTPS'
 # curl -so /dev/null --doh-url https://doh.seby.io:8443/dns-query https://example.com
 curl 'https://doh.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
 curl 'https://doh-1.seby.io:443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
-curl 'https://doh-2.seby.io:443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+# curl 'https://doh-2.seby.io:443/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
 curl -H 'content-type: application/dns-message' 'https://doh.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
 curl -H 'content-type: application/dns-message' 'https://doh-1.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
-curl -H 'content-type: application/dns-message' 'https://doh-2.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
+# curl -H 'content-type: application/dns-message' 'https://doh-2.seby.io/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' | hexdump -C
 curl --doh-url https://doh.seby.io/dns-query https://ip.seby.io
 curl --doh-url https://doh-1.seby.io/dns-query https://ip.seby.io
-curl --doh-url https://doh-2.seby.io/dns-query https://ip.seby.io
+# curl --doh-url https://doh-2.seby.io/dns-query https://ip.seby.io
 
 step 'test for TLS 1.3'
-echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
+# echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:853 | grep TLSv1.3
-echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
+# echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:8443 | grep TLSv1.3
 
 # step 'test dnscrypt-proxy:'
