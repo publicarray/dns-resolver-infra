@@ -1,4 +1,4 @@
-FROM alpine:3.18 as build
+FROM alpine:3.19 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
@@ -7,9 +7,9 @@ LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 ENV HAPROXY_BUILD_DEPS gcc ca-certificates libc-dev linux-headers make openssl-dev pcre2-dev readline-dev tar zlib-dev
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
-ENV HAPROXY_VERSION_SHORT 2.8
-ENV HAPROXY_VERSION 2.8.4
-ENV HAPROXY_SHA256 81bacbf50ec6d0f7ecaaad7c03e59978b00322fbdad6ed4a989dd31754b6f25d
+ENV HAPROXY_VERSION_SHORT 2.9
+ENV HAPROXY_VERSION 2.9.1
+ENV HAPROXY_SHA256 d5801c772aab9c43f40964b7b33b4388d14b5b45750be4d2671785863cdb9f1c
 ENV HAPROXY_DOWNLOAD_URL "https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
@@ -23,6 +23,8 @@ RUN set -x && \
         TARGET=linux-musl \
         USE_GETADDRINFO=1 \
         USE_OPENSSL=1 \
+        USE_QUIC=1 \
+        USE_QUIC_OPENSSL_COMPAT=1 \
         USE_PCRE2=1 \
         USE_PCRE2_JIT=1 \
         USE_ZLIB=1 \
@@ -31,7 +33,7 @@ RUN set -x && \
     eval "make $makeOpts install-bin"
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.18
+FROM alpine:3.19
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV HAPROXY_RUN_DEPS curl shadow zlib pcre2 openssl socat runit coreutils bind-tools

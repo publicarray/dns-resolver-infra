@@ -1,4 +1,4 @@
-FROM alpine:3.18 as build
+FROM alpine:3.19 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 ENV REVISION 9
 
@@ -6,8 +6,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.17.1
-ARG UNBOUND_SHA256=ee4085cecce12584e600f3d814a28fa822dfaacec1f94c84bfd67f8a5571a5f4
+ARG UNBOUND_VERSION=1.19.0
+ARG UNBOUND_SHA256=a97532468854c61c2de48ca4170de854fd3bc95c8043bb0cfb0fe26605966624
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -26,14 +26,15 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.18
+FROM alpine:3.19
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
 
-# https://github.com/NLnetLabs/unbound/blob/master/configure#L2844
+# https://github.com/NLnetLabs/unbound/blob/master/configure#L2852
+# https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.19.0-1-x86_64.pkg.tar.zst.html
 ARG LIBUNBOUND_CURRENT=8
-ARG LIBUNBOUND_REVISION=21
+ARG LIBUNBOUND_REVISION=23
 ARG LIBUNBOUND_AGE=1
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}

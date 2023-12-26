@@ -1,4 +1,4 @@
-FROM alpine:3.18 as build
+FROM alpine:3.19 as build
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
@@ -8,8 +8,8 @@ ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev openssl-dev
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
-ARG NSD_VERSION=4.6.1
-ARG NSD_SHA256=3f60a3a13ec3f68e84bfa7e19daff663c82bcf1de96e4f53f2246525e773a27a
+ARG NSD_VERSION=4.8.0
+ARG NSD_SHA256=820da4e384721915f4bcaf7f2bed98519da563c6e4c130c742c724760ec02a0a
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
 RUN set -x && \
@@ -27,7 +27,7 @@ RUN set -x && \
     make install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.18
+FROM alpine:3.19
 LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
 
 ENV NSD_RUN_DEPS openssl libevent shadow drill
