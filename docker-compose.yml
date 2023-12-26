@@ -53,8 +53,7 @@ services:
       - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
     volumes:
        - ssl:/opt/ssl
-       - acme-sh:/root/.acme.sh
-       - acme-acc:/acme.sh
+       - ./run/acmeout:/acme.sh
        - /var/run/docker.sock:/var/run/docker.sock
 
   acme-daemon:
@@ -69,17 +68,8 @@ services:
         max-file: "10"
     volumes:
        - ssl:/opt/ssl
-       - acme-sh:/root/.acme.sh
-       - acme-acc:/acme.sh
+       - ./run/acmeout:/acme.sh
        - /var/run/docker.sock:/var/run/docker.sock
-      #  - ./data/acme/cron:/etc/crontabs/root
-      #  - ./data/acme/conf.d:/etc/nginx/conf.d
-      #  - ./data/acme/vhost.d:/etc/nginx/vhost.d
-      #  - ./data/acme/dhparam:/etc/nginx/dhparam
-      #  - ./run/acme/acme:/acmecerts
-    # ports:
-    #   - "80:80"
-    #   - "443:443"
     environment:
       - DOMAIN=${DOMAIN}
       - HEALTHCHECK=${HEALTHCHECK}
