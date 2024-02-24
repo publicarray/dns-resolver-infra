@@ -6,8 +6,8 @@ ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
-ARG UNBOUND_VERSION=1.19.0
-ARG UNBOUND_SHA256=a97532468854c61c2de48ca4170de854fd3bc95c8043bb0cfb0fe26605966624
+ARG UNBOUND_VERSION=1.19.1
+ARG UNBOUND_SHA256=bc1d576f3dd846a0739adc41ffaa702404c6767d2b6082deb9f2f97cbb24a3a9
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -34,8 +34,9 @@ ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certif
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2852
 # https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.19.0-1-x86_64.pkg.tar.zst.html
 ARG LIBUNBOUND_CURRENT=8
-ARG LIBUNBOUND_REVISION=23
 ARG LIBUNBOUND_AGE=1
+ARG LIBUNBOUND_REVISION=24
+
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}
 
