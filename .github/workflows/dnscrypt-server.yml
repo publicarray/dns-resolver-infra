@@ -1,5 +1,6 @@
 name: dnscrypt-server
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'dnscrypt-server/*'

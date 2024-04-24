@@ -1,5 +1,6 @@
 name: haproxy
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'haproxy/*'

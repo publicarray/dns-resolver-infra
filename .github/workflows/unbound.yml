@@ -1,5 +1,6 @@
 name: unbound
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'unbound/*'

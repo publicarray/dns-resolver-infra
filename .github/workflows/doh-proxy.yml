@@ -1,5 +1,6 @@
 name: doh-proxy
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'doh-proxy/*'

@@ -1,5 +1,6 @@
 name: nsd
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'nsd/*'
