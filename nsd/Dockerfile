@@ -1,10 +1,10 @@
-FROM alpine:3.22 as build
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+FROM alpine:3.22 AS build
+LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
-ENV REVISION 2
+ENV REVISION=2
 
-ENV NSD_BUILD_DEPS make tar gcc musl-dev libevent-dev openssl-dev
+ENV NSD_BUILD_DEPS="make tar gcc musl-dev libevent-dev openssl-dev protobuf-c-dev fstrm-dev"
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
@@ -28,9 +28,9 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.22
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 
-ENV NSD_RUN_DEPS openssl libevent shadow drill
+ENV NSD_RUN_DEPS="openssl libevent shadow drill protobuf-c fstrm"
 RUN apk add --no-cache $NSD_RUN_DEPS
 
 COPY --from=build /usr/local/sbin/nsd /usr/local/sbin/nsd

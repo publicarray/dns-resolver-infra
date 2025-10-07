@@ -1,8 +1,8 @@
-FROM alpine:3.22 as build
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
-ENV REVISION 9
+FROM alpine:3.22 AS build
+LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
+ENV REVISION=9
 
-ENV UNBOUND_BUILD_DEPS expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev
+ENV UNBOUND_BUILD_DEPS="expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev"
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
 
@@ -27,15 +27,17 @@ RUN set -x && \
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.22
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 
-ENV UNBOUND_RUN_DEPS expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs
+ENV UNBOUND_RUN_DEPS="expat libevent openssl runit shadow drill wget bc ca-certificates nghttp2-libs"
 
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2852
 # https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.20.0-1-x86_64.pkg.tar.zst.html
-ARG LIBUNBOUND_CURRENT=9
+
+ARG UNBOUND_VERSION=1.24.0
+ARG LIBUNBOUND_CURRENT=8
 ARG LIBUNBOUND_AGE=1
-ARG LIBUNBOUND_REVISION=34
+ARG LIBUNBOUND_REVISION=33
 
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}
