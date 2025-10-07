@@ -59,9 +59,9 @@ sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
     /etc/haproxy.conf
 
 if [ $# -eq 0 ]; then
-    exec /sbin/runsvdir -P /etc/service
+    exec /usr/sbin/runsvdir -P /etc/service
 fi
 
 [ "$1" = '--' ] && shift
-/sbin/runsvdir -P /etc/service
+/usr/sbin/runsvdir -P /etc/service
 exec "$@"
