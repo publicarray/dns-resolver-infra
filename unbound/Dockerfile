@@ -1,6 +1,7 @@
 FROM alpine:3.23 AS build
 LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 ENV REVISION=9
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 # Alpine's ngtcp2 only ships the GnuTLS crypto backend; unbound is built against
 # OpenSSL, so we build ngtcp2 from source with its native OpenSSL backend
@@ -16,7 +17,7 @@ ARG NGTCP2_DOWNLOAD_URL=https://github.com/ngtcp2/ngtcp2/releases/download/v${NG
 RUN set -x && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
-    wget -O ngtcp2.tar.gz $NGTCP2_DOWNLOAD_URL && \
+    wget -q -O ngtcp2.tar.gz $NGTCP2_DOWNLOAD_URL && \
     echo "${NGTCP2_SHA256} *ngtcp2.tar.gz" | sha256sum -c - && \
     tar xzf ngtcp2.tar.gz && \
     rm -f ngtcp2.tar.gz && \
@@ -31,7 +32,7 @@ ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUN
 RUN set -x && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
-    wget -O unbound.tar.gz $UNBOUND_DOWNLOAD_URL && \
+    wget -q -O unbound.tar.gz $UNBOUND_DOWNLOAD_URL && \
     echo "${UNBOUND_SHA256} *unbound.tar.gz" | sha256sum -c - && \
     tar xzf unbound.tar.gz && \
     rm -f unbound.tar.gz && \
@@ -86,8 +87,8 @@ RUN set -x && \
     unbound-anchor -a /etc/unbound/run/root.key || true && \
     chown _unbound:_unbound /etc/unbound/run && \
     chown _unbound:_unbound /etc/unbound/run/root.key && \
-    wget -O /etc/unbound/root.hints https://www.internic.net/domain/named.root && \
-    wget -O /etc/unbound/run/root.zone https://www.internic.net/domain/root.zone && \
+    wget -q -O /etc/unbound/root.hints https://www.internic.net/domain/named.root && \
+    wget -q -O /etc/unbound/run/root.zone https://www.internic.net/domain/root.zone && \
     chown _unbound:_unbound /etc/unbound/run/root.zone && \
     update-ca-certificates 2> /dev/null || true
 

@@ -3,6 +3,7 @@ LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolv
 LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
 ENV REVISION=2
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 ENV NSD_BUILD_DEPS="make tar gcc musl-dev libevent-dev openssl-dev protobuf-c-dev fstrm-dev"
 
@@ -15,7 +16,7 @@ ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.t
 RUN set -x && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
-    wget -O nsd.tar.gz $NSD_DOWNLOAD_URL && \
+    wget -q -O nsd.tar.gz $NSD_DOWNLOAD_URL && \
     echo "${NSD_SHA256} *nsd.tar.gz" | sha256sum -c - && \
     tar xzf nsd.tar.gz && \
     rm -f nsd.tar.gz && \

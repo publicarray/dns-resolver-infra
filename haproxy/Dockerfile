@@ -3,6 +3,7 @@ LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolve
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
 # https://github.com/docker-library/haproxy/tree/master
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 ENV HAPROXY_BUILD_DEPS="gcc ca-certificates libc-dev linux-headers make openssl-dev pcre2-dev readline-dev tar zlib-dev"
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
@@ -15,7 +16,7 @@ ENV HAPROXY_DOWNLOAD_URL="https://www.haproxy.org/download/${HAPROXY_VERSION_SHO
 RUN set -x && \
     mkdir -p /tmp/src/haproxy && \
     cd /tmp/src/haproxy && \
-    wget -O haproxy.tar.gz $HAPROXY_DOWNLOAD_URL && \
+    wget -q -O haproxy.tar.gz $HAPROXY_DOWNLOAD_URL && \
     echo "${HAPROXY_SHA256} *haproxy.tar.gz" | sha256sum -c - && \
     tar xzf haproxy.tar.gz -C /tmp/src/haproxy --strip-components=1 && \
     nproc="$(getconf _NPROCESSORS_ONLN)" && \
