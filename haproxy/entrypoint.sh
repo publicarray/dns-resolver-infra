@@ -57,7 +57,7 @@ export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
 sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
-    -e "s|server dns .*|server dns ${RESOLVER} send-proxy maxconn 256|" \
+    -e "s|server dns .*|server dns ${RESOLVER} send-proxy-v2 maxconn 256|" \
     /etc/haproxy.conf
 
 if [ $# -eq 0 ]; then
