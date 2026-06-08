@@ -87,9 +87,6 @@ RUN set -x && \
     chown _unbound:_unbound /etc/unbound/run && \
     chown _unbound:_unbound /etc/unbound/run/root.key && \
     wget -O /etc/unbound/root.hints https://www.internic.net/domain/named.root && \
-    # ship an initial root zone so the for-upstream auth-zone "." can answer the
-    # very first queries (incl. resolving its own url master) instead of
-    # deadlocking on an empty zone; unbound refreshes it from the url afterwards
     wget -O /etc/unbound/run/root.zone https://www.internic.net/domain/root.zone && \
     chown _unbound:_unbound /etc/unbound/run/root.zone && \
     update-ca-certificates 2> /dev/null || true
@@ -105,12 +102,10 @@ EXPOSE 853/tcp
 RUN unbound -h || true
 RUN unbound-checkconf /etc/unbound/unbound.conf || true
 
-HEALTHCHECK --start-period=1m --interval=2m \
-CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
+HEALTHCHECK --start-period=1m --interval=2m CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Metadata
 LABEL org.opencontainers.image.title="unbound" \
         org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver." \
         org.opencontainers.image.url="https://nlnetlabs.nl/projects/unbound/about/" \

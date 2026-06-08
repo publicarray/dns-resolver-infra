@@ -15,8 +15,8 @@ LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/DNSC
 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends bash libc6 curl ca-certificates dnsutils libssl3 && \
-    rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
-RUN update-ca-certificates 2> /dev/null || true
+    rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log && \
+    update-ca-certificates 2> /dev/null || true
 COPY --from=doh-proxy-build /usr/local/cargo/bin/doh-proxy /usr/local/bin/doh-proxy
 
 RUN set -x && \

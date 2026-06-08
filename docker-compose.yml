@@ -1,6 +1,6 @@
 # Shared acme.sh env. Used by both the one-shot issuer and the renewal daemon so `docker compose up` provisions/renews certs
 x-acme-env: &acme-env
-  - HEALTHCHECK=${HEALTHCHECK}
+  - HEALTHCHECK=${HEALTHCHECK:-}
   - CF_Email=${CF_EMAIL}
   - CF_Key=${CF_KEY}
   - CF_Token=${CF_TOKEN}
@@ -36,7 +36,12 @@ services:
       - -ec
       - |
         acme.sh --set-default-ca --server letsencrypt || true
-        acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 || true
+        if [ -n "$$HEALTHCHECK" ]; then
+          acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 \
+            --renew-hook "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/$$HEALTHCHECK" || true
+        else
+          acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 || true
+        fi
         acme.sh --deploy -d "$$DOMAIN" --ecc --deploy-hook docker
         [ -n "$$HEALTHCHECK" ] && curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/$$HEALTHCHECK" || true
     logging:
