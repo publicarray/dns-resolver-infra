@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set +x
-set -e
-
 if ! command -v doggo; then
     echo "Please install doggo first:"
     echo "https://github.com/mr-karan/doggo"
@@ -17,30 +14,21 @@ step() {
     echo "=====> $@ <====="
 }
 
-step 'test DNS -over-TLS:'
+step 'Test DNS-over-TLS'
+doggo @tls://dot.seby.io example.com
 
-doggo -n 45.76.113.31 @tls://dot.seby.io example.com
-# doggo @tls://139.99.222.72 example.com
-# doggo @tls://45.76.113.31 example.com
-
-step 'test opennic:'
+step 'Test opennic'
 
 # domains="opennic.glue grep.geek nic.fur be.libre register.null opennic.oz www.opennic.chan"
 for domain in $domains; do
-    doggo -n 45.76.113.31 @tls://dot.seby.io $domain
-    # doggo @tls://139.99.222.72 $domain
-    # doggo @tls://45.76.113.31 $domain
+    doggo @tls://dot.seby.io $domain
 done
 
-step 'test DNS-over-HTTPS'
-doggo -n 45.76.113.31 @https://doh.seby.io/dns-query example.com
-doggo -n 45.76.113.31 @https://doh-1.seby.io/dns-query example.com
-# doggo @https://doh-2.seby.io/dns-query example.com
+step 'Test DNS-over-HTTPS'
+doggo @https://doh.seby.io/dns-query example.com
 
-step 'test for TLS 1.3'
-# echo "Q" | openssl s_client -connect 139.99.222.72:853 | grep TLSv1.3
+step 'Test for TLS 1.3'
 echo "Q" | openssl s_client -connect 45.76.113.31:853 | grep TLSv1.3
-# echo "Q" | openssl s_client -connect 139.99.222.72:443 | grep TLSv1.3
 echo "Q" | openssl s_client -connect 45.76.113.31:443 | grep TLSv1.3
 
 # step 'test dnscrypt-proxy:'
@@ -51,4 +39,7 @@ echo "Q" | openssl s_client -connect 45.76.113.31:443 | grep TLSv1.3
 # doggo example.com @sdns://AQcAAAAAAAAAEjEzOS45OS4yMjIuNzI6ODQ0MyDR7bj6zoAmbRaE1B8qTkCL_O84QCDMYPUgXZy5FRqUYRsyLmRuc2NyeXB0LWNlcnQuZG5zLnNlYnkuaW8
 # doggo example.com @sdns://AgcAAAAAAAAADTEzOS45OS4yMjIuNzKgPhoaD2xT8-l6SS1XCEtbmAcFnuBXqxUFh2_YP9o9uDggMob_ZaZfrzIIXuoTiMNzi6fjeHPJBszjxKKLTMKliYgRZG9oLTIuc2VieS5pbzo0NDMKL2Rucy1xdWVyeQ
 
-step 'All Tests Passed!'
+step 'Test DNS-over-QUIC'
+doggo @quic://dot.seby.io example.com
+
+step 'Done'
