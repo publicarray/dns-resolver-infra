@@ -1,11 +1,11 @@
-FROM golang:alpine3.22 as doh-build
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+FROM golang:alpine3.23 AS doh-build
+LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="High performance DNS over HTTPS server in golang. https://github.com/m13253/dns-over-https"
-ENV REVISION 2
+ENV REVISION=2
 
-ENV DOH_BUILD_DEPS git make
-ENV COMMIT 0b0651a015de5155f5a232041c7411751111a698
+ENV DOH_BUILD_DEPS="git make"
+ENV COMMIT=82c5f0d3277d258534782c8f827be51bacadec70
 RUN apk add --no-cache $DOH_BUILD_DEPS
 
 RUN set -x && \
@@ -17,10 +17,10 @@ RUN set -x && \
     make && \
     make install
 #------------------------------------------------------------------------------#
-FROM alpine:3.22
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+FROM alpine:3.23
+LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 
-ENV DOH_RUN_DEPS curl bind-tools
+ENV DOH_RUN_DEPS="curl bind-tools"
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 

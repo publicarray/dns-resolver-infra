@@ -19,7 +19,7 @@ step() {
 
 step 'test DNS -over-TLS:'
 
-doggo @tls://dot.seby.io example.com
+doggo -n 45.76.113.31 @tls://dot.seby.io example.com
 # doggo @tls://139.99.222.72 example.com
 # doggo @tls://45.76.113.31 example.com
 
@@ -27,14 +27,14 @@ step 'test opennic:'
 
 # domains="opennic.glue grep.geek nic.fur be.libre register.null opennic.oz www.opennic.chan"
 for domain in $domains; do
-    doggo @tls://dot.seby.io $domain
+    doggo -n 45.76.113.31 @tls://dot.seby.io $domain
     # doggo @tls://139.99.222.72 $domain
     # doggo @tls://45.76.113.31 $domain
 done
 
 step 'test DNS-over-HTTPS'
-doggo @https://doh.seby.io/dns-query example.com
-doggo @https://doh-1.seby.io/dns-query example.com
+doggo -n 45.76.113.31 @https://doh.seby.io/dns-query example.com
+doggo -n 45.76.113.31 @https://doh-1.seby.io/dns-query example.com
 # doggo @https://doh-2.seby.io/dns-query example.com
 
 step 'test for TLS 1.3'

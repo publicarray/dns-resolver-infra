@@ -3,17 +3,18 @@ set -e
 set -x
 
 getServiceIP () {
-    for arg
-    do dig "$arg" +short
+    found=
+    for arg; do
+        ip="$(dig +short "$arg" | grep -m1 .)" && { echo "$ip"; found=1; }
     done
+    [ -n "$found" ]
 }
 
 waitOrFail () {
     maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
-        outStr="$($@)"
-        if [ $? -eq 0 ];then
+        if outStr="$("$@")"; then
             echo "$outStr"
             return
         fi
@@ -26,7 +27,8 @@ waitOrFail () {
 }
 
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
-UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"53"}
+# unbound's PROXYv2 (proxy-protocol-port) listener for the DoT backend
+UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"5353"}
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
 
@@ -55,7 +57,7 @@ export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
 sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
-    -e "s/server dns .*/server dns ${RESOLVER}/" \
+    -e "s|server dns .*|server dns ${RESOLVER} send-proxy maxconn 256|" \
     /etc/haproxy.conf
 
 if [ $# -eq 0 ]; then

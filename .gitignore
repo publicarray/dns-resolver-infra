@@ -6,3 +6,4 @@ node_modules
 node.yml
 .env
 data/acme/cron
+run

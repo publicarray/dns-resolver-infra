@@ -1,4 +1,3 @@
-version: '3.4'
 volumes:
     dnscrypt:
     dnscrypt-server:
@@ -109,10 +108,10 @@ services:
     environment:
       - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=*.seby.io
       - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
-      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE=/opt/ssl/cert-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE=/opt/ssl/ca-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE=/opt/ssl/fullchain-ecc.pem
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD=cat /opt/ssl/key-ecc.pem /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy 2>/dev/null; unbound-control reload 2>/dev/null; true
 
   nsd:
     container_name: nsd
@@ -141,6 +140,9 @@ services:
     build: unbound
     image: publicarray/unbound
     command: -m -d nsd
+    labels:
+      # acme.sh deploys the cert here too, for DoQ/DoT on :853
+      - sh.acme.autoload.domain=*.seby.io
     deploy:
       replicas: 1
       resources:
@@ -160,6 +162,15 @@ services:
         published: 4949
         protocol: tcp
         mode: ingress
+      # DNS-over-QUIC (haproxy can't proxy DoQ; unbound terminates it directly)
+      - target: 853
+        published: 853
+        protocol: udp
+        mode: ingress
+    volumes:
+      # /opt/ssl = acme deploy-hook write path; /etc/unbound/ssl = same volume inside chroot
+      - ssl:/opt/ssl
+      - ssl:/etc/unbound/ssl
     networks:
       - nsd-net
       - unbound-net

@@ -1,15 +1,15 @@
-FROM rust:latest as doh-proxy-build
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
-ENV REVISION 1
-ARG VERSION=0.9.9
+FROM rust:latest AS doh-proxy-build
+LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
+ENV REVISION=1
+ARG VERSION=0.9.16
 
-ENV RUSTFLAGS "-C link-arg=-s"
+ENV RUSTFLAGS="-C link-arg=-s"
 RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu && \
     strip --strip-all /usr/local/cargo/bin/doh-proxy
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:22.04
-LABEL org.opencontainers.image.source https://github.com/publicarray/dns-resolver-infra
+FROM ubuntu:26.04
+LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="A DNS-over-HTTP server proxy in Rust. https://github.com/DNSCrypt/doh-server"
 

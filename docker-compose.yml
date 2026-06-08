@@ -1,4 +1,23 @@
-version: '3.4'
+# Shared acme.sh env. Used by both the one-shot issuer and the renewal daemon so `docker compose up` provisions/renews certs
+x-acme-env: &acme-env
+  - HEALTHCHECK=${HEALTHCHECK}
+  - CF_Email=${CF_EMAIL}
+  - CF_Key=${CF_KEY}
+  - CF_Token=${CF_TOKEN}
+  - CF_Account_ID=${CF_ACCOUNT_ID}
+  - CF_Zone_ID=${CF_ZONE_ID}
+  - DOMAIN=${DOMAIN}
+  - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN}
+  - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
+  - DEPLOY_DOCKER_CONTAINER_CERT_FILE=/opt/ssl/cert-ecc.pem
+  - DEPLOY_DOCKER_CONTAINER_CA_FILE=/opt/ssl/ca-ecc.pem
+  - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE=/opt/ssl/fullchain-ecc.pem
+  - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD=cat /opt/ssl/key-ecc.pem /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy 2>/dev/null; unbound-control reload 2>/dev/null; true
+
+x-acme-volumes: &acme-volumes
+  - ./run/acmeout:/acme.sh
+  - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
     dnscrypt:
     dnscrypt-server:
@@ -7,78 +26,40 @@ volumes:
     acme-sh:
     acme-acc:
 services:
+  # set CA, issue the cert (acme.sh skips if still valid)
   acme:
     image: docker.io/neilpang/acme.sh
     container_name: acme
-    command: >
-      /bin/sh -c "echo \"#!/bin/sh
-
-      set -e
-
-      acme.sh --set-default-ca --server letsencrypt
-
-      if [ -n ${HEALTHCHECK} ]; then
-
-        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem --pre-hook 'curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/${HEALTHCHECK}'
-
-      else
-
-        acme.sh --issue --dns dns_cf --dnssleep 60 --domain '${DOMAIN}' --keylength ec-384 --fullchain-file /opt/ssl/fullchain-ecc.pem --key-file /opt/ssl/key-ecc.pem --ca-file /opt/ssl/ca-ecc.pem --cert-file /opt/ssl/cert-ecc.pem
-      
-      fi
-
-      acme.sh --deploy -d '${DOMAIN}' --ecc --deploy-hook docker
-
-      \" > start.sh
-      && chmod +x start.sh
-      && ./start.sh"
+    restart: on-failure:2
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        acme.sh --set-default-ca --server letsencrypt || true
+        acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 || true
+        acme.sh --deploy -d "$$DOMAIN" --ecc --deploy-hook docker
+        [ -n "$$HEALTHCHECK" ] && curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/$$HEALTHCHECK" || true
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    environment:
-      - HEALTHCHECK=${HEALTHCHECK}
-      - CF_Email=${CF_EMAIL}
-      - CF_Key=${CF_KEY}
-      - CF_Token=${CF_TOKEN}
-      - CF_Account_ID=${CF_ACCOUNT_ID}
-      - CF_Zone_ID=${CF_ZONE_ID}
-      - DOMAIN=${DOMAIN}
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN}
-      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
-      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
-    volumes:
-       - ssl:/opt/ssl
-       - ./run/acmeout:/acme.sh
-       - /var/run/docker.sock:/var/run/docker.sock
+    environment: *acme-env
+    volumes: *acme-volumes
 
+  # Renewal daemon: periodically renews and re-deploys certificates.
   acme-daemon:
-    container_name: acme-daemon
-    restart: on-failure:2
     image: docker.io/neilpang/acme.sh
+    container_name: acme-daemon
+    restart: on-failure:5
     command: daemon
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    volumes:
-       - ssl:/opt/ssl
-       - ./run/acmeout:/acme.sh
-       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - DOMAIN=${DOMAIN}
-      - HEALTHCHECK=${HEALTHCHECK}
-      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=${DOMAIN}
-      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/opt/ssl/key-ecc.pem
-      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/opt/ssl/cert-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/opt/ssl/ca-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/opt/ssl/fullchain-ecc.pem"
-      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="cat /opt/ssl/key-ecc.pem > cat /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv restart haproxy"
+    environment: *acme-env
+    volumes: *acme-volumes
 
   nsd:
     container_name: nsd
@@ -98,6 +79,9 @@ services:
     restart: on-failure:5
     depends_on:
       - nsd
+      - acme
+    labels:
+      - sh.acme.autoload.domain=${DOMAIN}
     build: unbound
     image: ghcr.io/publicarray/dns-resolver-infra/unbound
     command: -d nsd
@@ -106,11 +90,14 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    # ports:
-    #   - target: 4949
-    #     published: 4949
-    #     protocol: tcp
-    #     mode: ingress
+    ports:
+      # DNS-over-QUIC (haproxy can't proxy DoQ)
+      - "853:853/udp"
+    volumes:
+      # /opt/ssl = where acme.sh's docker deploy-hook writes the cert;
+      # /etc/unbound/ssl = same volume inside unbound's chroot for reload.
+      - ssl:/opt/ssl
+      - ssl:/etc/unbound/ssl
 
   m13253-doh:
     container_name: doh
@@ -153,10 +140,10 @@ services:
         max-size: "200k"
         max-file: "10"
     ports:
-      - "443:443/tcp"
-      - "853:853/tcp"
-      - "443:443/udp"
-      - "853:853/udp"
+      - "443:443/tcp"   # DoH
+      - "443:443/udp"   # DoH3 (QUIC)
+      - "853:853/tcp"   # DoT
+      # 853/udp (DoQ) is served by unbound directly
     volumes:
        - ssl:/opt/ssl
     environment:
