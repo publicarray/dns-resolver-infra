@@ -1,12 +1,17 @@
 #!/bin/sh
 
-# yarn
-find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 node_modules/.bin/dockerlint
-# find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 node_modules/.bin/dockerfile_lint -f
-find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 node_modules/.bin/dockerfilelint -c .
+find . -not -path "./node_modules/*" -type f -name Dockerfile | while read -r f; do
+    echo "==> docker build --check $f"
+    docker build --check -f "$f" "$(dirname "$f")"
+done
 
 if command -v hadolint >/dev/null; then
-    find . -not -path "./node_modules/*" -type f -name Dockerfile | xargs -L1 hadolint
+    find . -not -path "./node_modules/*" -type f -name Dockerfile -exec hadolint {} +
+elif command -v docker >/dev/null; then
+    find . -not -path "./node_modules/*" -type f -name Dockerfile | while read -r f; do
+        echo "==> hadolint $f"
+        docker run --rm -i hadolint/hadolint < "$f"
+    done
 else
-    echo "For more linting install hadolint 'brew install hadolint'"
+    echo "Install hadolint for deeper linting: pacman -S hadolint"
 fi
