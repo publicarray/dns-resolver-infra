@@ -59,9 +59,6 @@ echo 'CF_ZONE_ID=xxxx' >> .env
 docker-compose up -d
 ```
 
-* [Usage with Docker-Swarm](docker.md)
-* [Usage with Kubernetes](kube.md)
-
 ### sysctl
 
 ```
