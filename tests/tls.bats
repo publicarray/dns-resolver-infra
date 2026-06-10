@@ -25,3 +25,23 @@ openssl_client() {
     run openssl_client 45.76.113.31:443
     assert_output -p "TLSv1.3"
 }
+
+@test "45.76.113.31 TLS 1.0 rejected DNS-over-TLS" {
+    run openssl_client 45.76.113.31:853 -tls1
+    assert_failure
+}
+
+@test "45.76.113.31 TLS 1.1 rejected DNS-over-TLS" {
+    run openssl_client 45.76.113.31:853 -tls1_1
+    assert_failure
+}
+
+@test "45.76.113.31 TLS 1.0 rejected DNS-over-HTTPS" {
+    run openssl_client 45.76.113.31:443 -tls1
+    assert_failure
+}
+
+@test "45.76.113.31 TLS 1.1 rejected DNS-over-HTTPS" {
+    run openssl_client 45.76.113.31:443 -tls1_1
+    assert_failure
+}

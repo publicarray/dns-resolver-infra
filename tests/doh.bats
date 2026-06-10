@@ -34,3 +34,8 @@ exampledotcom="q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB"
     run curl --doh-url https://doh-1.seby.io/dns-query https://ip.seby.io
     assert_success
 }
+
+@test "45.76.113.31 POST DNS-over-HTTPS" {
+    run bash -c "printf '%s' '$exampledotcom' | base64 -d | curl -s -f -H 'content-type: application/dns-message' --data-binary @- 'https://doh-1.seby.io/dns-query'"
+    assert_success
+}
