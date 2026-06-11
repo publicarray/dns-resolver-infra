@@ -62,7 +62,13 @@ VOLUME ["/opt/ssl"]
 EXPOSE 853/udp 853/tcp 443/udp 443/tcp
 
 RUN haproxy -vv
-RUN haproxy -f /etc/haproxy.conf -c || true
+# verify the haproxy configfile (needs temp certificate, deleted after check is done )
+RUN set -x && \
+    openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
+        -subj '/CN=build-check' -days 1 -keyout /tmp/key.pem -out /tmp/cert.pem && \
+    cat /tmp/key.pem /tmp/cert.pem > /opt/ssl/fullchain-key.pem.ecdsa && \
+    haproxy -f /etc/haproxy.conf -c && \
+    rm /opt/ssl/fullchain-key.pem.ecdsa /tmp/key.pem /tmp/cert.pem
 
 # Gracefully exit
 # All services are then put into soft-stop state,

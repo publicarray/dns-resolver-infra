@@ -13,7 +13,7 @@ if ! command -v kdig; then
     echo "https://www.knot-dns.cz/"
     echo "Arch: pacman -S knot"
     echo "macOS: brew install knot"
-    exit
+    exit 1
 fi
 
 npm run bats tests

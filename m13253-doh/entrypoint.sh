@@ -2,7 +2,13 @@
 set -e
 
 getServiceIP () {
-    dig +short "$1" | grep -m1 .
+    for arg; do
+        if ip="$(dig +short "$arg" | grep -m1 .)"; then
+            echo "$ip"
+            return 0
+        fi
+    done
+    return 1
 }
 
 waitOrFail () {

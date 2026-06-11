@@ -31,7 +31,9 @@
 ```sh
 pacman -S docker docker-composer docker-buildx
 git clone https://github.com/publicarray/dns-resolver-infra.git && cd dns-resolver-infra
-# Add Cloudflare cedentials for acme.sh / TLS certificates
+# Set the domain to issue TLS certificates for
+echo 'DOMAIN=dns.example.com' >> .env
+# Add Cloudflare credentials for acme.sh / TLS certificates
 echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env
@@ -45,7 +47,9 @@ echo 'CF_ZONE_ID=xxxx' >> .env
 # Build Images or pull them:
 docker-compose pull
 
-# Add Cloudflare cedentials for acme.sh / TLS certificates
+# Set the domain to issue TLS certificates for
+echo 'DOMAIN=dns.example.com' >> .env
+# Add Cloudflare credentials for acme.sh / TLS certificates
 echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env

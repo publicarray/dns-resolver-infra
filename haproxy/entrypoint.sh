@@ -3,11 +3,13 @@ set -e
 set -x
 
 getServiceIP () {
-    found=
     for arg; do
-        ip="$(dig +short "$arg" | grep -m1 .)" && { echo "$ip"; found=1; }
+        if ip="$(dig +short "$arg" | grep -m1 .)"; then
+            echo "$ip"
+            return 0
+        fi
     done
-    [ -n "$found" ]
+    return 1
 }
 
 waitOrFail () {
@@ -56,14 +58,56 @@ shift $((OPTIND-1))
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
+STOP_TIMEOUT=${STOP_TIMEOUT-30}
+
 sed -i -e "s/server doh-proxy .*/server doh-proxy ${DOH_SERVER}/" \
     -e "s|server dns .*|server dns ${RESOLVER} send-proxy-v2 maxconn 256|" \
+    -e "s/hard-stop-after .*/hard-stop-after ${STOP_TIMEOUT}s/" \
     /etc/haproxy.conf
 
-if [ $# -eq 0 ]; then
-    exec /usr/sbin/runsvdir -P /etc/service
+/usr/sbin/runsvdir -P /etc/service &
+runsvdir_pid=$!
+
+stopCmd () {
+    status=0
+    if [ "$cmd" != "$runsvdir_pid" ]; then
+        kill "$cmd" 2>/dev/null || true
+        wait "$cmd"
+        status=$?
+    fi
+    kill "$runsvdir_pid" 2>/dev/null || true
+}
+
+softStop () {
+    sv once /etc/service/haproxy || true
+    sv 1 /etc/service/haproxy || true
+    n=0
+    while [ -n "$(pidof haproxy)" ] && [ "$n" -lt "$STOP_TIMEOUT" ]; do
+        sleep 1
+        n=$((n+1))
+    done
+    sv force-stop /etc/service/haproxy || true
+    stopCmd
+    exit 0
+}
+
+hardStop () {
+    sv force-stop /etc/service/haproxy || true
+    stopCmd
+    exit "$status"
+}
+
+if [ $# -gt 0 ]; then
+    [ "$1" = '--' ] && shift
+    "$@" <&0 &
+    cmd=$!
+else
+    cmd=$runsvdir_pid
 fi
 
-[ "$1" = '--' ] && shift
-/usr/sbin/runsvdir -P /etc/service
-exec "$@"
+set +e
+trap softStop USR1
+trap hardStop TERM INT
+
+wait "$cmd"
+exit $?

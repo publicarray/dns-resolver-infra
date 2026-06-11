@@ -16,15 +16,18 @@ CONFIG_FILE_TEMPLATE="${CONF_DIR}/encrypted-dns.toml.in"
 
 getServiceIP() {
     for arg; do
-        dig "$arg" +short
+        if ip="$(dig +short "$arg" | grep -m1 .)"; then
+            echo "$ip"
+            return 0
+        fi
     done
+    return 1
 }
 waitOrFail() {
     maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
-        outStr="$($@)"
-        if [ $? -eq 0 ]; then
+        if outStr="$("$@")"; then
             echo "$outStr"
             return
         fi
@@ -84,7 +87,7 @@ init() {
     domain_blacklist_file="${LISTS_DIR}/blacklist.txt"
     domain_blacklist_configuration=""
     if [ -s "$domain_blacklist_file" ]; then
-        chown _encrypted-dns:_encrypted_dns "$domain_blacklist_file"
+        chown _encrypted-dns:_encrypted-dns "$domain_blacklist_file"
         domain_blacklist_configuration="domain_blacklist = \"${domain_blacklist_file}\""
     fi
 

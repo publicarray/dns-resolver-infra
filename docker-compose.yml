@@ -130,6 +130,7 @@ services:
   haproxy:
     container_name: haproxy
     restart: on-failure:5
+    stop_grace_period: 35s
     depends_on:
       - acme
       - m13253-doh

@@ -34,6 +34,6 @@ EXPOSE 3000/udp 3000/tcp
 RUN /usr/local/bin/doh-server -version
 
 HEALTHCHECK --start-period=5s --interval=60s \
-CMD curl -H 'accept: application/dns-message' 'http://127.0.0.1:3000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
+CMD curl -f -H 'accept: application/dns-message' 'http://127.0.0.1:3000/dns-query?dns=q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB' >/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

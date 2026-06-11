@@ -2,15 +2,20 @@
 set -e
 
 getServiceIP () {
-    dig "$1" +short
+    for arg; do
+        if ip="$(dig +short "$arg" | grep -m1 .)"; then
+            echo "$ip"
+            return 0
+        fi
+    done
+    return 1
 }
 
 waitOrFail () {
     maxTries=24
     i=0
     while [ $i -lt $maxTries ]; do
-        outStr="$($@)"
-        if [ $? -eq 0 ];then
+        if outStr="$("$@")"; then
             echo "$outStr"
             return
         fi

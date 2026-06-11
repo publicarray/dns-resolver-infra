@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly AS encrypted-dns-build
+FROM rust:1 AS encrypted-dns-build
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 ENV REVISION=2
 ENV VERSION=0.9.20

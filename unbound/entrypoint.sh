@@ -2,7 +2,13 @@
 set -e
 
 getServiceIP () {
-    drill -4 "$1" | awk '/ANSWER SECTION/ {print;getline;print}' | grep -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})'
+    for arg; do
+        if ip="$(drill -4 "$arg" | awk '/ANSWER SECTION/ {print;getline;print}' | grep -m1 -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})')"; then
+            echo "$ip"
+            return 0
+        fi
+    done
+    return 1
 }
 
 waitOrFail () {
@@ -114,16 +120,21 @@ optimise_unbound_memory() {
         threads=1
     fi
 
+    slabs=1
+    while [ $((slabs * 2)) -le $threads ]; do
+        slabs=$((slabs * 2))
+    done
+
     sed \
-        -re "s/num-threads:\\s{0,}\\d{1,}\\w/num-threads: ${threads}/" \
-        -re "s/msg-cache-slabs:\\s{0,}\\d{1,}\\w/msg-cache-size: ${threads}/" \
-        -re "s/rrset-cache-slabs:\\s{0,}\\d{1,}\\w/rrset-cache-slabs: ${threads}/" \
-        -re "s/key-cache-slabs:\\s{0,}\\d{1,}\\w/key-cache-slabs: ${threads}/" \
-        -re "s/infra-cache-slabs:\\s{0,}\\d{1,}\\w/infra-cache-slabs: ${threads}/" \
-        -re "s/msg-cache-size:\\s{0,}\\d{1,}\\w/msg-cache-size: ${memory}m/" \
-        -re "s/rrset-cache-size:\\s{0,}\\d{1,}\\w/rrset-cache-size: $((memory * 2))m/" \
-        -re "s/key-cache-size:\\s{0,}\\d{1,}\\w/key-cache-size: $((memory / 2))m/" \
-        -re "s/neg-cache-size:\\s{0,}\\d{1,}\\w/neg-cache-size: $((memory / 2))m/" \
+        -re "s/num-threads:[[:space:]]*[0-9]+/num-threads: ${threads}/" \
+        -re "s/msg-cache-slabs:[[:space:]]*[0-9]+/msg-cache-slabs: ${slabs}/" \
+        -re "s/rrset-cache-slabs:[[:space:]]*[0-9]+/rrset-cache-slabs: ${slabs}/" \
+        -re "s/key-cache-slabs:[[:space:]]*[0-9]+/key-cache-slabs: ${slabs}/" \
+        -re "s/infra-cache-slabs:[[:space:]]*[0-9]+/infra-cache-slabs: ${slabs}/" \
+        -re "s/msg-cache-size:[[:space:]]*[0-9]+m/msg-cache-size: ${memory}m/" \
+        -re "s/rrset-cache-size:[[:space:]]*[0-9]+m/rrset-cache-size: $((memory * 2))m/" \
+        -re "s/key-cache-size:[[:space:]]*[0-9]+m/key-cache-size: $((memory / 2))m/" \
+        -re "s/neg-cache-size:[[:space:]]*[0-9]+m/neg-cache-size: $((memory / 2))m/" \
         -i  "/etc/unbound/unbound.conf"
 
     if [ -n "$NSD_SERVICE_HOST" ]; then
@@ -155,7 +166,8 @@ fi
 optimise_unbound_memory
 echo "==> Done configuring unbound"
 
-if [ "$1" = '--' ] && shift; then
+[ "$1" = '--' ] && shift
+if [ $# -gt 0 ]; then
     /usr/sbin/runsvdir -P /etc/service &
     exec "$@"
 fi
