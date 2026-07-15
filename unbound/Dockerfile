@@ -3,18 +3,28 @@ LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolv
 ENV REVISION=9
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
-# Alpine's ngtcp2 only ships the GnuTLS crypto backend; unbound is built against
-# OpenSSL, so we build ngtcp2 from source with its native OpenSSL backend
-# (libngtcp2_crypto_ossl, needs OpenSSL >= 3.5) to get DNS-over-QUIC support.
 ENV UNBOUND_BUILD_DEPS="expat-dev file gcc libevent-dev openssl-dev make musl-dev nghttp2-dev pkgconf"
 
 RUN apk --no-cache add $UNBOUND_BUILD_DEPS
+
+ARG TARGETARCH
+RUN set -x && \
+    case "$TARGETARCH" in \
+      amd64) ARCH_CFLAGS="-march=x86-64-v3 -fcf-protection=full" ;; \
+      arm64) ARCH_CFLAGS="-mbranch-protection=standard" ;; \
+      *)     ARCH_CFLAGS="" ;; \
+    esac && \
+    { \
+      echo "export CFLAGS=\"-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection ${ARCH_CFLAGS}\""; \
+      echo "export LDFLAGS=\"-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack\""; \
+    } > /tmp/flags.sh
 
 ARG NGTCP2_VERSION=1.23.0
 ARG NGTCP2_SHA256=364d539c064d37ce0d9a595785d36eecb09926ec308813a6b6550c8adf4a50a4
 ARG NGTCP2_DOWNLOAD_URL=https://github.com/ngtcp2/ngtcp2/releases/download/v${NGTCP2_VERSION}/ngtcp2-${NGTCP2_VERSION}.tar.gz
 
 RUN set -x && \
+    . /tmp/flags.sh && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
     wget -q -O ngtcp2.tar.gz $NGTCP2_DOWNLOAD_URL && \
@@ -30,6 +40,7 @@ ARG UNBOUND_SHA256=0fe8b6277b0959cfd17562debac0aa5f71e0b02dc4ffa9c60271c583edab5
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
+    . /tmp/flags.sh && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
     wget -q -O unbound.tar.gz $UNBOUND_DOWNLOAD_URL && \
@@ -39,10 +50,8 @@ RUN set -x && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure --with-conf-file=/etc/unbound/unbound.conf --with-run-dir=/etc/unbound \
     --with-pthreads --with-username=_unbound --with-libevent --with-libnghttp2 \
-    --with-libngtcp2 \
-    CFLAGS="-O2 -march=x86-64-v3 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection=full" \
-    LDFLAGS="-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack" && \
-    make install && \
+    --with-libngtcp2 && \
+    make -j"$(nproc)" install && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
@@ -101,7 +110,10 @@ EXPOSE 4949/tcp
 EXPOSE 853/tcp
 
 RUN unbound -h || true
-RUN unbound-checkconf /etc/unbound/unbound.conf || true
+RUN unbound-control-setup && \
+    unbound-checkconf /etc/unbound/unbound.conf && \
+    rm -f /etc/unbound/unbound_server.pem /etc/unbound/unbound_server.key \
+          /etc/unbound/unbound_control.pem /etc/unbound/unbound_control.key
 
 HEALTHCHECK --start-period=1m --interval=2m CMD ["drill", "-D", "-Q", ".", "@127.0.0.1", "SOA"]
 

@@ -9,11 +9,24 @@ ENV NSD_BUILD_DEPS="make tar gcc musl-dev libevent-dev openssl-dev protobuf-c-de
 
 RUN apk add --no-cache $NSD_BUILD_DEPS
 
+ARG TARGETARCH
+RUN set -x && \
+    case "$TARGETARCH" in \
+      amd64) ARCH_CFLAGS="-march=x86-64-v3 -fcf-protection=full" ;; \
+      arm64) ARCH_CFLAGS="-mbranch-protection=standard" ;; \
+      *)     ARCH_CFLAGS="" ;; \
+    esac && \
+    { \
+      echo "export CFLAGS=\"-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection ${ARCH_CFLAGS}\""; \
+      echo "export LDFLAGS=\"-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack\""; \
+    } > /tmp/flags.sh
+
 ARG NSD_VERSION=4.14.2
 ARG NSD_SHA256=2bff57349841844d7560e76d7bd70b6bd6f4c462cdaa6d57b8e83d1e14dd22d6
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
 RUN set -x && \
+    . /tmp/flags.sh && \
     mkdir -p /tmp/src && \
     cd /tmp/src && \
     wget -q -O nsd.tar.gz $NSD_DOWNLOAD_URL && \
@@ -22,10 +35,8 @@ RUN set -x && \
     rm -f nsd.tar.gz && \
     cd nsd-${NSD_VERSION} && \
     ./configure --enable-root-server --with-configdir=/etc/nsd \
-    --with-user=_nsd --with-libevent \
-    CFLAGS="-O2 -march=x86-64-v3 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection=full" \
-    LDFLAGS="-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack" && \
-    make install
+    --with-user=_nsd --with-libevent && \
+    make -j"$(nproc)" install
 
 #------------------------------------------------------------------------------#
 FROM alpine:3.23
