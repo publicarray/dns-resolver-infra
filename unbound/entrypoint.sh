@@ -111,7 +111,7 @@ optimise_unbound_memory() {
         echo "Not enough memory" >&2
         exit 1
     fi
-    memory=$(($((memoryMB / 4)) - reserved))
+    memory=$(($((memoryMB / 8)) - reserved))
 
     nproc=$(nproc)
     if [ "$nproc" -gt 1 ]; then
@@ -133,8 +133,6 @@ optimise_unbound_memory() {
         -re "s/infra-cache-slabs:[[:space:]]*[0-9]+/infra-cache-slabs: ${slabs}/" \
         -re "s/msg-cache-size:[[:space:]]*[0-9]+m/msg-cache-size: ${memory}m/" \
         -re "s/rrset-cache-size:[[:space:]]*[0-9]+m/rrset-cache-size: $((memory * 2))m/" \
-        -re "s/key-cache-size:[[:space:]]*[0-9]+m/key-cache-size: $((memory / 2))m/" \
-        -re "s/neg-cache-size:[[:space:]]*[0-9]+m/neg-cache-size: $((memory / 2))m/" \
         -i  "/etc/unbound/unbound.conf"
 
     if [ -n "$NSD_SERVICE_HOST" ]; then
