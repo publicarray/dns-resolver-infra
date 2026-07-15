@@ -40,8 +40,8 @@ RUN set -x && \
     ./configure --with-conf-file=/etc/unbound/unbound.conf --with-run-dir=/etc/unbound \
     --with-pthreads --with-username=_unbound --with-libevent --with-libnghttp2 \
     --with-libngtcp2 \
-    CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
-    LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
+    CFLAGS="-O2 -march=x86-64-v3 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection=full" \
+    LDFLAGS="-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack" && \
     make install && \
     ls /usr/local/lib/
 

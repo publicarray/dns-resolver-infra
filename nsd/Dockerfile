@@ -23,8 +23,8 @@ RUN set -x && \
     cd nsd-${NSD_VERSION} && \
     ./configure --enable-root-server --with-configdir=/etc/nsd \
     --with-user=_nsd --with-libevent \
-    CFLAGS="-O2 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security" \
-    LDFLAGS="-Wl,-z,now -Wl,-z,relro" && \
+    CFLAGS="-O2 -march=x86-64-v3 -flto -fPIE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection=full" \
+    LDFLAGS="-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack" && \
     make install
 
 #------------------------------------------------------------------------------#
