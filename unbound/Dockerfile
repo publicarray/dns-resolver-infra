@@ -35,8 +35,8 @@ RUN set -x && \
     ./configure --prefix=/usr --enable-lib-only --with-openssl --without-gnutls && \
     make -j"$(nproc)" install
 
-ARG UNBOUND_VERSION=1.25.1
-ARG UNBOUND_SHA256=0fe8b6277b0959cfd17562debac0aa5f71e0b02dc4ffa9c60271c583edab586f
+ARG UNBOUND_VERSION=1.25.2
+ARG UNBOUND_SHA256=0d92275c703d5f5f8baba3dab22117dd8c29b495588a5c229768ed6581566600
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -64,10 +64,10 @@ ENV UNBOUND_RUN_DEPS="expat libevent openssl runit shadow drill wget bc ca-certi
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2852
 # https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.25.1-1-x86_64.pkg.tar.zst.html
 
-ARG UNBOUND_VERSION=1.25.1
+ARG UNBOUND_VERSION=1.25.2
 ARG LIBUNBOUND_CURRENT=8
 ARG LIBUNBOUND_AGE=1
-ARG LIBUNBOUND_REVISION=37
+ARG LIBUNBOUND_REVISION=38
 
 # {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}
