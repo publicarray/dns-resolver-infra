@@ -65,12 +65,12 @@ ENV UNBOUND_RUN_DEPS="expat libevent openssl runit shadow drill wget bc ca-certi
 # https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.25.1-1-x86_64.pkg.tar.zst.html
 
 ARG UNBOUND_VERSION=1.26.0
-ARG LIBUNBOUND_CURRENT=9
+ARG LIBUNBOUND_SONAME=8
 ARG LIBUNBOUND_AGE=1
 ARG LIBUNBOUND_REVISION=39
 
-# {LIBUNBOUND_CURRENT}.{LIBUNBOUND_AGE}.{LIBUNBOUND_REVISION}
-ARG LIBUNBOUND_VERSION=${LIBUNBOUND_CURRENT}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}
+# libtool: shared object name (SONAME) = configure.ac's LIBUNBOUND_CURRENT - LIBUNBOUND_AGE
+ARG LIBUNBOUND_VERSION=${LIBUNBOUND_SONAME}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}
 
 RUN apk add --no-cache $UNBOUND_RUN_DEPS
 
@@ -87,7 +87,7 @@ COPY --from=build /usr/lib/libngtcp2_crypto_ossl.so* /usr/lib/
 
 RUN set -x && \
     cd /usr/local/lib/ && \
-    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_CURRENT} && \
+    ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so.${LIBUNBOUND_SONAME} && \
     ln -sf libunbound.so.${LIBUNBOUND_VERSION} libunbound.so && \
     cd && \
     groupadd _unbound && \
