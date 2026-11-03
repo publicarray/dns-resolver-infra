@@ -99,7 +99,9 @@ RUN set -x && \
     wget -q -O /etc/unbound/root.hints https://www.internic.net/domain/named.root && \
     wget -q -O /etc/unbound/run/root.zone https://www.internic.net/domain/root.zone && \
     chown _unbound:_unbound /etc/unbound/run/root.zone && \
-    update-ca-certificates 2> /dev/null || true
+    update-ca-certificates 2> /dev/null || true && \
+    mkdir -p /etc/unbound/certs && \
+    cp /etc/ssl/certs/ca-certificates.crt /etc/unbound/certs/ca-certificates.crt
 
 COPY unbound.conf /etc/unbound/unbound.conf
 COPY unbound.sh /etc/service/unbound/run
