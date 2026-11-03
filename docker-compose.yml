@@ -43,14 +43,22 @@ services:
       - -ec
       - |
         acme.sh --set-default-ca --server letsencrypt || true
+        issue_rc=0
         if [ -n "$$HEALTHCHECK" ]; then
           acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 \
-            --renew-hook "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/$$HEALTHCHECK" || true
+            --renew-hook "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/$$HEALTHCHECK" || issue_rc=$$?
         else
-          acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 || true
+          acme.sh --issue --dns dns_cf --dnssleep 60 -d "$$DOMAIN" --keylength ec-384 || issue_rc=$$?
         fi
-        acme.sh --deploy -d "$$DOMAIN" --ecc --deploy-hook docker
-        [ -n "$$HEALTHCHECK" ] && curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/$$HEALTHCHECK" || true
+        deploy_rc=0
+        acme.sh --deploy -d "$$DOMAIN" --ecc --deploy-hook docker || deploy_rc=$$?
+        if { [ "$$issue_rc" -eq 0 ] || [ "$$issue_rc" -eq 2 ]; } && [ "$$deploy_rc" -eq 0 ]; then
+          [ -n "$$HEALTHCHECK" ] && curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/$$HEALTHCHECK" || true
+        else
+          echo "acme: issue exit $$issue_rc, deploy exit $$deploy_rc" >&2
+          [ -n "$$HEALTHCHECK" ] && curl -fsS -m 10 --retry 5 -o /dev/null "https://hc-ping.com/$$HEALTHCHECK/fail" || true
+          exit 1
+        fi
     logging:
       driver: "json-file"
       options:
