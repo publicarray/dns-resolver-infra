@@ -43,14 +43,29 @@ dns_summary() {
     printf ' answers=%d\n' $((b[6] * 256 + b[7]))
 }
 
+response_complete() {
+    local size len
+    size=$(wc -c < "$1")
+    [ "$size" -ge 2 ] || return 1
+    len=$(od -An -tu1 -N2 "$1" | awk '{print $1 * 256 + $2}')
+    [ "$size" -ge $((2 + len)) ]
+}
+
 stream_exchange() {
-    local transport=$1 extra=()
+    local transport=$1 extra=() out i
     shift
     [ "$transport" = quic ] && extra=(-quic -alpn doq)
-    (dns_query "$@" | with_length; sleep 1) |
-        timeout 10 openssl s_client "${extra[@]}" -quiet -no_ign_eof \
-            -connect "$SERVER_IP:853" -servername "$TLS_HOST" -verify_return_error 2>/dev/null |
-        tail -c +3
+    out=$(mktemp)
+    {
+        dns_query "$@" | with_length
+        for i in $(seq 100); do
+            response_complete "$out" && break
+            sleep 0.1
+        done
+    } | timeout 15 openssl s_client "${extra[@]}" -quiet -no_ign_eof \
+        -connect "$SERVER_IP:853" -servername "$TLS_HOST" -verify_return_error > "$out" 2>/dev/null
+    tail -c +3 "$out"
+    rm -f "$out"
 }
 
 dot_lookup() {
