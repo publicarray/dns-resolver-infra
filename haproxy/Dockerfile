@@ -49,7 +49,9 @@ RUN set -x && \
     mkdir -p \
         /etc/service/haproxy/ \
         /run/haproxy/ \
-        /opt/ssl/ && \
+        /opt/ssl/ \
+        /etc/haproxy/ && \
+    touch /etc/haproxy/redirects.map && \
     update-ca-certificates 2> /dev/null || true
 
 COPY entrypoint.sh /
@@ -58,7 +60,7 @@ COPY haproxy.sh /etc/service/haproxy/run
 
 VOLUME ["/opt/ssl"]
 
-EXPOSE 853/udp 853/tcp 443/udp 443/tcp
+EXPOSE 80/tcp 853/udp 853/tcp 443/udp 443/tcp
 
 RUN haproxy -vv
 # verify the haproxy configfile (needs temp certificate, deleted after check is done )

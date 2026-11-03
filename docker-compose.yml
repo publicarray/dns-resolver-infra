@@ -171,6 +171,7 @@ services:
         max-size: "200k"
         max-file: "10"
     ports:
+      - "80:80/tcp"     # redirects
       - "443:443/tcp"   # DoH
       - "443:443/udp"   # DoH3 (QUIC)
       - "853:853/tcp"   # DoT
@@ -179,6 +180,8 @@ services:
        - ssl:/opt/ssl
     environment:
       - DOMAIN=${DOMAIN}
+      - REDIRECTS=${REDIRECTS:-dns.seby.io=https://dns.seby.io www.dns.seby.io=https://dns.seby.io dot.seby.io=https://dns.seby.io www.dot.seby.io=https://dns.seby.io doh.seby.io=https://dns.seby.io www.doh.seby.io=https://dns.seby.io ntppool.org=https://www.ntppool.org/en/}
+      - REDIRECT_DEFAULT=${REDIRECT_DEFAULT:-https://www.ntppool.org/en/}
       - UNBOUND_SERVICE_HOST=172.30.53.53
       - DOH_PROXY_SERVICE_HOST=172.30.53.80
     networks:

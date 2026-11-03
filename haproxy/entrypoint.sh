@@ -52,6 +52,16 @@ export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
 STOP_TIMEOUT=${STOP_TIMEOUT-30}
 
+set -f
+: > /etc/haproxy/redirects.map
+for pair in ${REDIRECTS-}; do
+    case "$pair" in
+        ?*=?*) printf '%s %s\n' "$(echo "${pair%%=*}" | tr 'A-Z' 'a-z')" "${pair#*=}" >> /etc/haproxy/redirects.map ;;
+        *) echo "==> ignoring invalid REDIRECTS entry: $pair" >&2 ;;
+    esac
+done
+set +f
+
 sed -i -e "s/^\([[:space:]]*\)server doh-proxy [^ ]*/\1server doh-proxy ${DOH_SERVER}/" \
     -e "s/^\([[:space:]]*\)server dns [^ ]*/\1server dns ${RESOLVER}/" \
     -e "s/hard-stop-after .*/hard-stop-after ${STOP_TIMEOUT}s/" \
