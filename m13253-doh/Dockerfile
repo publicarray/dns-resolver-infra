@@ -20,7 +20,7 @@ RUN set -x && \
 FROM alpine:3.24
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 
-ENV DOH_RUN_DEPS="curl bind-tools"
+ENV DOH_RUN_DEPS="curl"
 
 RUN apk add --no-cache $DOH_RUN_DEPS
 

@@ -1,32 +1,6 @@
 #!/bin/sh
 set -e
 
-getServiceIP () {
-    for arg; do
-        if ip="$(drill -4 "$arg" | awk '/ANSWER SECTION/ {print;getline;print}' | grep -m1 -oE '(([0-9]{1,3})\.){3}(1?[0-9]{1,3})')"; then
-            echo "$ip"
-            return 0
-        fi
-    done
-    return 1
-}
-
-waitOrFail () {
-    maxTries=24
-    i=0
-    while [ $i -lt $maxTries ]; do
-        if outStr="$("$@")"; then
-            echo "$outStr"
-            return
-        fi
-        i=$((i+1))
-        echo "==> waiting for a dependent service $i/$maxTries" >&2
-        sleep 5
-    done
-    echo "Too many failed attempts" >&2
-    exit 1
-}
-
 #------------------------ Optional add munin statistics -----------------------#
 munin() {
     echo "==> Installing munin-node"
@@ -87,7 +61,6 @@ EOF
 }
 
 usage() {
-    echo "-d [domain name]  domain lookup for service discovery"
     echo "-m                setup munin node"
     exit 0
 }
@@ -145,11 +118,9 @@ optimise_unbound_memory() {
     fi
 }
 
-while getopts "h?d:m" opt; do
+while getopts "h?m" opt; do
     case "$opt" in
         h|\?) usage;;
-        d) NSD_SERVICE_HOST="$(waitOrFail getServiceIP "$OPTARG")"
-        ;;
         m) munin;;
     esac
 done

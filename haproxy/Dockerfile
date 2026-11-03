@@ -36,7 +36,7 @@ RUN set -x && \
 FROM alpine:3.24
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 
-ENV HAPROXY_RUN_DEPS="curl shadow zlib pcre2 openssl socat runit coreutils bind-tools"
+ENV HAPROXY_RUN_DEPS="curl shadow zlib pcre2 openssl socat runit coreutils"
 
 RUN apk add --no-cache $HAPROXY_RUN_DEPS
 

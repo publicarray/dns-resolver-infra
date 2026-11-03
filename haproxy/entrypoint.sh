@@ -2,51 +2,12 @@
 set -e
 set -x
 
-getServiceIP () {
-    for arg; do
-        if ip="$(dig +short "$arg" | grep -m1 .)"; then
-            echo "$ip"
-            return 0
-        fi
-    done
-    return 1
-}
-
-waitOrFail () {
-    maxTries=24
-    i=0
-    while [ $i -lt $maxTries ]; do
-        if outStr="$("$@")"; then
-            echo "$outStr"
-            return
-        fi
-        i=$((i+1))
-        echo "==> waiting for a dependent service $i/$maxTries" >&2
-        sleep 5
-    done
-    echo "Too many failed attempts" >&2
-    exit 1
-}
-
 UNBOUND_SERVICE_HOST=${UNBOUND_SERVICE_HOST-"1.1.1.1"}
 # unbound's PROXYv2 (proxy-protocol-port) listener for the DoT backend
 UNBOUND_SERVICE_PORT=${UNBOUND_SERVICE_PORT-"5353"}
 DOH_PROXY_SERVICE_HOST=${DOH_PROXY_SERVICE_HOST-"127.0.0.1"}
 DOH_PROXY_SERVICE_PORT=${DOH_PROXY_SERVICE_PORT-"3000"}
 
-while getopts "h?d" opt; do
-    case "$opt" in
-        h|\?)
-            echo "-d  domain lookup for service discovery";
-            exit 0
-        ;;
-        d)
-            UNBOUND_SERVICE_HOST="$(waitOrFail getServiceIP unbound)"
-            DOH_PROXY_SERVICE_HOST="$(waitOrFail getServiceIP doh-proxy m13253-doh)"
-        ;;
-    esac
-done
-shift $((OPTIND-1))
 export RESOLVER="$UNBOUND_SERVICE_HOST:$UNBOUND_SERVICE_PORT"
 export DOH_SERVER="$DOH_PROXY_SERVICE_HOST:$DOH_PROXY_SERVICE_PORT"
 
