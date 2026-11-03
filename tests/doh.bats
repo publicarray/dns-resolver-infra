@@ -39,3 +39,16 @@ exampledotcom="q80BAAABAAAAAAAAA3d3dwdleGFtcGxlA2NvbQAAAQAB"
     run bash -c "printf '%s' '$exampledotcom' | base64 -d | curl -s -f -H 'content-type: application/dns-message' --data-binary @- 'https://doh-1.seby.io/dns-query'"
     assert_success
 }
+
+@test "45.76.113.31 GET DNS-over-HTTPS over HTTP/3 (QUIC)" {
+    curl -V | grep -q HTTP3 || skip "curl built without HTTP/3"
+    run curl -s -m 10 --http3-only -o /dev/null -w '%{http_version} %{http_code}' "https://doh-1.seby.io/dns-query?dns=$exampledotcom"
+    assert_success
+    assert_output "3 200"
+}
+
+@test "45.76.113.31 DNS-over-HTTPS advertises HTTP/3 via alt-svc" {
+    run curl -sI -m 10 "https://doh-1.seby.io/dns-query?dns=$exampledotcom"
+    assert_success
+    assert_output -p 'alt-svc: h3=":443"'
+}
