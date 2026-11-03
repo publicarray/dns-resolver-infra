@@ -15,7 +15,7 @@ LABEL name="dnscrypt-server"
 LABEL description="https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
 SHELL ["/bin/sh", "-x", "-c"]
 WORKDIR /tmp
-ENV RUN_DEPS="bash dnsutils coreutils findutils grep ca-certificates"
+ENV RUN_DEPS="bash coreutils findutils grep ca-certificates"
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends $RUN_DEPS && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log

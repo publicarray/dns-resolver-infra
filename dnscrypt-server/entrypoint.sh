@@ -14,31 +14,6 @@ CONF_DIR="/opt/encrypted-dns/etc"
 CONFIG_FILE="${CONF_DIR}/encrypted-dns.toml"
 CONFIG_FILE_TEMPLATE="${CONF_DIR}/encrypted-dns.toml.in"
 
-getServiceIP() {
-    for arg; do
-        if ip="$(dig +short "$arg" | grep -m1 .)"; then
-            echo "$ip"
-            return 0
-        fi
-    done
-    return 1
-}
-waitOrFail() {
-    maxTries=24
-    i=0
-    while [ $i -lt $maxTries ]; do
-        if outStr="$("$@")"; then
-            echo "$outStr"
-            return
-        fi
-        i=$((i + 1))
-        echo "==> waiting for a dependent service $i/$maxTries" >&2
-        sleep 5
-    done
-    echo "Too many failed attempts" >&2
-    exit 1
-}
-
 init() {
     if [ "$(is_initialized)" = yes ]; then
         start
@@ -56,8 +31,8 @@ init() {
             h | \?) usage ;;
             N) provider_name=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
             E) ext_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
-            d) upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
-            T) tls_proxy_upstream_address=$(waitOrFail getServiceIP "$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)") ;;
+            d) upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//') ;;
+            T) tls_proxy_upstream_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//') ;;
             P) tls_proxy_upstream_port=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z)  ;;
             A) anondns_enabled="true" ;;
             M) metrics_address=$(echo "$OPTARG" | sed -e 's/^[ \t]*//' | tr A-Z a-z) ;;
@@ -226,11 +201,11 @@ initialize the container for a server accessible at ip <external ip> on port
 <port>, for a provider named <provider_name>. This is required only once.
 
 If TLS connections to the same port have to be redirected to a HTTPS server
-(e.g. for DoH), add -T <https server ip>:<port>
+(e.g. for DoH), add -T <https server ip> and optionally -P <port> (default 443)
 
 To enable Anonymized DNS relaying, add -A.
 
-To use dns service discovery use -d <service name> of a resolver on port 53
+To use a resolver other than 127.0.0.1, add -d <resolver ip> (port 53)
 
 * start (default command): start the resolver and the dnscrypt server proxy.
 Ports 443/udp and 443/tcp have to be publicly exposed.

@@ -149,7 +149,11 @@ services:
   #     - unbound
   #   build: doh-proxy
   #   image: ghcr.io/publicarray/dns-resolver-infra/doh-proxy
-  #   command: -d
+  #   environment:
+  #     - UNBOUND_SERVICE_HOST=172.30.53.53
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.30.53.81
 
   haproxy:
     container_name: haproxy
@@ -195,11 +199,12 @@ services:
   #   image: ghcr.io/publicarray/dns-resolver-infra/dnscrypt-server
   #   command:
   #     - init
-  #     - -d unbound
+  #     - -d
+  #     - 172.30.53.53
   #     - -N
   #     - dns.seby.io
   #     - -T
-  #     - haproxy
+  #     - 172.30.53.43
   #     - -E
   #     - 45.76.113.31:8443
   #     - -A
@@ -214,3 +219,6 @@ services:
   #   volumes:
   #      - dnscrypt:/opt/dnscrypt-wrapper
   #      - dnscrypt-server:/opt/encrypted-dns
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.30.53.84
