@@ -8,14 +8,14 @@ RUN cargo install encrypted-dns --version $VERSION && \
     strip --strip-all /usr/local/cargo/bin/encrypted-dns
 
 #------------------------------------------------------------------------------#
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL name="dnscrypt-server"
 LABEL description="https://github.com/jedisct1/encrypted-dns-server - Basically https://github.com/DNSCrypt/dnscrypt-server-docker minus unbound"
 SHELL ["/bin/sh", "-x", "-c"]
 WORKDIR /tmp
-ENV RUN_DEPS="bash dnsutils coreutils findutils grep ca-certificates libevent-2.1 libssl3 expat"
+ENV RUN_DEPS="bash dnsutils coreutils findutils grep ca-certificates"
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends $RUN_DEPS && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
