@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
-load ../node_modules/bats-support/load.bash
-load ../node_modules/bats-assert/load.bash
+load common
 
 https_redirect() {
     curl -s -m 10 -o /dev/null -w '%{http_code} %{redirect_url}' "$@"

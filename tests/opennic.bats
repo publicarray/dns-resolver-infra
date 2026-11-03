@@ -1,7 +1,5 @@
 #!/usr/bin/env bats
-load ../node_modules/bats-support/load.bash
-load ../node_modules/bats-assert/load.bash
-load dns
+load common
 
 @test "45.76.113.31 opennic.glue DNS-over-TLS" {
     run dot_lookup opennic.glue

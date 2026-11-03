@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
-load ../node_modules/bats-support/load.bash
-load ../node_modules/bats-assert/load.bash
+load common
 
 setup() {
     if ! docker inspect --type container haproxy >/dev/null 2>&1; then
