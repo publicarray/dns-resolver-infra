@@ -201,7 +201,7 @@ services:
   #     - -T
   #     - haproxy
   #     - -E
-  #     - 139.99.222.72:8443
+  #     - 45.76.113.31:8443
   #     - -A
   #   logging:
   #     driver: "json-file"

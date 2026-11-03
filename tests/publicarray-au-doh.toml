@@ -1,4 +1,4 @@
-server_names = ['publicarray-au2-doh']
+server_names = ['publicarray-au-doh']
 listen_addresses = ['127.0.0.1:4320']
 
 [sources]

@@ -43,14 +43,6 @@ echo "Q" | openssl s_client -connect 45.76.113.31:443 | grep TLSv1.3
 # sleep 1
 # dnscrypt-proxy -config tests/publicarray-au.toml -resolve example.com
 # kill $(jobs -lp | tail)
-# dnscrypt-proxy -config tests/publicarray-au2-doh.toml &
-# sleep 1
-# dnscrypt-proxy -config tests/publicarray-au2-doh.toml -resolve example.com
-# kill $(jobs -lp | tail)
-# dnscrypt-proxy -config tests/publicarray-au2.toml &
-# sleep 1
-# dnscrypt-proxy -config tests/publicarray-au2.toml -resolve example.com
-# kill $(jobs -lp | tail)
 # sleep 1
 # jobs -l
 # killall dnscrypt-proxy

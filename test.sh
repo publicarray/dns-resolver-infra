@@ -8,12 +8,11 @@
 
 npm i --legacy-peer-deps
 
-if ! command -v kdig; then
-    echo "Please install knot first:"
-    echo "https://www.knot-dns.cz/"
-    echo "Arch: pacman -S knot"
-    echo "macOS: brew install knot"
-    exit 1
-fi
+for cmd in curl openssl; do
+    if ! command -v "$cmd" >/dev/null; then
+        echo "Please install $cmd first"
+        exit 1
+    fi
+done
 
 npm run bats tests
