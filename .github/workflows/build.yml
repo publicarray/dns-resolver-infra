@@ -1,0 +1,128 @@
+name: build
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        required: true
+        type: string
+      platforms:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build ${{ inputs.app }} (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include: ${{ fromJSON(inputs.platforms) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.app }}
+          file: ${{ inputs.app }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,"name=ghcr.io/${{ github.repository }}/${{ inputs.app }},${{ github.repository_owner }}/${{ inputs.app }}",push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ inputs.app }}-${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.app }}-${{ env.PLATFORM_PAIR }}
+
+      - name: Export digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ inputs.app }}-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Push ${{ inputs.app }}:latest
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ inputs.app }}-*
+          merge-multiple: true
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push manifest list
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          GHCR_IMAGE: ghcr.io/${{ github.repository }}/${{ inputs.app }}
+          HUB_IMAGE: ${{ github.repository_owner }}/${{ inputs.app }}
+        run: |
+          sources=()
+          for digest in *; do
+            sources+=("${GHCR_IMAGE}@sha256:${digest}")
+          done
+          docker buildx imagetools create \
+            -t "${GHCR_IMAGE}:latest" \
+            -t "${HUB_IMAGE}:latest" \
+            "${sources[@]}"
+
+      - name: Inspect
+        env:
+          GHCR_IMAGE: ghcr.io/${{ github.repository }}/${{ inputs.app }}
+          HUB_IMAGE: ${{ github.repository_owner }}/${{ inputs.app }}
+        run: |
+          docker buildx imagetools inspect "${GHCR_IMAGE}:latest"
+          docker buildx imagetools inspect "${HUB_IMAGE}:latest"
