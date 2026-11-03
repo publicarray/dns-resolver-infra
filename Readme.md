@@ -16,7 +16,7 @@
 
 <br>
 
-* [acme.sh](https://github.com/Neilpang/acme.sh) (TLS certificate generation for haproxy)
+* [acme.sh](https://github.com/acmesh-official/acme.sh) (TLS certificate generation for haproxy)
 * [nsd](https://www.nlnetlabs.nl/projects/nsd/) ([OpenNIC](https://www.opennic.org/)) [![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/nsd.svg?maxAge=86400)](https://hub.docker.com/r/publicarray/nsd/) [![Docker Image Size](https://img.shields.io/docker/image-size/publicarray/nsd/latest)](https://microbadger.com/images/publicarray/nsd)
   * [unbound](https://unbound.nlnetlabs.nl/) (DNS Resolver) [![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/unbound.svg?maxAge=86400)](https://hub.docker.com/r/publicarray/unbound/) [![Docker Image Size](https://img.shields.io/docker/image-size/publicarray/unbound/latest)](https://microbadger.com/images/publicarray/unbound)
     * [dnscrypt-server](https://github.com/jedisct1/encrypted-dns-server) (dnscrypt) [![Docker Pulls](https://img.shields.io/docker/pulls/publicarray/dnscrypt-server.svg?maxAge=86400)](https://hub.docker.com/r/publicarray/dnscrypt-server/) [![Docker Image Size](https://img.shields.io/docker/image-size/publicarray/dnscrypt-server/latest)](https://microbadger.com/images/publicarray/dnscrypt-server)
@@ -29,7 +29,7 @@
 ### Quick start**
 
 ```sh
-pacman -S docker docker-composer docker-buildx
+pacman -S docker docker-compose docker-buildx
 git clone https://github.com/publicarray/dns-resolver-infra.git && cd dns-resolver-infra
 # Set the domain to issue TLS certificates for
 echo 'DOMAIN=dns.example.com' >> .env
@@ -38,6 +38,10 @@ echo 'CF_TOKEN=xxxx' >> .env
 echo 'CF_ACCOUNT_ID=xxxx' >> .env
 echo 'CF_ZONE_ID=xxxx' >> .env
 
+# Issue the TLS certificate first, unbound and haproxy need it to start
+docker compose up -d acme
+docker compose logs -f acme
+
 ./deploy.sh
 ```
 
@@ -45,7 +49,7 @@ echo 'CF_ZONE_ID=xxxx' >> .env
 
 ```sh
 # Build Images or pull them:
-docker-compose pull
+docker compose pull
 
 # Set the domain to issue TLS certificates for
 echo 'DOMAIN=dns.example.com' >> .env
@@ -59,8 +63,12 @@ echo 'CF_ZONE_ID=xxxx' >> .env
 # # or
 # docker-compose run acme.sh --set-default-ca --server letsencrypt
 
+# Issue the TLS certificate first, unbound and haproxy need it to start
+docker compose up -d acme
+docker compose logs -f acme
+
 # Launch
-docker-compose up -d
+docker compose up -d
 ```
 
 ### sysctl
