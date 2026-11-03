@@ -1,37 +1,47 @@
 name: doh-proxy
+
 on:
   workflow_dispatch:
   push:
+    branches: [master]
     paths:
-      - 'doh-proxy/*'
+      - 'doh-proxy/**'
+      - '.github/workflows/doh-proxy.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP: doh-proxy
+
 jobs:
   build:
-    name: Build & Push doh-proxy Container
+    name: Build & Push doh-proxy
     runs-on: ubuntu-latest
-    env:
-      APP: doh-proxy
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
+      - name: Login DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Login to GitHub Packages
+      - name: Login GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_PACKAGE_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -43,3 +53,5 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}/${{ env.APP }}:latest
             ${{ github.repository_owner }}/${{ env.APP }}:latest
+          cache-from: type=gha,scope=${{ env.APP }}
+          cache-to: type=gha,mode=max,scope=${{ env.APP }}
