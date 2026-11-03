@@ -28,7 +28,7 @@ volumes:
 services:
   # set CA, issue the cert (acme.sh skips if still valid)
   acme:
-    image: docker.io/neilpang/acme.sh
+    image: ghcr.io/acmesh-official/acme.sh
     container_name: acme
     restart: on-failure:2
     command:
@@ -54,7 +54,7 @@ services:
 
   # Renewal daemon: periodically renews and re-deploys certificates.
   acme-daemon:
-    image: docker.io/neilpang/acme.sh
+    image: ghcr.io/acmesh-official/acme.sh
     container_name: acme-daemon
     restart: on-failure:5
     command: daemon
