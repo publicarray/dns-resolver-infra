@@ -14,6 +14,8 @@ x-acme-env: &acme-env
   - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE=/opt/ssl/fullchain-ecc.pem
   - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD=cat /opt/ssl/key-ecc.pem /opt/ssl/fullchain-ecc.pem > /opt/ssl/fullchain-key.pem.ecdsa; sv 2 haproxy 2>/dev/null; unbound-control reload_keep_cache 2>/dev/null; true
 
+x-acme-image: &acme-image ghcr.io/acmesh-official/acme.sh:3.1.6@sha256:92b201ade090fb8551e221fba553fd7d7167628284cb28fe73bd64ec4a7f3a2b
+
 x-acme-volumes: &acme-volumes
   - ./run/acmeout:/acme.sh
   - /var/run/docker.sock:/var/run/docker.sock
@@ -35,7 +37,7 @@ volumes:
 services:
   # set CA, issue the cert (acme.sh skips if still valid)
   acme:
-    image: ghcr.io/acmesh-official/acme.sh
+    image: *acme-image
     container_name: acme
     restart: on-failure:2
     command:
@@ -69,7 +71,7 @@ services:
 
   # Renewal daemon: periodically renews and re-deploys certificates.
   acme-daemon:
-    image: ghcr.io/acmesh-official/acme.sh
+    image: *acme-image
     container_name: acme-daemon
     restart: on-failure:5
     command: daemon
