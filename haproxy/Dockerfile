@@ -48,14 +48,13 @@ RUN set -x && \
     useradd -g _haproxy -s /dev/null -d /dev/null _haproxy && \
     mkdir -p \
         /etc/service/haproxy/ \
-        /run/haproxy/ && \
+        /run/haproxy/ \
+        /opt/ssl/ && \
     update-ca-certificates 2> /dev/null || true
 
 COPY entrypoint.sh /
 COPY haproxy.conf /etc/haproxy.conf
 COPY haproxy.sh /etc/service/haproxy/run
-# wget https://ssl-config.mozilla.org/ffdhe2048.txt -O /opt/ssl/dhparam.pem
-COPY ffdhe2048.txt /opt/ssl/dhparam.pem
 
 VOLUME ["/opt/ssl"]
 

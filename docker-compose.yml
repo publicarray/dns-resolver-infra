@@ -32,8 +32,6 @@ volumes:
     dnscrypt-server:
     ssl:
     nsd:
-    acme-sh:
-    acme-acc:
 services:
   # set CA, issue the cert (acme.sh skips if still valid)
   acme:
@@ -167,7 +165,6 @@ services:
       - sh.acme.autoload.domain=${DOMAIN}
     build: haproxy
     image: ghcr.io/publicarray/dns-resolver-infra/haproxy
-    command: -r
     logging:
       driver: "json-file"
       options:
