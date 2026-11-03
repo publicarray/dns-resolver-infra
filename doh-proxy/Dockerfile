@@ -1,7 +1,7 @@
 FROM rust:latest AS doh-proxy-build
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 ENV REVISION=1
-ARG VERSION=0.9.16
+ARG VERSION=0.11.1
 
 ENV RUSTFLAGS="-C link-arg=-s"
 RUN cargo install doh-proxy --version $VERSION --target=x86_64-unknown-linux-gnu && \

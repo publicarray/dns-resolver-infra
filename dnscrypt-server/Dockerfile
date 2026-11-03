@@ -1,7 +1,7 @@
 FROM rust:1 AS encrypted-dns-build
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 ENV REVISION=2
-ENV VERSION=0.9.20
+ENV VERSION=0.9.22
 SHELL ["/bin/sh", "-x", "-c"]
 ENV RUSTFLAGS="-C link-arg=-s"
 RUN cargo install encrypted-dns --version $VERSION && \

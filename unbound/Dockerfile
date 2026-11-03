@@ -1,4 +1,4 @@
-FROM alpine:3.23 AS build
+FROM alpine:3.24 AS build
 LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 ENV REVISION=9
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
@@ -19,8 +19,8 @@ RUN set -x && \
       echo "export LDFLAGS=\"-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack\""; \
     } > /tmp/flags.sh
 
-ARG NGTCP2_VERSION=1.23.0
-ARG NGTCP2_SHA256=364d539c064d37ce0d9a595785d36eecb09926ec308813a6b6550c8adf4a50a4
+ARG NGTCP2_VERSION=1.26.0
+ARG NGTCP2_SHA256=85174d674e7f8fd911a827c6e483fd417b21b1f54d7853dac464cee446c8d35f
 ARG NGTCP2_DOWNLOAD_URL=https://github.com/ngtcp2/ngtcp2/releases/download/v${NGTCP2_VERSION}/ngtcp2-${NGTCP2_VERSION}.tar.gz
 
 RUN set -x && \
@@ -35,8 +35,8 @@ RUN set -x && \
     ./configure --prefix=/usr --enable-lib-only --with-openssl --without-gnutls && \
     make -j"$(nproc)" install
 
-ARG UNBOUND_VERSION=1.26.0
-ARG UNBOUND_SHA256=77458a7156e275c0b7b17fabcb357cb12445d95cfcb26fb9bb7d5ecba45e0b63
+ARG UNBOUND_VERSION=1.26.2
+ARG UNBOUND_SHA256=d8ee7aa6bbb3ff1be7d9e57637d0d0ec2f18273a8efff1a0afe2c665858b96f7
 ARG UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 RUN set -x && \
@@ -55,7 +55,7 @@ RUN set -x && \
     ls /usr/local/lib/
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.23
+FROM alpine:3.24
 LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 
 # NB: no apk 'ngtcp2' (that's the GnuTLS build); the OpenSSL-backed libs are copied from the build stage below
@@ -64,10 +64,10 @@ ENV UNBOUND_RUN_DEPS="expat libevent openssl runit shadow drill wget bc ca-certi
 # https://github.com/NLnetLabs/unbound/blob/master/configure#L2852
 # https://archlinux.pkgs.org/rolling/archlinux-extra-x86_64/unbound-1.25.1-1-x86_64.pkg.tar.zst.html
 
-ARG UNBOUND_VERSION=1.26.0
+ARG UNBOUND_VERSION=1.26.2
 ARG LIBUNBOUND_SONAME=8
 ARG LIBUNBOUND_AGE=1
-ARG LIBUNBOUND_REVISION=39
+ARG LIBUNBOUND_REVISION=41
 
 # libtool: shared object name (SONAME) = configure.ac's LIBUNBOUND_CURRENT - LIBUNBOUND_AGE
 ARG LIBUNBOUND_VERSION=${LIBUNBOUND_SONAME}.${LIBUNBOUND_AGE}.${LIBUNBOUND_REVISION}

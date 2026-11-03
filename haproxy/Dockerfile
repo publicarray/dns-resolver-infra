@@ -1,4 +1,4 @@
-FROM alpine:3.23 AS build
+FROM alpine:3.24 AS build
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 LABEL maintainer="publicarray"
 LABEL description="The Reliable, High Performance TCP/HTTP Load Balancer"
@@ -9,8 +9,8 @@ ENV HAPROXY_BUILD_DEPS="gcc ca-certificates libc-dev linux-headers make openssl-
 RUN apk add --no-cache $HAPROXY_BUILD_DEPS
 
 ENV HAPROXY_VERSION_SHORT=3.4
-ENV HAPROXY_VERSION=3.4.0
-ENV HAPROXY_SHA256=9298f565c2a9ba8a4e7f89c54be2c5d3fd960b5b304eb5515e15d29d2c15d4f7
+ENV HAPROXY_VERSION=3.4.7
+ENV HAPROXY_SHA256=ccfd342f3724c2cd659574044d788f44e20b212467c6bd5edbbfc517a2775dca
 ENV HAPROXY_DOWNLOAD_URL="https://www.haproxy.org/download/${HAPROXY_VERSION_SHORT}/src/haproxy-${HAPROXY_VERSION}.tar.gz"
 
 RUN set -x && \
@@ -33,7 +33,7 @@ RUN set -x && \
     eval "make $makeOpts install-bin"
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.23
+FROM alpine:3.24
 LABEL org.opencontainers.image.source=https://github.com/publicarray/dns-resolver-infra
 
 ENV HAPROXY_RUN_DEPS="curl shadow zlib pcre2 openssl socat runit coreutils bind-tools"

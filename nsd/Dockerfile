@@ -1,4 +1,4 @@
-FROM alpine:3.23 AS build
+FROM alpine:3.24 AS build
 LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 LABEL maintainer="publicarray"
 LABEL description="NSD is an authoritative only, high performance, simple and open source name server. https://www.nlnetlabs.nl/projects/nsd/"
@@ -21,8 +21,8 @@ RUN set -x && \
       echo "export LDFLAGS=\"-pie -flto -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack\""; \
     } > /tmp/flags.sh
 
-ARG NSD_VERSION=4.14.2
-ARG NSD_SHA256=2bff57349841844d7560e76d7bd70b6bd6f4c462cdaa6d57b8e83d1e14dd22d6
+ARG NSD_VERSION=4.15.4
+ARG NSD_SHA256=74a095fdb774a157c8aec9009e440fc3d2ba94c4372ae9ed86588c1719d1df2f
 ARG NSD_DOWNLOAD_URL=https://www.nlnetlabs.nl/downloads/nsd/nsd-${NSD_VERSION}.tar.gz
 
 RUN set -x && \
@@ -39,7 +39,7 @@ RUN set -x && \
     make -j"$(nproc)" install
 
 #------------------------------------------------------------------------------#
-FROM alpine:3.23
+FROM alpine:3.24
 LABEL org.opencontainers.image.source="https://github.com/publicarray/dns-resolver-infra"
 
 ENV NSD_RUN_DEPS="openssl libevent shadow drill protobuf-c fstrm"
