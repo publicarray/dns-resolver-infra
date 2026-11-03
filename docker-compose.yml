@@ -18,6 +18,13 @@ x-acme-volumes: &acme-volumes
   - ./run/acmeout:/acme.sh
   - /var/run/docker.sock:/var/run/docker.sock
 
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.30.53.0/24
+          ip_range: 172.30.53.128/25
+
 volumes:
     dnscrypt:
     dnscrypt-server:
@@ -78,6 +85,9 @@ services:
         max-file: "10"
     volumes:
       - nsd:/etc/nsd/run
+    networks:
+      default:
+        ipv4_address: 172.30.53.10
 
   unbound:
     container_name: unbound
@@ -89,7 +99,8 @@ services:
       - sh.acme.autoload.domain=${DOMAIN}
     build: unbound
     image: ghcr.io/publicarray/dns-resolver-infra/unbound
-    command: -d nsd
+    environment:
+      - NSD_SERVICE_HOST=172.30.53.10
     logging:
       driver: "json-file"
       options:
@@ -103,6 +114,9 @@ services:
       # /etc/unbound/ssl = same volume inside unbound's chroot for reload.
       - ssl:/opt/ssl
       - ssl:/etc/unbound/ssl
+    networks:
+      default:
+        ipv4_address: 172.30.53.53
 
   m13253-doh:
     container_name: doh
@@ -111,12 +125,16 @@ services:
       - unbound
     build: m13253-doh
     image: ghcr.io/publicarray/dns-resolver-infra/m13253-doh
-    command: -d unbound
+    environment:
+      - UNBOUND_SERVICE_HOST=172.30.53.53
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    networks:
+      default:
+        ipv4_address: 172.30.53.80
 
   # doh-proxy:
   #   container_name: doh-proxy
@@ -139,7 +157,7 @@ services:
       - sh.acme.autoload.domain=${DOMAIN}
     build: haproxy
     image: ghcr.io/publicarray/dns-resolver-infra/haproxy
-    command: -d -r
+    command: -r
     logging:
       driver: "json-file"
       options:
@@ -154,6 +172,11 @@ services:
        - ssl:/opt/ssl
     environment:
       - DOMAIN=${DOMAIN}
+      - UNBOUND_SERVICE_HOST=172.30.53.53
+      - DOH_PROXY_SERVICE_HOST=172.30.53.80
+    networks:
+      default:
+        ipv4_address: 172.30.53.43
 
   # dnscrypt-server:
   #   container_name: dnscrypt-server
