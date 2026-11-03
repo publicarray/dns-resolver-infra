@@ -80,11 +80,13 @@ sysctl net.ipv4.tcp_congestion_control=bbr
 
 ### Tests
 
-```
-npm i --legacy-peer-deps
-./lint.sh
-npm run bats tests
+```sh
+# uses npm, curl and openssl, or a docker container when npm is missing
 ./test.sh
+# force the docker container
+TEST_WITH_DOCKER=1 ./test.sh
+# human-readable check with doggo
+./test-doggo.sh
+# lint the Dockerfiles
+./lint.sh
 ```
-
-###
